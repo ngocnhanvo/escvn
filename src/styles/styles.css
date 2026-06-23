@@ -22,6 +22,10 @@ img.alignnone, img.aligncenter {
   contain-intrinsic-size: auto 250px; 
 }
 
+.max-w-container-max {
+  max-width: 1920px;
+}
+
 @media (max-width: 1024px) {
   .py-section-gap {
     padding-top: 48px;
