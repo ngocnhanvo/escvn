@@ -1,7 +1,9 @@
 name: Deploy Website to DirectAdmin
 
-# Kích hoạt khi có hành động PUSH vào nhánh main
+# Kích hoạt khi có hành động PUSH vào nhánh main HOẶC gọi từ WordPress
 on:
+  repository_dispatch:
+    types: [wp_trigger_build] # Trùng với event_type khai báo trong PHP
   push:
     branches:
       - main
@@ -16,11 +18,11 @@ jobs:
     - name: Get latest code
       uses: actions/checkout@v4
 
-    # Bước 2: Cài đặt NodeJS trên server ảo
+    # Bước 2: Cài đặt NodeJS chuẩn trên server ảo
     - name: Setup Node.js
-      uses: actions/preferred-node-version@v1
+      uses: actions/setup-node@v4
       with:
-        node-version: '24.14.1' # Thay bằng phiên bản Node bạn đang dùng
+        node-version: '20' # Khuyên dùng bản LTS gõ gọn '20' hoặc '22', tự động lấy minor version mới nhất
 
     # Bước 3: Cài đặt thư viện và Build ra thư mục dist
     - name: Install dependencies and Build
@@ -35,5 +37,5 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}      # Địa chỉ IP hoặc FTP host của DirectAdmin
         username: ${{ secrets.FTP_USERNAME }}  # Tên tài khoản FTP (hoặc user DA)
         password: ${{ secrets.FTP_PASSWORD }}  # Mật khẩu FTP
-        local-dir: ./dist/                      # Thư mục chứa code sau khi build xong ở máy ảo
+        local-dir: ./dist/                      # Nhớ kiểm tra xem dự án của bạn build ra 'dist' hay 'build' hay 'out' nhé
         server-dir: /public_html/               # Thư mục đích trên hosting DirectAdmin
