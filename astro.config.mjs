@@ -100,7 +100,18 @@ export default defineConfig({
   vite: {
     ssr: {
       external: ['node:buffer', 'node:fs', 'node:path'],
-      noExternal: ['piccolore', 'devalue'],
+      noExternal: [
+        'piccolore', 
+        'devalue', 
+        'es-module-lexer', 
+        'cookie', 
+        'kleur', 
+        'mime', 
+        'source-map-js',
+        'path-to-regexp',
+        'html-escaper',
+        'flatted'
+      ],
     },
     build: {
       rollupOptions: {
