@@ -110,7 +110,10 @@ export default defineConfig({
         'source-map-js',
         'path-to-regexp',
         'html-escaper',
-        'flatted'
+        'flatted',
+        'unstorage',
+        'destr',
+        'radix3'
       ],
     },
     build: {
