@@ -100,21 +100,22 @@ export default defineConfig({
   vite: {
     ssr: {
       external: ['node:buffer', 'node:fs', 'node:path'],
-      noExternal: [
-        'piccolore', 
-        'devalue', 
-        'es-module-lexer', 
-        'cookie', 
-        'kleur', 
-        'mime', 
-        'source-map-js',
-        'path-to-regexp',
-        'html-escaper',
-        'flatted',
-        'unstorage',
-        'destr',
-        'radix3'
-      ],
+      noExternal: [/.*/],
+      // noExternal: [
+      //   'piccolore', 
+      //   'devalue', 
+      //   'es-module-lexer', 
+      //   'cookie', 
+      //   'kleur', 
+      //   'mime', 
+      //   'source-map-js',
+      //   'path-to-regexp',
+      //   'html-escaper',
+      //   'flatted',
+      //   'unstorage',
+      //   'destr',
+      //   'radix3'
+      // ],
     },
     build: {
       rollupOptions: {
