@@ -1,0 +1,44 @@
+---
+import { Head, HeadProps } from "@/components/Head";
+import AppRouter from "@/components/Router";
+import "@/styles/global.css";
+import { AppRouterProps } from "@/entities";
+import { returnLang } from "@/lib/LanguageContext";
+import {PageTransition}  from '@/components/PageTransition';
+import { getSharedWordPressData } from "@/lib/wordpress/cache";
+
+const WC_URL_CLIENT = import.meta.env.WC_URL_CLIENT || process.env.WC_URL_CLIENT;
+export const { data_info, pages, menus } = await getSharedWordPressData();
+
+const props: AppRouterProps = {
+  basename: '/',
+  pages: pages,
+  menus: menus,
+  data_info: data_info,
+  status: 500
+};
+const lang = returnLang(pages, Astro.url.pathname, props.basename);
+// Sử dụng Astro.url để lấy URL chính xác, đảm bảo không bị lỗi double slash
+const siteOrigin = (WC_URL_CLIENT || Astro.url.origin).replace(/\/$/, '');
+const currentPageUrl = new URL(Astro.url.pathname, siteOrigin).href;
+const headProps: HeadProps = {
+  title: Astro.props.title || data_info?.tencongty[lang],
+  href: currentPageUrl,
+  ogImage: siteOrigin + Astro.props.ogImage,
+  description: Astro.props.description,
+  lang: lang,
+  data_info: data_info
+}
+---
+<html lang={lang} class="w-full h-full">
+  <head>
+    <Head {...headProps} />
+  </head>
+  <body class="w-full h-full">
+    <PageTransition client:load />
+    <div style="display:none">Build ID: {Date.now()}</div>
+    <div id="root" class="w-full h-full">
+      <AppRouter client:idle {...props} />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+[
+  {
+    "key": "page404",
+    "lang": "vi",
+    "action": "Page404",
+    "slug": "p404",
+    "title": "{tencongty} - {motaSeo}",
+    "label": "Trang 404",
+    "description": "Trang này xuất hiện khi bạn truy cập vào đường dẫn đang được bảo trì hoặc không còn tồn tại",
+    "ogImage": ""
+  },
+ {
+    "key": "page404",
+    "lang": "en",
+    "slug": "p404-en",
+    "action": "Page404",
+    "title": "{tencongty} - {motaSeo}",
+    "label": "Page 404",
+    "description": "The page you are looking for is under maintenance or no longer exists.",
+    "ogImage": ""
+  }
+]

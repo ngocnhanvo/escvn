@@ -1,0 +1,39 @@
+name: Deploy Website to DirectAdmin
+
+# Kích hoạt khi có hành động PUSH vào nhánh main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Bước 1: Lấy code từ GitHub về server ảo của GitHub
+    - name: Get latest code
+      uses: actions/checkout@v4
+
+    # Bước 2: Cài đặt NodeJS trên server ảo
+    - name: Setup Node.js
+      uses: actions/preferred-node-version@v1
+      with:
+        node-version: '24.14.1' # Thay bằng phiên bản Node bạn đang dùng
+
+    # Bước 3: Cài đặt thư viện và Build ra thư mục dist
+    - name: Install dependencies and Build
+      run: |
+        npm install
+        npm run build # Lệnh này sẽ tạo ra thư mục 'dist' hoặc 'build'
+
+    # Bước 4: Tự động sync (đồng bộ) thư mục dist lên Hosting qua tài khoản FTP
+    - name: Sync files via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}      # Địa chỉ IP hoặc FTP host của DirectAdmin
+        username: ${{ secrets.FTP_USERNAME }}  # Tên tài khoản FTP (hoặc user DA)
+        password: ${{ secrets.FTP_PASSWORD }}  # Mật khẩu FTP
+        local-dir: ./dist/                      # Thư mục chứa code sau khi build xong ở máy ảo
+        server-dir: /public_html/               # Thư mục đích trên hosting DirectAdmin

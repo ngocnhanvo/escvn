@@ -1,0 +1,215 @@
+{
+  "id": "27c287ed-ab96-44b3-8a18-de2afced13d6",
+  "initialPrompt": "Create a website inspired by https://store-kids.webcake.me",
+  "siteName": "store-kids.webcake.me",
+  "brandBook": {
+    "tones": [
+      "playful",
+      "energetic",
+      "approachable",
+      "warm",
+      "optimistic"
+    ],
+    "designStyle": {
+      "primaryStyle": [
+        "Playful",
+        "Bright",
+        "Rounded"
+      ],
+      "supportingStyles": [
+        "E-commerce",
+        "Family-friendly",
+        "Vibrant"
+      ]
+    },
+    "toneOfVoice": "Playful, friendly, energetic, approachable, trustworthy, helpful.",
+    "graphicElements": {
+      "icons": "Simple, line-based icons with rounded edges, matching the primary or accent color.",
+      "stickers": "Playful, sticker-like elements with irregular shapes and soft shadows, used sparingly for decorative accents.",
+      "illustrations": "Whimsical, character-driven illustrations with a soft, rounded aesthetic, using the brand's bright color palette."
+    },
+    "designSummary": "**The Joyful Mosaic: Playful E-commerce Architecture**\n\nThe Vision: To create a vibrant, engaging, and approachable online store that delights parents and children alike. This design embraces a 'playful' personality, translating into a dynamic, organic, and visually rich experience. We will move away from sterile corporate design towards a joyful, tactile interface that feels like a curated collection of treasures.\n\n**Execution Blueprint:**\n1. Organic Grid Integration: While a grid forms the foundation for product display, it will be softened with rounded elements and asymmetrical arrangements where appropriate, avoiding rigid uniformity.\n2. Typography as a Playmate: Utilize rounded, friendly sans-serif fonts for primary text and headings, with potential for a quirky accent font to inject personality. Hierarchy will be clear but not overly formal.\n3. Color as Celebration: Employ a bright, saturated, and optimistic color palette. Multiple vibrant accent colors will be used to create an energetic and cheerful atmosphere, ensuring high contrast for accessibility.\n4. Tactile Components: Buttons and cards will feature generous, soft rounded corners, inviting interaction. Animations will be bouncy and responsive, providing positive feedback and enhancing the sense of delight.\n5. Whitespace as Breathing Room: Ample, yet not excessive, negative space will be used to ensure content is scannable and the overall feel remains uncluttered and approachable.",
+    "layout": {
+      "grid": {
+        "margins": "Consistent margins around sections (e.g., 64px vertical, 24px horizontal within content areas).",
+        "padding": "Generous padding within containers and cards (e.g., 24px, 32px).",
+        "compositionApproach": "Hybrid: A structured grid for product catalogs and a more fluid, section-based approach for content and promotional areas, incorporating asymmetrical elements.",
+        "spacing": {
+          "gaps": "Base unit: 8px. Grid gaps are 24px (3x base unit) for product grids, with larger gaps (e.g., 40px, 64px) between major sections.",
+          "rows": "Flexible row heights based on content.",
+          "columns": "12-column grid system.",
+          "compositionApproach": "Not specified"
+        }
+      },
+      "layoutDna": {
+        "contrastSpectrum": "High contrast between text and background, with vibrant accent colors providing visual pop.",
+        "densitySpectrum": "Moderately dense for product listings, airy for informational sections.",
+        "textVsImageEmphasis": "Balanced emphasis, with high-quality product imagery taking center stage in listings, supported by clear, legible typography.",
+        "complexitySpectrum": "Organized complexity, using a mosaic-like approach for content sections (e.g., categories, blog) to maintain engagement without overwhelming.",
+        "gridAlignmentSpectrum": "Primarily grid-based for product display, with asymmetrical elements and organic flow in other sections.",
+        "negativeSpaceUsage": "Generous use of whitespace to create breathing room and highlight key elements, especially around CTAs and informational blocks."
+      },
+      "heroSectionLayout": "**The Animated Welcome Banner**\nComposition (Tailwind Spec): Full-screen container (`h-screen grid place-items-center p-8`). A central `div` with `flex flex-col items-center text-center`.\nSignature Hook (Framer Motion Spec): Headline 'Discover Fun for Little Ones!' (`motion.h1 text-7xl font-bold text-primary`) uses `variants` with `transition: { staggerChildren: 0.05 }`. Each letter is a `motion.span` with `initial={{ opacity: 0, y: 30 }}` and `animate={{ opacity: 1, y: 0 }}`. A secondary `motion.p` below (`mt-4 text-xl`) fades in with a slight delay."
+    },
+    "components": {
+      "images": "Layout Role: Product images are displayed in a responsive grid. Promotional images are full-bleed or integrated into content blocks. | Gallery Type: Product Grid: A responsive masonry-like grid that adapts to screen size, ensuring visual appeal. Promotional Banners: Full-width sections with large, impactful imagery.",
+      "buttons": "Primary: background-color: #FF6679, color: #FFFFFF, border: 1px solid #FF6679, border-radius: 100px, padding: 12px 24px. Secondary: background-color: transparent, color: #126CEC, border: 1px solid #126CEC, border-radius: 100px, padding: 12px 24px.",
+      "containers": "Method: Card-based with soft, large rounded corners (100px radius). Style: Background color #FFFFFF, subtle shadow for depth, generous padding."
+    },
+    "palette": {
+      "colors": {
+        "customColors": [
+          {
+            "name": "accent",
+            "value": "#108B67"
+          },
+          {
+            "name": "destructive",
+            "value": "#E53E3E"
+          },
+          {
+            "name": "destructiveForeground",
+            "value": "#FFFFFF"
+          }
+        ],
+        "background": "#FFFFFF",
+        "secondary": "#126CEC",
+        "foreground": "#000000",
+        "secondaryForeground": "#FFFFFF",
+        "primaryForeground": "#FFFFFF",
+        "primary": "#FF6679"
+      },
+      "paletteUsageGuide": "The primary color (#FF6679) is for key calls-to-action and branding highlights. Secondary color (#126CEC) is for secondary actions or informational elements. Accent color (#108B67) is for specific features or links. Background is clean white (#FFFFFF) for readability, with dark foreground (#000000) for text. Custom colors like 'destructive' are reserved for error states.",
+      "paletteAccessibilityNotes": "Ensure sufficient contrast between primary/secondary colors and their foregrounds. Text on white background should meet WCAG AA standards. Avoid using accent color for critical information if contrast is insufficient."
+    },
+    "typography": {
+      "headings": {
+        "font": {
+          "fontFamily": "madefor-display",
+          "role": "heading",
+          "fontJustification": ""
+        },
+        "headingsAccessibilityNotes": "Headings should be distinct from body text in size and weight. Ensure sufficient contrast against background.",
+        "headingsSimilarFonts": [],
+        "headingsUsageGuide": "Use for all major headings (H1, H2, H3). Maintain consistent sizing and weight for hierarchy. Ensure ample spacing around headings."
+      },
+      "paragraphs": {
+        "font": {
+          "fontFamily": "rubik-v2",
+          "role": "body",
+          "fontJustification": ""
+        },
+        "paragraphsUsageGuide": "Use for all body text, descriptions, and longer content blocks. Maintain consistent line height and letter spacing for readability.",
+        "paragraphsSimilarFonts": [],
+        "paragraphsAccessibilityNotes": "Paragraph text must have a minimum size and sufficient line height for comfortable reading. Ensure high contrast with the background."
+      },
+      "customFontFamilies": {},
+      "fontSizes": [
+        {
+          "name": "xs",
+          "size": "0.75rem",
+          "lineHeight": "1.25",
+          "letterSpacing": "0.02em",
+          "fontWeight": "400"
+        },
+        {
+          "name": "sm",
+          "size": "0.875rem",
+          "lineHeight": "1.3",
+          "letterSpacing": "0.02em",
+          "fontWeight": "400"
+        },
+        {
+          "name": "base",
+          "size": "1rem",
+          "lineHeight": "1.5",
+          "letterSpacing": "0.02em",
+          "fontWeight": "400"
+        },
+        {
+          "name": "lg",
+          "size": "1.125rem",
+          "lineHeight": "1.4",
+          "letterSpacing": "0.01em",
+          "fontWeight": "500"
+        },
+        {
+          "name": "xl",
+          "size": "1.25rem",
+          "lineHeight": "1.3",
+          "letterSpacing": "0.01em",
+          "fontWeight": "500"
+        },
+        {
+          "name": "2xl",
+          "size": "1.5rem",
+          "lineHeight": "1.2",
+          "letterSpacing": "0em",
+          "fontWeight": "600"
+        },
+        {
+          "name": "3xl",
+          "size": "1.875rem",
+          "lineHeight": "1.15",
+          "letterSpacing": "0em",
+          "fontWeight": "700"
+        },
+        {
+          "name": "4xl",
+          "size": "2.25rem",
+          "lineHeight": "1.1",
+          "letterSpacing": "0em",
+          "fontWeight": "700"
+        },
+        {
+          "name": "5xl",
+          "size": "3rem",
+          "lineHeight": "1.05",
+          "letterSpacing": "0em",
+          "fontWeight": "800"
+        },
+        {
+          "name": "6xl",
+          "size": "3.75rem",
+          "lineHeight": "1",
+          "letterSpacing": "0em",
+          "fontWeight": "800"
+        },
+        {
+          "name": "7xl",
+          "size": "4.5rem",
+          "lineHeight": "1",
+          "letterSpacing": "0em",
+          "fontWeight": "900"
+        },
+        {
+          "name": "8xl",
+          "size": "6rem",
+          "lineHeight": "1",
+          "letterSpacing": "0em",
+          "fontWeight": "900"
+        },
+        {
+          "name": "9xl",
+          "size": "8rem",
+          "lineHeight": "1",
+          "letterSpacing": "0em",
+          "fontWeight": "900"
+        }
+      ],
+      "welcomeSectionTypography": {
+        "placement": "Centered, prominent within the hero section.",
+        "implementation": "Large, bold headings using 'madefor-display' with generous letter spacing. Body text below using 'rubik-v2' with clear line height."
+      }
+    },
+    "originImagesUrls": []
+  },
+  "attachments": {
+    "contentImagesUrls": [],
+    "inspirationImagesUrls": [
+      "https://wixmp-c562ea68f10846b458285ce5.wixmp.com/scraped-screenshots/screenshot-1780745045412.webp"
+    ]
+  },
+  "status": "READY",
+  "plan": "\n\n```json\n{\n  \"sections\": [\n    {\n      \"id\": \"overview\",\n      \"title\": \"## Overview\",\n      \"content\": \"This plan creates an e-commerce website for children's clothing, featuring product listings, categories, and informational content to support parents in their shopping decisions.\"\n    },\n    {\n      \"id\": \"key-features\",\n      \"title\": \"## Key features\",\n      \"content\": \"- **Product Listing**: Browse all available children's clothing items including t-shirts, sets, and character-themed apparel.\\n- **Product Detail View**: View detailed information about individual products including images, descriptions, and pricing.\\n- **Filtering / Search**: Filter products by categories such as sports wear, party wear, and character themes.\\n- **Blog Article Listing**: Browse parenting tips and product-related articles.\\n- **Blog Article Detail View**: Read full blog articles relevant to parents and children's fashion.\",\n      \"metadata\": [\n        { \"id\": \"product-listing\", \"name\": \"Product Listing\" },\n        { \"id\": \"product-detail-view\", \"name\": \"Product Detail View\" },\n        { \"id\": \"filtering-search\", \"name\": \"Filtering / Search\" },\n        { \"id\": \"blog-article-listing\", \"name\": \"Blog Article Listing\" },\n        { \"id\": \"blog-article-detail-view\", \"name\": \"Blog Article Detail View\" }\n      ]\n    },\n    {\n      \"id\": \"structure\",\n      \"title\": \"## Structure\",\n      \"content\": \"- **Header (Reusable)**: Contains site logo, navigation menu with links to Home, Shop, Categories, Blog, and About pages, plus search functionality.\\n- **Footer (Reusable)**: Displays customer service information (cash on delivery, free shipping policy, return policy), contact details, and quick links.\\n- **Home Page**: Features hero section with promotional visuals, best-selling products showcase, and category highlights.\\n- **Shop Page**: Hosts the Product Listing, Filtering / Search, and Product Detail View features for browsing and viewing children's clothing.\\n- **Blog Page**: Hosts the Blog Article Listing and Blog Article Detail View features for parenting and fashion content.\\n- **About Page**: Provides information about the store's mission, values, and commitment to quality children's clothing.\\n- **Contact Page**: Displays contact form and store contact information for customer inquiries.\"\n    }\n  ],\n  \"apps\": [\n    {\n      \"id\": \"wix-cms\",\n      \"keyFeatures\": [\n        { \"id\": \"product-listing\", \"name\": \"Product Listing\" },\n        { \"id\": \"product-detail-view\", \"name\": \"Product Detail View\" },\n        { \"id\": \"filtering-search\", \"name\": \"Filtering / Search\" },\n        { \"id\": \"blog-article-listing\", \"name\": \"Blog Article Listing\" },\n        { \"id\": \"blog-article-detail-view\", \"name\": \"Blog Article Detail View\" }\n      ]\n    }\n  ],\n  \"version\": \"4.0.1\"\n}\n```"
+}
