@@ -22,7 +22,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20' # Khuyên dùng bản LTS gõ gọn '20' hoặc '22', tự động lấy minor version mới nhất
+        node-version: '24' # Khuyên dùng bản LTS gõ gọn '20' hoặc '22', tự động lấy minor version mới nhất
 
     # Bước 3: Cài đặt thư viện và Build ra thư mục dist
     - name: Install dependencies and Build
@@ -39,3 +39,4 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}  # Mật khẩu FTP
         local-dir: ./dist/                      # Nhớ kiểm tra xem dự án của bạn build ra 'dist' hay 'build' hay 'out' nhé
         server-dir: /public_html/               # Thư mục đích trên hosting DirectAdmin
+        dangerous-clean-slate: true
