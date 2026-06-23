@@ -38,5 +38,5 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}  # Tên tài khoản FTP (hoặc user DA)
         password: ${{ secrets.FTP_PASSWORD }}  # Mật khẩu FTP
         local-dir: ./dist/                      # Nhớ kiểm tra xem dự án của bạn build ra 'dist' hay 'build' hay 'out' nhé
-        server-dir: /public_html/               # Thư mục đích trên hosting DirectAdmin
+        server-dir: /node-app/dist/               # Thư mục đích trên hosting DirectAdmin
         dangerous-clean-slate: true

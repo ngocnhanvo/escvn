@@ -11,6 +11,7 @@ import customErrorOverlayPlugin from "./vite-error-overlay-plugin.js";
 import postcssPseudoToData from "@wix/postcss-pseudo-to-data";
 import cloudflare from "@astrojs/cloudflare";
 import { loadEnv } from 'vite';
+import node from '@astrojs/node';
 
 // Load biến môi trường
 const { WC_URL } = loadEnv(process.env.NODE_ENV?? "development", process.cwd(), "");
@@ -26,7 +27,9 @@ export default defineConfig({
     inlineStylesheets: 'always'
   },
   output: "static",
-  adapter: cloudflare(),
+  adapter: node({
+    mode: 'standalone',
+  }),
   integrations: [
     {
       name: "framewire",
