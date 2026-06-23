@@ -24,13 +24,18 @@ jobs:
       with:
         node-version: '24' # Khuyên dùng bản LTS gõ gọn '20' hoặc '22', tự động lấy minor version mới nhất
 
-    # Bước 3: Cài đặt thư viện và Build ra thư mục dist
+    # Bước 3: Tự động tạo file .env từ GitHub Secret trước khi build
+    - name: Make env file
+      run: |
+        echo "${{ secrets.ENV_FILE }}" > .env
+
+    # Bước 4: Cài đặt thư viện và Build ra thư mục dist
     - name: Install dependencies and Build
       run: |
         npm install
         npm run build # Lệnh này sẽ tạo ra thư mục 'dist' hoặc 'build'
 
-    # Bước 4: Tự động sync (đồng bộ) thư mục dist lên Hosting qua tài khoản FTP
+    # Bước 5: Tự động sync (đồng bộ) thư mục dist lên Hosting qua tài khoản FTP
     - name: Sync files via FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
@@ -38,5 +43,5 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}  # Tên tài khoản FTP (hoặc user DA)
         password: ${{ secrets.FTP_PASSWORD }}  # Mật khẩu FTP
         local-dir: ./dist/                      # Nhớ kiểm tra xem dự án của bạn build ra 'dist' hay 'build' hay 'out' nhé
-        server-dir: /node-app/dist/               # Thư mục đích trên hosting DirectAdmin
+        server-dir: /public_html/               # Thư mục đích trên hosting DirectAdmin
         dangerous-clean-slate: true
