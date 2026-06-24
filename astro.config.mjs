@@ -27,6 +27,7 @@ export default defineConfig({
     inlineStylesheets: 'always'
   },
   output: "static",
+  //adapter: cloudflare(),
   adapter: node({
     mode: 'standalone',
   }),
