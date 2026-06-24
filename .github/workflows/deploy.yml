@@ -54,8 +54,22 @@ jobs:
         exclude: |                              # Ép bỏ qua mọi thứ khác, chỉ đẩy đúng file zip
           **
           !escvn.zip
-    # 6. Gọi file unzip.php từ xa để DirectAdmin tự giải nén
-    - name: Trigger Remote Unzip via URL
+
+    # BƯỚC 6: Đẩy riêng file .env lên THƯ MỤC CHA (Nằm ngoài public_html)
+    - name: Upload .env to secure parent folder via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}                
+        username: ${{ secrets.FTP_USERNAME }}   
+        password: ${{ secrets.FTP_PASSWORD }}   
+        local-dir: ./                           
+        server-dir: /public_html/                           # Thư mục gốc tài khoản FTP (thường là ngang hàng public_html)
+        dangerous-clean-slate: false            
+        exclude: |                              
+          **
+          !.env
+
+    # BƯỚC 7: Gọi file unzip.php từ xa để DirectAdmin tự giải nén
+    - name: Trigger Remote Unzip
       run: |
-        # Thay 'tenmienofban.com' bằng tên miền thật của bạn đang trỏ về DirectAdmin này
         curl -s https://escvn.com/unzip.php
