@@ -18,8 +18,7 @@ export async function generateAndSaveSitemap(
       const domain = infoData?.domain['vi'] || '';
 
       if (!domain) {
-        console.warn('⚠️ Sitemap: Không tìm thấy domain trong infoData. Vui lòng kiểm tra CMS.');
-        return { sitemap: null, robots: null };
+        throw new Error('Build failed: Domain missing in WPInfo, cannot generate sitemap.');
       }
 
       const baseUrl = domain.startsWith('http') ? domain.replace(/\/$/, '') : `https://${domain.replace(/\/$/, '')}`;
@@ -70,6 +69,7 @@ Sitemap: ${baseUrl}/sitemap.xml`;
       return { sitemap: sitemapXml, robots: robotsTxt };
     } catch (err) {
       console.error('❌ Lỗi nghiêm trọng khi tạo sitemap:', err);
+      throw new Error(err);
     }
   }
   return { sitemap: null, robots: null };

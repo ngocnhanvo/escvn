@@ -52,7 +52,10 @@ export async function processAndStoreImage({
         mkdirSync(publicDir, { recursive: true });
       }
 
-      const res = await fetch(absoluteImageUrl);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // Timeout 10s
+      const res = await fetch(absoluteImageUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
       if (res.ok) {
         const buffer = await res.arrayBuffer();
         const nodeBuffer = Buffer.from(buffer);

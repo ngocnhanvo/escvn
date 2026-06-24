@@ -96,6 +96,23 @@ export default defineConfig({
           }
         }
       }
+    },
+    {
+      name: 'load-env-hook',
+      hooks: {
+        'astro:config:setup': ({ injectScript }) => {
+          injectScript('page-ssr', `
+            const [major, minor] = process.versions.node.split('.').map(Number);
+            // Chỉ khi Node < 20.6.0 thì mới load cả 'path' và 'dotenv'
+            if (major < 20 || (major === 20 && minor < 6)) {
+              const path = await import('path');
+              const dotenv = await import('dotenv');
+              
+              dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
+            }
+          `);
+        }
+      }
     }
   ],
   vite: {
