@@ -38,9 +38,13 @@ jobs:
     # Bước 5: Nén toàn bộ nội dung bên trong thư mục dist thành file escvn.zip
     - name: Zip Build Folder
       run: |
-        cd dist
+        mkdir deploy
+
+        cp .env deploy/
+        cp -r dist/* deploy/
+
+        cd deploy
         zip -r ../escvn.zip .
-        cd ..
     # Bước 5: Tự động sync (đồng bộ) thư mục dist lên Hosting qua tài khoản FTP
     - name: Sync files via FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -55,21 +59,7 @@ jobs:
           **
           !escvn.zip
 
-    # BƯỚC 6: Đẩy riêng file .env lên THƯ MỤC CHA (Nằm ngoài public_html)
-    - name: Upload .env to secure parent folder via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}                
-        username: ${{ secrets.FTP_USERNAME }}   
-        password: ${{ secrets.FTP_PASSWORD }}   
-        local-dir: ./                           
-        server-dir: /public_html/                           # Thư mục gốc tài khoản FTP (thường là ngang hàng public_html)
-        dangerous-clean-slate: false            
-        exclude: |                              
-          **
-          !.env
-
-    # BƯỚC 7: Gọi file unzip.php từ xa để DirectAdmin tự giải nén
+    # BƯỚC 6: Gọi file unzip.php từ xa để DirectAdmin tự giải nén
     - name: Trigger Remote Unzip
       run: |
         curl -s https://admin.escvn.com/unzip.php

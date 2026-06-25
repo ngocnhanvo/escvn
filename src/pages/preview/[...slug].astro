@@ -10,9 +10,11 @@ import { replacePlaceholders, mergeJSON, mergeJSONReverse } from "@/lib/stringUt
 import { returnLang } from "@/lib/LanguageContext";
 import {PageTransition}  from '@/components/PageTransition';
 import menu_json from "@/data/menu.json";
+import { getAvas } from '@/lib/avas_env';
 
-const WC_URL_CLIENT = import.meta.env.WC_URL_CLIENT || process.env.WC_URL_CLIENT;
-const WC_URL = import.meta.env.WC_URL || process.env.WC_URL;
+const avas = getAvas(Astro.locals);
+const WC_URL_CLIENT = avas.WC_URL_CLIENT;
+const WC_URL = avas.WC_URL;
 const data_info = (await getInfo(true))[0];
 let pages = await getPages(data_info, true);
 pages.map(page => {

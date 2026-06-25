@@ -54,7 +54,10 @@ export async function processAndStoreImage({
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // Timeout 10s
-      const res = await fetch(absoluteImageUrl, { signal: controller.signal });
+      const res = await fetch(absoluteImageUrl, { 
+        signal: controller.signal,
+        headers: { 'User-Agent': 'Astro-Image-Processor/1.0' }
+      });
       clearTimeout(timeoutId);
       if (res.ok) {
         const buffer = await res.arrayBuffer();
