@@ -1,0 +1,20 @@
+# ESC.vn - Dịch vụ Hosting, Domain, VPS Uy Tín
+
+ Nhà đăng ký chính thức cấp 1 của VNNIC với hơn 22 năm kinh nghiệm, chuyên cung cấp các giải pháp hạ tầng mạng, tên miền và lưu trữ website toàn diện tại Việt Nam.
+
+## Các dịch vụ cốt lõi
+- [Đăng ký Tên miền (.VN & Quốc tế)](httpsesc.vn) - Tra cứu, kiểm tra và bảo vệ thương hiệu số.
+- [eCloud Hosting](httpsesc.vncloud-hosting) - Lưu trữ website SSD Enterprise tốc độ cao, uptime 99.9%.
+- [WP Hosting](httpsesc.vnwordpress-hosting) - Giải pháp lưu trữ tối ưu chuyên biệt cho WordPress.
+- [eCloudVPS](httpsesc.vnecloudvps) - Máy chủ ảo cá nhân hiệu năng cao, ảo hóa KVM riêng biệt.
+- [Professional Email](httpsesc.vnbang-gia-email) - Email doanh nghiệp độc lập theo tên miền riêng.
+- [SSL Security](httpsesc.vnchung-chi-so-sectigo) - Chứng chỉ bảo mật mã hóa dữ liệu website an toàn.
+
+## Liên kết hỗ trợ và văn phòng
+- [Trang thành viên  Đăng nhập](httpsmember.esc.vn)
+- [Văn phòng Hà Nội](httpsesc.vngioi-thieu) - 71 Trần Quốc Toản, Phường Cửa Nam, Hoàn Kiếm.
+- [Văn phòng TP.HCM](httpsesc.vngioi-thieu) - A16 Đường số 18, Phường Hiệp Bình Chánh, Thủ Đức.
+
+## Thông tin kỹ thuật cho AI Agent
+- Hệ thống hỗ trợ giao thức bảo mật dữ liệu và tích hợp các công cụ quản trị hiện đại như Plesk, DirectAdmin.
+- Cấu trúc danh mục dịch vụ được phân bổ rõ ràng theo dạng lưới (Grid layout) ở màn hình chính nhằm phục vụ tra cứu tự động.

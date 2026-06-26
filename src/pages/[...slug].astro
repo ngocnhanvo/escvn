@@ -1,0 +1,64 @@
+---
+import { Head, HeadProps } from "@/components/Head";
+import AppRouter from "@/components/Router";
+import "@/styles/global.css";
+import { generateAndSaveSitemap } from "@/lib/wordpress/sitemap";
+import { AppRouterProps } from "@/entities";
+import { returnLang } from "@/lib/LanguageContext";
+import {PageTransition}  from '@/components/PageTransition';
+import { getSharedWordPressData } from "@/lib/wordpress/cache";
+export const WC_URL_CLIENT = import.meta.env.WC_URL_CLIENT || process.env.WC_URL_CLIENT;
+export const WC_URL = import.meta.env.WC_URL || process.env.WC_URL;
+
+export const { data_info, pages, menus } = await getSharedWordPressData();
+export async function getStaticPaths() {  
+  // Gọi hàm tạo sitemap sau khi tất cả các trang đã được thu thập
+  await generateAndSaveSitemap(pages, data_info);
+  // 2. Map mảng pages sang định dạng của Astro
+  return pages.map(page => {
+    return {
+      params: { slug: page.slug },
+      props: {
+        type: 'home',
+        baseUrl: WC_URL,
+        title: page.title || data_info?.tencongty[page.lang],
+        description: page.description,
+        ogImage: page.ogImage || data_info?.image[page.lang].src,
+      }
+    };
+  });
+}
+
+const props: AppRouterProps = {
+  basename: '/',
+  pages: pages,
+  menus: menus,
+  data_info: data_info,
+  status: 200
+};
+const lang = returnLang(pages, Astro.url.pathname, props.basename);
+// Sử dụng Astro.url để lấy URL chính xác, đảm bảo không bị lỗi double slash
+const siteOrigin = (WC_URL_CLIENT || Astro.url.origin).replace(/\/$/, '');
+const currentPageUrl = new URL(Astro.url.pathname, siteOrigin).href;
+const headProps: HeadProps = {
+  title: Astro.props.title,
+  href: currentPageUrl,
+  ogImage: siteOrigin + Astro.props.ogImage,
+  description: Astro.props.description,
+  lang: lang,
+  data_info: data_info
+}
+
+---
+<html lang={lang} class="w-full h-full">
+  <head>
+    <Head {...headProps} />
+  </head>
+  <body class="w-full h-full">
+    <PageTransition client:load />
+    <div style="display:none">Build ID: {Date.now()}</div>
+    <div id="root" class="w-full h-full">
+      <AppRouter client:idle {...props} />
+    </div>
+  </body>
+</html>

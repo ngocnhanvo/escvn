@@ -1,0 +1,175 @@
+{
+    "promotionSection": {
+        "vi": {
+            "title": "Dịch Vụ Giá Tốt Nhất",
+            "services": [
+                {
+                    "id": 1,
+                    "title": "Google Workspace",
+                    "icon": "Cloud",
+                    "description": "Bộ công cụ cộng tác trực tuyến toàn diện từ Google.",
+                    "startingPrice": "99k",
+                    "period": "/tháng"
+                },
+                {
+                    "id": 2,
+                    "title": "Microsoft 365",
+                    "icon": "LayoutGrid",
+                    "description": "Giải pháp văn phòng thông minh từ Microsoft.",
+                    "startingPrice": "73k",
+                    "period": "/tháng"
+                },
+                {
+                    "id": 3,
+                    "title": "eCloudVPS",
+                    "icon": "Server",
+                    "description": "Máy chủ ảo riêng biệt hiệu năng cao.",
+                    "startingPrice": "180k",
+                    "period": "/tháng"
+                },
+                {
+                    "id": 4,
+                    "title": "SSL Security",
+                    "icon": "Lock",
+                    "description": "Chứng chỉ bảo mật website an toàn.",
+                    "startingPrice": "449k",
+                    "period": "/năm"
+                },
+                {
+                    "id": 5,
+                    "title": "Managed Cloud",
+                    "icon": "Settings",
+                    "description": "Dịch vụ quản trị máy chủ trọn gói.",
+                    "startingPrice": "199k",
+                    "period": "/tháng"
+                },
+                {
+                    "id": 6,
+                    "title": "eCloud Hosting",
+                    "icon": "Cloud",
+                    "description": "Lưu trữ website tốc độ cao.",
+                    "startingPrice": "60k",
+                    "period": "/tháng"
+                },
+                {
+                    "id": 7,
+                    "title": "WP Hosting",
+                    "icon": "Code",
+                    "description": "Tối ưu chuyên biệt cho WordPress.",
+                    "startingPrice": "75k",
+                    "period": "/tháng"
+                },
+                {
+                    "id": 8,
+                    "title": "Professional Email",
+                    "icon": "Mail",
+                    "description": "Email doanh nghiệp độc lập.",
+                    "startingPrice": "50k",
+                    "period": "/tháng"
+                },
+                {
+                    "id": 9,
+                    "title": "Hybrid Email",
+                    "icon": "AtSign",
+                    "description": "Giải pháp email lai tiết kiệm.",
+                    "startingPrice": "500k",
+                    "period": "/tháng"
+                },
+                {
+                    "id": 10,
+                    "title": "Email Server",
+                    "icon": "Database",
+                    "description": "Máy chủ email dành riêng.",
+                    "startingPrice": "899k",
+                    "period": "/tháng"
+                }
+            ],
+            "startingFrom": "Starting from"
+        },
+        "en": {
+            "title": "Best Value Services",
+            "services": [
+                {
+                    "id": 1,
+                    "title": "Google Workspace",
+                    "icon": "Cloud",
+                    "description": "Comprehensive online collaboration suite from Google.",
+                    "startingPrice": "99k",
+                    "period": "/month"
+                },
+                {
+                    "id": 2,
+                    "title": "Microsoft 365",
+                    "icon": "LayoutGrid",
+                    "description": "Smart office solutions from Microsoft.",
+                    "startingPrice": "73k",
+                    "period": "/month"
+                },
+                {
+                    "id": 3,
+                    "title": "eCloudVPS",
+                    "icon": "Server",
+                    "description": "High-performance isolated virtual private servers.",
+                    "startingPrice": "180k",
+                    "period": "/month"
+                },
+                {
+                    "id": 4,
+                    "title": "SSL Security",
+                    "icon": "Lock",
+                    "description": "Secure website security certificates.",
+                    "startingPrice": "449k",
+                    "period": "/year"
+                },
+                {
+                    "id": 5,
+                    "title": "Managed Cloud",
+                    "icon": "Settings",
+                    "description": "Full-service server management service.",
+                    "startingPrice": "199k",
+                    "period": "/month"
+                },
+                {
+                    "id": 6,
+                    "title": "eCloud Hosting",
+                    "icon": "Cloud",
+                    "description": "High-speed and secure website hosting.",
+                    "startingPrice": "60k",
+                    "period": "/month"
+                },
+                {
+                    "id": 7,
+                    "title": "WP Hosting",
+                    "icon": "Code",
+                    "description": "Optimized specifically for WordPress platforms.",
+                    "startingPrice": "75k",
+                    "period": "/month"
+                },
+                {
+                    "id": 8,
+                    "title": "Professional Email",
+                    "icon": "Mail",
+                    "description": "Independent and professional business email.",
+                    "startingPrice": "50k",
+                    "period": "/month"
+                },
+                {
+                    "id": 9,
+                    "title": "Hybrid Email",
+                    "icon": "AtSign",
+                    "description": "Cost-effective hybrid email solutions.",
+                    "startingPrice": "500k",
+                    "period": "/month"
+                },
+                {
+                    "id": 10,
+                    "title": "Email Server",
+                    "icon": "Database",
+                    "description": "Dedicated and private email servers.",
+                    "startingPrice": "899k",
+                    "period": "/month"
+                }
+            ]
+        }
+    }
+}

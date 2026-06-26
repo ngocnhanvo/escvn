@@ -1,0 +1,474 @@
+[
+    {
+        "key": "home",
+        "lang": "vi",
+        "action": "HomePage"
+    },
+    {
+        "key": "home",
+        "lang": "en",
+        "action": "HomePage"
+    },
+    {
+        "key": "domain",
+        "lang": "vi",
+        "slug": "#domain",
+        "label": "Tên miền",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2023/04/tenmien_vn.jpg"
+            }
+        ],
+        "mega": [
+            {
+                "key": "domainfree",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "domainregister",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "pricelist",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "domainsell",
+                "slug": "https://member.esc.vn/domain/domainmanage_sale.php",
+                "lang": "vi",
+                "label": "Tên miền đang bán",
+                "description": "Danh sách tên miền đang bán của các thành viên. Để đăng ký bán tên miền, hãy nhấp vào đây và làm theo hướng dẫn.",
+                "position": 0
+            },
+            {
+                "key": "domainrebirth",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "domainsecurity",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "dnssecurity",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "domaintransfer",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "domaintransfer2",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "reportabuse",
+                "lang": "vi",
+                "position": 1
+            }
+        ]
+    },
+    {
+        "key": "domain",
+        "lang": "en",
+        "slug": "#domain",
+        "label": "Domain",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2023/04/tenmien_vn.jpg"
+            }
+        ],
+        "mega": [
+            {
+                "key": "domainfree",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "domainregister",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "pricelist",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "domainsell",
+                "slug": "https://member.esc.vn/domain/domainmanage_sale.php",
+                "lang": "en",
+                "label": "Domains for sale",
+                "description": "List of domains for sale by members. To list your domain for sale, click here and follow the instructions.",
+                "position": 0
+            },
+            {
+                "key": "domainrebirth",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "domainsecurity",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "dnssecurity",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "domaintransfer",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "domaintransfer2",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "reportabuse",
+                "lang": "en",
+                "position": 1
+            }
+        ]
+    },
+    {
+        "key": "hosting",
+        "lang": "vi",
+        "slug": "#hosting",
+        "label": "Hosting",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2015/10/servers.png"
+            }
+        ],
+        "mega": [
+            {
+                "key": "hosting",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "domainregister",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "pricelist",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "domainsell",
+                "slug": "https://member.esc.vn/domain/domainmanage_sale.php",
+                "lang": "vi",
+                "label": "Domains for sale",
+                "description": "List of domains for sale by members. To list your domain for sale, click here and follow the instructions.",
+                "position": 0
+            },
+            {
+                "key": "domainrebirth",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "domainsecurity",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "dnssecurity",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "domaintransfer",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "domaintransfer2",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "reportabuse",
+                "lang": "vi",
+                "position": 1
+            }
+        ]
+    },
+    {
+        "key": "hosting-en",
+        "lang": "en",
+        "slug": "#hosting-en",
+        "label": "Hosting",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2015/10/servers.png"
+            }
+        ],
+        "mega": [
+            {
+                "key": "hosting",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "domainregister",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "pricelist",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "domainsell",
+                "slug": "https://member.esc.vn/domain/domainmanage_sale.php",
+                "lang": "en",
+                "label": "Domains for sale",
+                "description": "List of domains for sale by members. To list your domain for sale, click here and follow the instructions.",
+                "position": 0
+            },
+            {
+                "key": "domainrebirth",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "domainsecurity",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "dnssecurity",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "domaintransfer",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "domaintransfer2",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "reportabuse",
+                "lang": "en",
+                "position": 1
+            }
+        ]
+    },
+    {
+        "key": "email",
+        "lang": "vi",
+        "action": "EmailPage"
+    },
+    {
+        "key": "email",
+        "lang": "en",
+        "action": "EmailPage"
+    },
+    {
+        "key": "server",
+        "lang": "vi",
+        "slug": "#server",
+        "label": "Server"
+    },
+    {
+        "key": "server",
+        "lang": "en",
+        "slug": "#server",
+        "label": "Server"
+    },
+    {
+        "key": "ssl",
+        "lang": "vi",
+        "action": "SSLPage"
+    },
+    {
+        "key": "ssl",
+        "lang": "en",
+        "action": "SSLPage"
+    },
+    {
+        "key": "website",
+        "lang": "vi",
+        "action": "WebsitePage"
+    },
+    {
+        "key": "website",
+        "lang": "en",
+        "action": "WebsitePage"
+    },
+    {
+        "key": "services",
+        "lang": "vi",
+        "slug": "#services",
+        "label": "Dịch vụ khác"
+    },
+    {
+        "key": "services",
+        "lang": "en",
+        "slug": "#services",
+        "label": "Services"
+    },
+    {
+        "key": "partners",
+        "lang": "vi",
+        "slug": "#partners",
+        "label": "Đối tác"
+    },
+    {
+        "key": "partners",
+        "lang": "en",
+        "slug": "#partners",
+        "label": "Partners"
+    },
+    {
+        "key": "support",
+        "lang": "vi",
+        "slug": "#support",
+        "label": "Hỗ trợ"
+    },
+    {
+        "key": "support",
+        "lang": "en",
+        "slug": "#support",
+        "label": "Support"
+    },
+    {
+        "key": "promotion",
+        "lang": "vi",
+        "slug": "#promotion",
+        "label": "Khuyến mãi",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2023/04/tenmien_vn.jpg"
+            }
+        ],
+        "mega": [
+            {
+                "key": "promotion",
+                "lang": "vi",
+                "label": "Khuyến mãi trên từng dịch vụ",
+                "action": "PromotionPage",
+                "position": 0
+            },
+            {
+                "key": "combo",
+                "lang": "vi",
+                "label": "Giảm giá khi mua combo",
+                "action": "PromotionPage",
+                "position": 1
+            }
+        ]
+    },
+    {
+        "key": "promotion",
+        "lang": "en",
+        "slug": "#promotion",
+        "label": "Promotion",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2023/04/tenmien_vn.jpg"
+            }
+        ],
+        "mega": [
+            {
+                "key": "promotion",
+                "lang": "en",
+                "label": "Service-specific promotions",
+                "action": "PromotionPage",
+                "position": 0
+            },
+            {
+                "key": "combo",
+                "lang": "en",
+                "label": "Combo Discount",
+                "action": "PromotionPage",
+                "position": 1
+            }
+        ]
+    },
+    {
+        "key": "about",
+        "lang": "vi",
+        "action": "AboutPage",
+        "header": false
+    },
+    {
+        "key": "about",
+        "lang": "en",
+        "action": "AboutPage",
+        "header": false
+    },
+    {
+        "key": "member",
+        "lang": "vi",
+        "action": "MemberPage",
+        "header": false
+    },
+    {
+        "key": "member",
+        "lang": "en",
+        "action": "MemberPage",
+        "header": false
+    }
+]

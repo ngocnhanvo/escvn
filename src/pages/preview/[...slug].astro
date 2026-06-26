@@ -1,0 +1,64 @@
+---
+export const prerender = false; // Chế độ SSR để lấy dữ liệu động
+import { Head, HeadProps } from "@/components/Head";
+import AppRouter from "@/components/Router";
+import "@/styles/global.css";
+import { AppRouterProps, Pages, Products } from "@/entities";
+import { getInfo } from "@/lib/wordpress/info";
+import { getPages } from "@/lib/wordpress/pages";
+import { replacePlaceholders, mergeJSON, mergeJSONReverse } from "@/lib/stringUtils";
+import { returnLang } from "@/lib/LanguageContext";
+import {PageTransition}  from '@/components/PageTransition';
+import menu_json from "@/data/menu.json";
+import { getAvas } from '@/lib/avas_env';
+
+const avas = getAvas(Astro.locals);
+const WC_URL_CLIENT = avas.WC_URL_CLIENT;
+const WC_URL = avas.WC_URL;
+const data_info = (await getInfo(true))[0];
+let pages = await getPages(data_info, true);
+pages.map(page => {
+  const dictionary = {
+      tencongty: data_info.tencongty[page.lang],
+      motaSeo: data_info.motaSeo[page.lang],
+      diachiHCM: data_info.diachiHCM[page.lang],
+      diachiHaNoi: data_info.diachiHaNoi[page.lang],
+    };
+    const title = replacePlaceholders(page.title, dictionary);
+    const description = replacePlaceholders(page.description, dictionary); 
+    page.title = title;
+    page.description = description;
+    return page;
+});
+
+const props: AppRouterProps = {
+  basename: '/preview',
+  pages: mergeJSONReverse(pages, menu_json),
+  menus: mergeJSON(pages, menu_json),
+  data_info: data_info
+};
+const lang = returnLang(pages, Astro.url.pathname, props.basename);
+// Sử dụng Astro.url để lấy URL chính xác, đảm bảo không bị lỗi double slash
+const siteOrigin = (WC_URL_CLIENT || Astro.url.origin).replace(/\/$/, '');
+const currentPageUrl = new URL(Astro.url.pathname, siteOrigin).href;
+const headProps: HeadProps = {
+  title: Astro.props.title,
+  href: currentPageUrl,
+  ogImage: siteOrigin + Astro.props.ogImage,
+  description: Astro.props.description,
+  lang: lang,
+  data_info: data_info
+}
+---
+<html lang={lang} class="w-full h-full">
+  <head>
+    <Head {...headProps} />
+  </head>
+  <body class="w-full h-full">
+    <PageTransition client:load />
+    <div style="display:none">Build ID: {Date.now()}</div>
+    <div id="root" class="w-full h-full">
+      <AppRouter client:idle {...props} />
+    </div>
+  </body>
+</html>
