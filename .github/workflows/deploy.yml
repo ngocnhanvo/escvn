@@ -45,6 +45,7 @@ jobs:
 
         cd deploy
         zip -r ../escvn.zip .
+        cd ..
     # Bước 5: Tự động sync (đồng bộ) thư mục dist lên Hosting qua tài khoản FTP
     - name: Sync files via FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -60,6 +61,7 @@ jobs:
           !escvn.zip
 
     # BƯỚC 6: Gọi file unzip.php từ xa để DirectAdmin tự giải nén
-    - name: Trigger Remote Unzip
+    - name: Trigger API
       run: |
-        curl -s https://admin.escvn.com/unzip.php
+        source .env
+        curl -s "$WC_URL/unzip.php"
