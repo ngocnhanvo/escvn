@@ -8,24 +8,38 @@ import { LanguageProvider } from '@/lib/LanguageContext';
 import { motion } from 'framer-motion';
 import { HelmetProvider } from 'react-helmet-async';
 // Lazy load các trang để giảm kích thước bundle ban đầu
-const modulePages = {
-  HomePage: lazy(() => import('@/components/pages/HomePage')),
-  AboutPage: lazy(() => import('@/components/pages/AboutPage')),
-  ContactPage: lazy(() => import('@/components/pages/ContactPage')),
-  DomainPage: lazy(() => import('@/components/pages/DomainPage')),
-  HostingPage: lazy(() => import('@/components/pages/HostingPage')),
-  EmailPage: lazy(() => import('@/components/pages/EmailPage')),
-  ServerPage: lazy(() => import('@/components/pages/ServerPage')),
-  SSLPage: lazy(() => import('@/components/pages/SSLPage')),
-  ComboPage: lazy(() => import('@/components/pages/ComboPage')),
-  WebsitePage: lazy(() => import('@/components/pages/WebsitePage')),
-  ServicesPage: lazy(() => import('@/components/pages/ServicesPage')),
-  PartnersPage: lazy(() => import('@/components/pages/PartnersPage')),
-  SupportPage: lazy(() => import('@/components/pages/SupportPage')),
-  PromotionPage: lazy(() => import('@/components/pages/PromotionPage')),
-  MemberPage: lazy(() => import('@/components/pages/MemberPage')),
-  PublicPage: lazy(() => import('@/components/pages/PublicPage'))
-};
+const components = import.meta.glob<{ default: any }>('../components/pages/*.tsx', { eager: false });
+export const modulePages = {};
+Object.entries(components).forEach(([path, importFn]) => {
+    const fileName = path.split('/').pop()?.replace('.tsx', '');
+    
+    if (fileName) {
+        // Sử dụng React.lazy để load component khi cần
+        const lazyComponent = lazy(() => 
+            (importFn as () => Promise<any>)().then((mod) => ({ default: mod.default }))
+        );
+        const key = fileName.toLowerCase();
+        modulePages[fileName] = lazyComponent;
+    }
+});
+// const modulePages = {
+//   HomePage: lazy(() => import('@/components/pages/HomePage')),
+//   AboutPage: lazy(() => import('@/components/pages/AboutPage')),
+//   ContactPage: lazy(() => import('@/components/pages/ContactPage')),
+//   DomainPage: lazy(() => import('@/components/pages/DomainPage')),
+//   HostingPage: lazy(() => import('@/components/pages/HostingPage')),
+//   EmailPage: lazy(() => import('@/components/pages/EmailPage')),
+//   ServerPage: lazy(() => import('@/components/pages/ServerPage')),
+//   SSLPage: lazy(() => import('@/components/pages/SSLPage')),
+//   ComboPage: lazy(() => import('@/components/pages/ComboPage')),
+//   WebsitePage: lazy(() => import('@/components/pages/WebsitePage')),
+//   ServicesPage: lazy(() => import('@/components/pages/ServicesPage')),
+//   PartnersPage: lazy(() => import('@/components/pages/PartnersPage')),
+//   SupportPage: lazy(() => import('@/components/pages/SupportPage')),
+//   PromotionPage: lazy(() => import('@/components/pages/PromotionPage')),
+//   MemberPage: lazy(() => import('@/components/pages/MemberPage')),
+//   PublicPage: lazy(() => import('@/components/pages/PublicPage'))
+// };
 
 // Hiệu ứng loading trang chuyên nghiệp hơn
 const PageLoader = () => (
@@ -76,7 +90,6 @@ function LanguageGuard({ children, ...props }: { children: React.ReactNode } & A
     const pathParts = window.location.pathname.split(props.basename);
     lang = pathParts[1];
     if(lang.startsWith('/')) lang = lang.substring(1);
-    console.log(`lang`, lang, `props.pages?`, props.pages?.map((page: any) => page.slug));
     lang = props.pages?.filter((a: any) => {
       return (a.slug ?? '') === (lang ?? '');
     })[0]?.lang;

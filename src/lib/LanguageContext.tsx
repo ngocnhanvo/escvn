@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Language } from './i18n';
-import { AppRouterProps } from '@/entities';
+import { AppRouterProps, Pages } from '@/entities';
 
 interface LanguageContextType {
   language: Language;
@@ -60,6 +60,12 @@ export const returnCurrentPath = (baseName?: string) => {
   currentPath = currentPath.startsWith('/') ? currentPath.substring(1) : currentPath;
   currentPath = currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath;
   return currentPath;
+};
+
+export const returnCurrentPage = (props: AppRouterProps, language: string) => {
+  const currentPath = returnCurrentPath(props.basename);
+  const page = props.pages.find((a: Pages) => a.slug === currentPath && a.lang === language);
+  return page;
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);

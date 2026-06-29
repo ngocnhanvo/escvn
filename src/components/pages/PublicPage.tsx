@@ -9,14 +9,12 @@ import Footer from '@/components/Footer';
 import FooterSection from '@/components/FooterSection';
 import { AppRouterProps, Pages } from '@/entities';
 import { motion } from 'framer-motion';
-import { useLanguage, returnCurrentPath } from '@/lib/LanguageContext';
+import { useLanguage, returnCurrentPage } from '@/lib/LanguageContext';
 
 export default function PublicPage(props: AppRouterProps) {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
-  const currentPath = returnCurrentPath(props.basename);
-  console.log(`currentPath`, currentPath);
-  const page = props.pages.find((a: Pages) => a.slug === currentPath && a.lang === language);
+  const page = returnCurrentPage(props, language);
   const contentRef = useRef<HTMLDivElement>(null);
   
   return (

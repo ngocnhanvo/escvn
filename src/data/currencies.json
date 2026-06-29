@@ -1,0 +1,17 @@
+[
+  { "key": "vi", "code": "VND", "symbol": "₫", "name_vi": "Đồng Việt Nam", "name_en": "Vietnamese Dong" },
+  { "key": "en", "code": "USD", "symbol": "$", "name_vi": "Đô la Mỹ", "name_en": "US Dollar" },
+  { "key": "eu", "code": "EUR", "symbol": "€", "name_vi": "Euro", "name_en": "Euro" },
+  { "key": "jp", "code": "JPY", "symbol": "¥", "name_vi": "Yên Nhật", "name_en": "Japanese Yen" },
+  { "key": "gb", "code": "GBP", "symbol": "£", "name_vi": "Bảng Anh", "name_en": "British Pound" },
+  { "key": "au", "code": "AUD", "symbol": "$", "name_vi": "Đô la Úc", "name_en": "Australian Dollar" },
+  { "key": "ca", "code": "CAD", "symbol": "$", "name_vi": "Đô la Canada", "name_en": "Canadian Dollar" },
+  { "key": "ch", "code": "CHF", "symbol": "Fr", "name_vi": "Franc Thụy Sĩ", "name_en": "Swiss Franc" },
+  { "key": "cn", "code": "CNY", "symbol": "¥", "name_vi": "Nhân dân tệ", "name_en": "Chinese Yuan" },
+  { "key": "sg", "code": "SGD", "symbol": "$", "name_vi": "Đô la Singapore", "name_en": "Singapore Dollar" },
+  { "key": "kr", "code": "KRW", "symbol": "₩", "name_vi": "Won Hàn Quốc", "name_en": "South Korean Won" },
+  { "key": "th", "code": "THB", "symbol": "฿", "name_vi": "Baht Thái", "name_en": "Thai Baht" },
+  { "key": "tw", "code": "TWD", "symbol": "$", "name_vi": "Đô la Đài Loan", "name_en": "New Taiwan Dollar" },
+  { "key": "hk", "code": "HKD", "symbol": "$", "name_vi": "Đô la Hồng Kông", "name_en": "Hong Kong Dollar" },
+  { "key": "my", "code": "MYR", "symbol": "RM", "name_vi": "Ringgit Malaysia", "name_en": "Malaysian Ringgit" }
+]
