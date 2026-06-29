@@ -1,9 +1,8 @@
 import { Products, WPInfo, Pages } from '@/entities';
 import { processAndStoreImage } from './imageProcessor';
 import { stripHtmlAndUnescape } from '@/lib/stringUtils';
-const WC_URL = import.meta.env.WC_URL || process.env.WC_URL;
 
-export async function getInfo(isPreview: boolean = false) {
+export async function getInfo(WC_URL, isPreview: boolean = false) {
   if (!WC_URL) {
     console.error('❌ LỖI: Biến WC_URL chưa được cấu hình trong Environment Variables.');
     return [];

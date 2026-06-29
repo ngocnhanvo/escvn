@@ -1,5 +1,5 @@
 import { ProcessedImageResult } from '@/entities';
-
+import {Agent, fetch as undiciFetch} from 'undici';
 interface ProcessImageOptions {
   imageUrl: string;
   alt?: string;
@@ -7,6 +7,8 @@ interface ProcessImageOptions {
   publicDirBase?: string;
   isPreview?: boolean;
 }
+const agent = new Agent({ connect: { family: 4, timeout: 30000 } });
+const processedImagesCache = new Set<ProcessedImageResult>();
 
 export async function processAndStoreImage({
   imageUrl,
@@ -20,6 +22,12 @@ export async function processAndStoreImage({
   // Kết quả mặc định dự phòng nếu gặp lỗi hoặc chạy ở Client
   const defaultResult: ProcessedImageResult = { src: imageUrl, alt: alt || '', srcSet: '', srcSets: {} };
   if (!imageUrl) return { src: '', srcSet: '', srcSets: {} };
+  
+  const exist = Array.from(processedImagesCache).find(item => item.src_key === imageUrl);
+   if (exist) {
+    return exist;
+  }
+
   if (isPreview) { 
     defaultResult.src = wcUrl + imageUrl;
     defaultResult.srcSet = wcUrl + imageUrl;
@@ -54,9 +62,10 @@ export async function processAndStoreImage({
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // Timeout 10s
-      const res = await fetch(absoluteImageUrl, { 
+      const res = await undiciFetch(absoluteImageUrl, { 
         signal: controller.signal,
-        headers: { 'User-Agent': 'Astro-Image-Processor/1.0' }
+        headers: { 'User-Agent': 'Astro-Image-Processor/1.0' },
+        dispatcher: agent,
       });
       clearTimeout(timeoutId);
       if (res.ok) {
@@ -96,16 +105,18 @@ export async function processAndStoreImage({
 
         // Bản mặc định (src) sẽ lấy bản lớn nhất từ srcSets (thường là 1200w)
         const defaultSrc = `/${publicDirBase}/${originalFilename}`;
-
-        return {
+        var item = {
+          src_key: imageUrl,
           src: defaultSrc,
           alt: alt || '',
           srcSet: srcSetPart.join(', '),
           srcSets: srcSetParts,
         };
+        processedImagesCache.add(item);
+        return item;
       }
     } catch (err) {
-      console.error(`Lỗi Server-side xử lý ảnh đa kích thước:`, err);
+      throw new Error(`Lỗi Server-side xử lý ảnh đa kích thước:`, err);
     }
   }
 

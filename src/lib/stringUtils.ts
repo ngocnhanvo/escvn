@@ -2,6 +2,21 @@
  * Escape các ký tự đặc biệt trong HTML để tránh lỗi định dạng và bảo vệ XSS
  */
 import he from 'he';
+import currencies from '@/data/currencies.json';
+
+export interface CurrencyItem {
+  key: string;
+  code: string;
+  symbol: string;
+  name_vi: string;
+  name_en: string;
+}
+
+// Giả sử mảng JSON trên được lưu vào biến currencies
+export function getCurrencyByKey(key: string): CurrencyItem | undefined {
+  return currencies.find(c => c.key === key.toLowerCase());
+}
+
 export const escapeHtml = (unsafe: string): string => {
   if (!unsafe) return '';
   return he.encode(unsafe);
@@ -75,16 +90,20 @@ export const formatCurrency = (amount: number | string, currency: string = 'VND'
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: currency }).format(num);
 };
 
-export const formatCurrencyValue = (amount: number | string, currency: string = 'VND'): string => {
-  const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+export const formatCurrencyValue = (amount: number | string, currency: string = 'VND', numb: number = 1): string => {
+  let num = typeof amount === 'string' ? parseFloat(amount) : amount;
   if (isNaN(num)) {
     return ''; // Trả về chuỗi rỗng nếu không phải là số hợp lệ
   }
   currency = removeUnicode(currency);
-  if(currency == 'VND') {
-    return new Intl.NumberFormat('vi-VN').format(num / 1000000);
+  let text = '';
+  if(currency === 'VND') {
+    if(numb === 3) {
+      num = num / 1000;
+      text = 'k';
+    }
   }
-  return new Intl.NumberFormat('vi-VN').format(num);
+  return new Intl.NumberFormat('vi-VN').format(num) + text;
 };
 
 export const mergeJSON = (pages:any, menu:any) => {

@@ -5,7 +5,8 @@
 
 export interface ProcessedImageResult {
   alt?: string;
-  src?: string;     // Đường dẫn ảnh mặc định (bản lớn nhất hoặc ảnh gốc)
+  src?: string;  
+  src_key?: string;   // Đường dẫn ảnh mặc định (bản lớn nhất hoặc ảnh gốc)
   srcSet?: string;
   srcSets?: Record<string, string>;   // Chuỗi srcSet chứa nhiều kích thước phục vụ responsive
 }
@@ -61,6 +62,18 @@ export interface Bivit {
   publicationDate?: Date | string;
 }
 
+export interface tablePress {
+  shortcode?: string,
+  json?: any
+}
+
+export interface PageBlock {
+  type: 'html' | 'shortcode';
+  content?: string; // Nếu html
+  shortcode?: string; // Nếu là shortcode
+  data?: any; // Dữ liệu json đã fetch
+}
+
 export interface Pages {
   key: string,
   lang: string,
@@ -73,10 +86,12 @@ export interface Pages {
   action?: string,
   description?: string,
   content?: string,
+  contents?: PageBlock[],
   image?: Record<string, ProcessedImageResult>,
   ogImage?: string,
   mega?: Pages[],
-  header?: boolean
+  header?: boolean,
+  tablePress?: tablePress[]
 }
 
 export interface AppRouterProps {

@@ -1,0 +1,234 @@
+{
+    "vi": [
+        {
+            "tld": ".vn",
+            "isAvailable": null,
+            "priceReg": "450000",
+            "priceRenew": "450000"
+        },
+        {
+            "tld": ".com.vn",
+            "isAvailable": null,
+            "priceReg": "350000",
+            "priceRenew": "350000"
+        },
+        {
+            "tld": ".net.vn",
+            "isAvailable": null,
+            "priceReg": "350000",
+            "priceRenew": "350000"
+        },
+        {
+            "tld": ".org.vn",
+            "isAvailable": null,
+            "priceReg": "150000",
+            "priceRenew": "200000"
+        },
+        {
+            "tld": ".info.vn",
+            "isAvailable": null,
+            "priceReg": "60000",
+            "priceRenew": "100000"
+        },
+        {
+            "tld": ".gov.vn",
+            "isAvailable": null,
+            "priceReg": "150000",
+            "priceRenew": "200000"
+        },
+        {
+            "tld": ".biz.vn",
+            "isAvailable": null,
+            "priceReg": "350000",
+            "priceRenew": "350000"
+        },
+        {
+            "tld": ".idn.vn",
+            "isAvailable": null,
+            "priceReg": "99000",
+            "priceRenew": "90000"
+        },
+        {
+            "tld": ".pro.vn",
+            "isAvailable": null,
+            "priceReg": "60000",
+            "priceRenew": "100000"
+        },
+        {
+            "tld": ".health.vn",
+            "isAvailable": null,
+            "priceReg": "150000",
+            "priceRenew": "200000"
+        },
+        {
+            "tld": ".name.vn",
+            "isAvailable": null,
+            "priceReg": "30000",
+            "priceRenew": "40000"
+        },
+        {
+            "tld": ".edu.vn",
+            "isAvailable": null,
+            "priceReg": "150000",
+            "priceRenew": "200000"
+        },
+        {
+            "tld": ".ac.vn",
+            "isAvailable": null,
+            "priceReg": "150000",
+            "priceRenew": "200000"
+        },
+        {
+            "tld": ".io.vn",
+            "isAvailable": null,
+            "priceReg": "30000",
+            "priceRenew": "40000"
+        },
+        {
+            "tld": ".ai.vn",
+            "isAvailable": null,
+            "priceReg": "350000",
+            "priceRenew": "350000"
+        },
+        {
+            "tld": ".id.vn",
+            "isAvailable": null,
+            "priceReg": "60000",
+            "priceRenew": "100000"
+        }
+    ],
+    "en": [
+        {
+            "tld": ".com",
+            "isAvailable": null,
+            "priceReg": "249000",
+            "priceRenew": "379000"
+        },
+        {
+            "tld": ".net",
+            "isAvailable": null,
+            "priceReg": "345000",
+            "priceRenew": "409000"
+        },
+        {
+            "tld": ".org",
+            "isAvailable": null,
+            "priceReg": "399000",
+            "priceRenew": "399000"
+        },
+        {
+            "tld": ".biz",
+            "isAvailable": null,
+            "priceReg": "679000",
+            "priceRenew": "679000"
+        },
+        {
+            "tld": ".info",
+            "isAvailable": null,
+            "priceReg": "139000",
+            "priceRenew": "789000"
+        },
+        {
+            "tld": ".cc",
+            "isAvailable": null,
+            "priceReg": "719000",
+            "priceRenew": "719000"
+        },
+        {
+            "tld": ".name",
+            "isAvailable": null,
+            "priceReg": "339000",
+            "priceRenew": "339000"
+        },
+        {
+            "tld": ".asia",
+            "isAvailable": null,
+            "priceReg": "479000",
+            "priceRenew": "479000"
+        },
+        {
+            "tld": ".me",
+            "isAvailable": null,
+            "priceReg": "632000",
+            "priceRenew": "632000"
+        },
+        {
+            "tld": ".mobi",
+            "isAvailable": null,
+            "priceReg": "129000",
+            "priceRenew": "739000"
+        },
+        {
+            "tld": ".us",
+            "isAvailable": null,
+            "priceReg": "295000",
+            "priceRenew": "295000"
+        },
+        {
+            "tld": ".tel",
+            "isAvailable": null,
+            "priceReg": "419000",
+            "priceRenew": "419000"
+        },
+        {
+            "tld": ".eu",
+            "isAvailable": null,
+            "priceReg": "339000",
+            "priceRenew": "339000"
+        },
+        {
+            "tld": ".in",
+            "isAvailable": null,
+            "priceReg": null,
+            "priceRenew": null
+        },
+        {
+            "tld": ".tv",
+            "isAvailable": null,
+            "priceReg": "1128000",
+            "priceRenew": "1128000"
+        },
+        {
+            "tld": ".co",
+            "isAvailable": null,
+            "priceReg": null,
+            "priceRenew": null
+        },
+        {
+            "tld": ".tw",
+            "isAvailable": null,
+            "priceReg": "1270000",
+            "priceRenew": "1270000"
+        },
+        {
+            "tld": ".ws",
+            "isAvailable": null,
+            "priceReg": null,
+            "priceRenew": null
+        },
+        {
+            "tld": ".cn",
+            "isAvailable": null,
+            "priceReg": "850000",
+            "priceRenew": "850000"
+        },
+        {
+            "tld": ".xxx",
+            "isAvailable": null,
+            "priceReg": null,
+            "priceRenew": null
+        },
+        {
+            "tld": ".top",
+            "isAvailable": null,
+            "priceReg": "75000",
+            "priceRenew": "297000"
+        },
+        {
+            "tld": ".photo",
+            "isAvailable": null,
+            "priceReg": "475000",
+            "priceRenew": "475000"
+        }
+    ]
+}
