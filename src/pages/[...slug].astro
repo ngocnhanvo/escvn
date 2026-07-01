@@ -7,10 +7,12 @@ import { AppRouterProps } from "@/entities";
 import { returnLang } from "@/lib/LanguageContext";
 import {PageTransition}  from '@/components/PageTransition';
 import { getSharedWordPressData } from "@/lib/wordpress/cache";
-export const WC_URL_CLIENT = import.meta.env.WC_URL_CLIENT || process.env.WC_URL_CLIENT;
-export const WC_URL = import.meta.env.WC_URL || process.env.WC_URL;
+import { getAvas } from '@/lib/avas_env';
+export const avas = getAvas(null);
+export const WC_URL_CLIENT = avas.WC_URL_CLIENT;
+export const WC_URL = avas.WC_URL;
 
-export const { data_info, pages, menus } = await getSharedWordPressData();
+export const { data_info, pages, menus } = await getSharedWordPressData(avas, false);
 export async function getStaticPaths() {  
   // Gọi hàm tạo sitemap sau khi tất cả các trang đã được thu thập
   await generateAndSaveSitemap(pages, data_info);

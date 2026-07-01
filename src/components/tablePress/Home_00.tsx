@@ -19,6 +19,9 @@ export default function Home_00(props: home_00) {
     const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState("");
     const checkdomain = props.props?.pages?.find((a: Pages) => a.key === 'checkdomain' && a.lang === language);
+    const handleSearch = (e) => {
+        handlePageLink(e, `/${checkdomain?.slug}?id=${searchValue}`, navigate);
+    };
     return (
         <section
             ref={heroRef}
@@ -45,7 +48,7 @@ export default function Home_00(props: home_00) {
                     backgroundSize: "24px 24px",
                 }}
             />
-            <div className="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-[55%_45%] gap-12 items-center">
                 <div className="space-y-8 z-10">
                     <h1 className="font-headline-xl text-[48px] leading-[56px] text-primary uppercase font-extrabold tracking-tight">
                         {data.items[0].title1} <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">{data.items[0].title2}</span>
@@ -67,11 +70,16 @@ export default function Home_00(props: home_00) {
                             type="text"
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleSearch(e); // Gọi hàm xử lý tìm kiếm của bạn tại đây
+                                }
+                            }}
                         />
                         <button
                             disabled={!searchValue.trim()}
                             onClick={(e) => {
-                                handlePageLink(e, `/${checkdomain?.slug}?id=${searchValue}`, navigate);
+                                handleSearch(e);
                             }}
                             className="bg-primary text-white px-4 md:px-6 py-3 font-bold rounded-2xl hover:bg-blue-900 transition-all flex items-center gap-2 shadow-md z-10 active:scale-95"
                         >
@@ -88,6 +96,9 @@ export default function Home_00(props: home_00) {
                             >
                                 <span className="text-primary font-bold text-lg">{item.domain}</span>
                                 <span className="text-signal-red font-bold text-lg ml-2">{formatCurrencyValue(item.price, currency.code, 3)}</span>
+                                {item.subprice?.length > 0 && (
+                                    <span className="text-[10px] pl-1 md:text-xs text-slate-500 italic">{item.subprice}</span>
+                                )}
                             </div>
                         ))}
                     </div>

@@ -136,7 +136,8 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
             tblshort: part, 
             wcUrl: WC_URL, 
             data_info: data_info, 
-            lang: p.lang
+            lang: p.lang,
+            isPreview: isPreview
           });
           p.contents.push({
             type: 'shortcode',
