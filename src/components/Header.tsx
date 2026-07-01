@@ -17,6 +17,8 @@ import { AppRouterProps, Pages } from '@/entities';
 import { handlePageLink } from '@/components/PageTransition';
 import { getTranslation, getContent } from '@/lib/i18n';
 import { useLanguage } from '@/lib/LanguageContext';
+import Cart from './Cart';
+import { Button } from './ui/button';
 
 export default function Header(props: AppRouterProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -24,9 +26,9 @@ export default function Header(props: AppRouterProps) {
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const [activeMobileMegaMenu, setActiveMobileMegaMenu] = useState<string | null>(null);
   const menuRef = useRef<HTMLElement>(null);
-  const { itemCount, actions } = useCart();
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
+  const { itemCount, actions } = useCart(language);
   const data_info = props.data_info;
   let navItems = props.menus.filter((a: Pages) => {
     if (!a.slug) return false;
@@ -252,9 +254,20 @@ export default function Header(props: AppRouterProps) {
             })}
           </nav>
           <div className="flex items-center gap-2">
-            <button className="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors">
-              {getTranslation('header.top.login', language)}
-            </button>
+            <Button
+              aria-label="Toggle Cart"
+              variant="ghost"
+              size="default"
+              className="relative hover:bg-accent/10 transition-colors duration-200 [&_svg]:size-auto"
+              onClick={actions.toggleCart}
+            >
+              <ShoppingCart className="h-5 w-5 text-primary" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {itemCount}
+                </span>
+              )}
+            </Button>
             {/* Nút Toggle Menu Mobile */}
             <button
               className="lg:hidden p-2 text-primary hover:bg-gray-100 rounded-lg transition-colors"
@@ -358,6 +371,7 @@ export default function Header(props: AppRouterProps) {
           </div>
         </div>
       </div>
+      <Cart {...props} />
     </>
   );
 }

@@ -3,33 +3,17 @@ export const prerender = false; // Chế độ SSR để lấy dữ liệu độ
 import { Head, HeadProps } from "@/components/Head";
 import AppRouter from "@/components/Router";
 import "@/styles/global.css";
-import { AppRouterProps, Pages, Products } from "@/entities";
-import { getInfo } from "@/lib/wordpress/info";
-import { getPages } from "@/lib/wordpress/pages";
-import { replacePlaceholders, mergeJSON, mergeJSONReverse } from "@/lib/stringUtils";
+import { AppRouterProps } from "@/entities";
+import { mergeJSON, mergeJSONReverse } from "@/lib/stringUtils";
 import { returnLang } from "@/lib/LanguageContext";
 import {PageTransition}  from '@/components/PageTransition';
 import menu_json from "@/data/menu.json";
 import { getAvas } from '@/lib/avas_env';
-
-const avas = getAvas(Astro.locals);
-const WC_URL_CLIENT = avas.WC_URL_CLIENT;
-const WC_URL = avas.WC_URL;
-const data_info = (await getInfo(true))[0];
-let pages = await getPages(data_info, true);
-pages.map(page => {
-  const dictionary = {
-      tencongty: data_info.tencongty[page.lang],
-      motaSeo: data_info.motaSeo[page.lang],
-      diachiHCM: data_info.diachiHCM[page.lang],
-      diachiHaNoi: data_info.diachiHaNoi[page.lang],
-    };
-    const title = replacePlaceholders(page.title, dictionary);
-    const description = replacePlaceholders(page.description, dictionary); 
-    page.title = title;
-    page.description = description;
-    return page;
-});
+import { getSharedWordPressData } from "@/lib/wordpress/cache";
+export const avas = getAvas(null);
+export const WC_URL_CLIENT = avas.WC_URL_CLIENT;
+export const WC_URL = avas.WC_URL;
+export const { data_info, pages, menus } = await getSharedWordPressData(avas, true);
 
 const props: AppRouterProps = {
   basename: '/preview',

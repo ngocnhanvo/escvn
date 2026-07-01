@@ -129,6 +129,12 @@
             "priceRenew": "789000"
         },
         {
+            "tld": ".ai",
+            "isAvailable": null,
+            "priceReg": "2990000",
+            "priceRenew": "2990000"
+        },
+        {
             "tld": ".cc",
             "isAvailable": null,
             "priceReg": "719000",
