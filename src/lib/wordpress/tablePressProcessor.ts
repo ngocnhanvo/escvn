@@ -60,6 +60,7 @@ export async function processAndGetData({
                         const responseAPI = await fetch(`${wcUrl}${linkAPI.replaceAll(id, value)}`);
                         if (response.ok) {
                             datasAPI = await responseAPI.json();
+                            item['keyAPI'] = value;
                         }
                     }
                     else {

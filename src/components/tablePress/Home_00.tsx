@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { AppRouterProps, Pages, tablePress } from '@/entities';
 import { Search } from '@/lib/effects';
 import { formatCurrencyValue, getCurrencyByKey } from '@/lib/stringUtils';
 import { handlePageLink } from '../PageTransition';
 import { useNavigate } from 'react-router-dom';
+import { scale } from 'framer-motion';
 interface home_00 {
     page: Pages;
     data: any;
@@ -22,6 +23,13 @@ export default function Home_00(props: home_00) {
     const handleSearch = (e) => {
         handlePageLink(e, `/${checkdomain?.slug}?id=${searchValue}`, navigate);
     };
+
+    const sparks = [
+        { left: "10%", top: "35%", rotate: -30, scale: 1.5, zIndex: 0 },
+        { left: "20%", top: "42%", rotate: 15, scale: 1.4, zIndex: 20 },
+        { left: "33%", top: "30%", rotate: -45, scale: 1.2, zIndex: 30 },
+        { left: "50%", top: "42%", rotate: 20, scale: 0.7, zIndex: 40 },
+    ];
     return (
         <section
             ref={heroRef}
@@ -51,7 +59,7 @@ export default function Home_00(props: home_00) {
             <div className="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-[55%_45%] gap-12 items-center">
                 <div className="space-y-8 z-10">
                     <h1 className="font-headline-xl text-[48px] leading-[56px] text-primary uppercase font-extrabold tracking-tight">
-                        {data.items[0].title1} <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">{data.items[0].title2}</span>
+                        {data.items[0].title1} <br /><span className="text-transparent bg-clip-text [-webkit-background-clip:text] bg-gradient-to-r from-primary to-blue-600">{data.items[0].title2}</span>
                     </h1>
                     <p className="text-lg italic text-on-surface-variant font-medium">
                         {data.description}
@@ -103,30 +111,107 @@ export default function Home_00(props: home_00) {
                         ))}
                     </div>
                 </div>
-                <div className="hidden md:flex justify-end z-10 relative mr-[10%]"
-                >
-                    {/* Flying lights around mascot */}
-                    <div className="absolute top-[25%] left-[35%] w-3 h-3 bg-yellow-400 rounded-full blur-[1px] shadow-[0_0_5px_#facc15] animate-float-sparkle" style={{ animationDuration: '4s' }} />
-                    <div className="absolute top-[45%] right-[5%] w-2 h-2 bg-blue-400 rounded-full blur-[1px] shadow-[0_0_5px_#60a5fa] animate-float-sparkle" style={{ animationDuration: '6s', animationDelay: '1s' }} />
-                    <div className="absolute bottom-[35%] left-[37%] w-4 h-4 bg-indigo-400 rounded-full blur-[1px] shadow-[0_0_5px_#818cf8] animate-float-sparkle" style={{ animationDuration: '8s', animationDelay: '2s' }} />
-                    <div className="absolute top-[0%] right-[40%] w-2 h-2 bg-red-400 rounded-full blur-[1px] shadow-[0_0_5px_#ef4444] animate-float-sparkle" style={{ animationDuration: '5s', animationDelay: '0.5s' }} />
-                    <picture className="max-w-[400px] h-auto object-contain animate-float relative z-10">
-                        <source
-                            srcSet={data.items[0]?.image?.srcSet} type="image/webp"
-                            sizes="251px"
+                <div className="hidden md:flex justify-end z-10 relative mr-[12%]">
+                    <div className="absolute inset-0 -z-10">
+                        <div
+                            className="
+                                absolute
+                                left-1/2
+                                top-1/2
+                                -translate-x-1/2
+                                -translate-y-1/2
+                                w-[90%]
+                                h-[90%]
+                                rounded-full
+                                bg-cyan-400/20
+                                blur-3xl
+                                animate-pulse
+                                "
                         />
-                        <img
-                            width={251}
-                            height={300}
-                            fetchPriority="high"
-                            loading="eager"
-                            decoding="async"
-                            alt={data.items[0]?.image?.alt}
-                            src={data.items[0]?.image?.src}
-                        />
-                    </picture>
+                    </div>
+
+                    <div className="z-10 max-w-[586px] h-auto object-contain animate-float relative">
+                        {sparks.map((s, i) => (
+                            <div
+                                key={i}
+                                className="absolute w-4 h-8 animate-lightning"
+                                style={{
+                                    left: s.left,
+                                    top: s.top,
+                                    zIndex: s.zIndex,
+                                    zoom: s.scale,
+                                    clipPath:
+                                        "polygon(50% 0,100% 0,65% 42%,92% 42%,30% 100%,45% 60%,10% 60%)",
+                                    background: "#7dd3fc",
+                                    filter:
+                                        "drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px #38bdf8)",
+                                }}
+                            />
+                        ))}
+                        <picture>
+                            <source
+                                srcSet={data.items[0]?.image?.srcSet} type="image/webp"
+                                sizes="586px"
+                            />
+                            <img
+                                className="drop-shadow-[0_0_25px_rgba(56,189,248,.6)]"
+                                width={586}
+                                height={391}
+                                fetchPriority="high"
+                                loading="eager"
+                                decoding="async"
+                                alt={data.items[0]?.image?.alt}
+                                src={data.items[0]?.image?.src}
+                            />
+                        </picture>
+                    </div>
                 </div>
             </div>
         </section>
+    );
+}
+
+export const ElectricAura = () => {
+    return (
+        <div className="absolute inset-0 pointer-events-none overflow-visible">
+            <svg
+                className="absolute inset-0 w-full h-full"
+                viewBox="0 0 400 400"
+                preserveAspectRatio="none"
+            >
+                <path
+                    d="M200 60 L180 95 L210 120 L175 155 L220 190"
+                    className="stroke-cyan-300 animate-electric"
+                    strokeWidth="3"
+                    fill="none"
+                />
+
+                <path
+                    d="M310 120 L280 150 L315 175 L275 205 L305 240"
+                    className="stroke-cyan-300 animate-electric"
+                    strokeWidth="2"
+                    fill="none"
+                    style={{ animationDelay: ".2s" }}
+                />
+
+                <path
+                    d="M120 100 L150 130 L110 170 L145 200 L115 240"
+                    className="stroke-cyan-300 animate-electric"
+                    strokeWidth="2"
+                    fill="none"
+                    style={{ animationDelay: ".5s" }}
+                />
+
+                <path
+                    d="M180 240 L210 270 L170 300 L220 330"
+                    className="stroke-cyan-300 animate-electric"
+                    strokeWidth="3"
+                    fill="none"
+                    style={{ animationDelay: ".8s" }}
+                />
+            </svg>
+
+            <div className="absolute inset-0 rounded-full bg-cyan-300/10 blur-2xl animate-pulse" />
+        </div>
     );
 }

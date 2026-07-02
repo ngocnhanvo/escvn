@@ -118,7 +118,7 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
             imageUrl: p.favicon[id].src,
             alt: p.favicon[id].alt,
             wcUrl: WC_URL,
-            publicDirBase: 'images/info', // Lưu vào thư mục riêng cho sản phẩm
+            publicDirBase: 'images/pages', // Lưu vào thư mục riêng cho sản phẩm
             isPreview: isPreview, // Truyền trạng thái preview
           });
           p.favicon[id] = store;
@@ -131,7 +131,7 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
             imageUrl: p.logo[id].src,
             alt: p.logo[id].alt,
             wcUrl: WC_URL,
-            publicDirBase: 'images/info', // Lưu vào thư mục riêng cho sản phẩm
+            publicDirBase: 'images/pages', // Lưu vào thư mục riêng cho sản phẩm
             isPreview: isPreview, // Truyền trạng thái preview
           });
           p.logo[id] = store;
@@ -144,7 +144,7 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
             imageUrl: p.image[id].src,
             alt: p.image[id].alt,
             wcUrl: WC_URL,
-            publicDirBase: 'images/info', // Lưu vào thư mục riêng cho sản phẩm
+            publicDirBase: 'images/pages', // Lưu vào thư mục riêng cho sản phẩm
             isPreview: isPreview, // Truyền trạng thái preview
           });
           p.image[id] = store;
@@ -157,7 +157,7 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
             imageUrl: p.mascot[id].src,
             alt: p.mascot[id].alt,
             wcUrl: WC_URL,
-            publicDirBase: 'images/info', // Lưu vào thư mục riêng cho sản phẩm
+            publicDirBase: 'images/pages', // Lưu vào thư mục riêng cho sản phẩm
             isPreview: isPreview, // Truyền trạng thái preview
           });
           p.mascot[id] = store;

@@ -263,7 +263,7 @@ export default function Header(props: AppRouterProps) {
             >
               <ShoppingCart className="h-5 w-5 text-primary" />
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 bg-[#b00c3b] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                   {itemCount}
                 </span>
               )}
@@ -371,7 +371,6 @@ export default function Header(props: AppRouterProps) {
           </div>
         </div>
       </div>
-      <Cart {...props} />
     </>
   );
 }

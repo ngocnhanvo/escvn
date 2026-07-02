@@ -20,7 +20,7 @@ export default function Home_02(props: home_02) {
                 const IconComponent = IconMap[item?.icon] || null;
                 if (index % 2 == 0) {
                     return !item ? null : (
-                        <section className="bg-surface-container-low py-16">
+                        <section className="bg-surface-container-low py-16 [content-visibility:auto] [contain-intrinsic-size:0_500px]">
                             <div className="max-w-container-max mx-auto px-margin-desktop grid-cols-1 gap-16 items-center">
                                 <motion.div
                                     className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
@@ -85,8 +85,8 @@ export default function Home_02(props: home_02) {
                                                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                                 />
                                                 <img
-                                                    width={916}
-                                                    height={719}
+                                                    width={651}
+                                                    height={511}
                                                     alt={item.image?.alt}
                                                     src={item.image?.src}
                                                 />
@@ -100,7 +100,7 @@ export default function Home_02(props: home_02) {
                 }
                 else {
                     return !item ? null : (
-                        <section className="py-section-gap max-w-container-max mx-auto px-margin-desktop space-y-24">
+                        <section className="py-section-gap max-w-container-max mx-auto px-margin-desktop space-y-24 [content-visibility:auto] [contain-intrinsic-size:0_500px]">
                             <motion.div
                                 initial="hidden"
                                 whileInView="visible"
@@ -115,8 +115,8 @@ export default function Home_02(props: home_02) {
                                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         />
                                         <img
-                                            width={916}
-                                            height={719}
+                                            width={651}
+                                            height={511}
                                             alt={item.image?.alt}
                                             src={item.image?.src}
                                         />

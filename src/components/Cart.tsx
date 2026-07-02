@@ -229,10 +229,10 @@ export default function Cart(props: AppRouterProps) {
                     >
                       {/* Product Image */}
                       <div className="w-24 h-24 flex-shrink-0 bg-secondary">
-                        {item.itemImage[language] && (
+                        {item?.itemImage[language] && (
                           <Image
-                            src={item.itemImage[language].srcSets["100"]}
-                            alt={item.itemName[language]}
+                            src={item.itemImage[language]?.srcSets["100"]}
+                            alt={item.itemName[language] || ''}
                             className="w-full h-full object-cover"
                             width={96}
                           />

@@ -15,5 +15,7 @@ export const getAvas = (locals: App.Locals) => {
         RESEND_API_KEY: getEnv('RESEND_API_KEY'),
         TURNSTILE_SECRET_KEY: getEnv('CLOUDFLARE_TURNSTILE_SECRET_KEY'),
         WC_URL: getEnv('WC_URL'),
+        WOO_KEY: getEnv('WOO_KEY'),
+        WOO_SECRET: getEnv('WOO_SECRET'),
     };
 };

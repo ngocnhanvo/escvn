@@ -41,7 +41,7 @@ export const Head = (props: HeadProps) => {
         /* Định nghĩa danh sách các file ảnh và kích thước chiều rộng (w) tương ứng */
         imageSrcSet={props.data_info?.mascot[props.lang]?.srcSet}
         /* Báo cho trình duyệt biết ở mỗi kích thước màn hình, ảnh này sẽ hiển thị rộng bao nhiêu */
-        imageSizes="(max-width: 768px) 251px, 400px"
+        imageSizes="586px"
         crossOrigin="anonymous" 
       />
       <link

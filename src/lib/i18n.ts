@@ -1,7 +1,6 @@
 import { AppRouterProps } from "@/entities";
 import { replacePlaceholders } from "@/lib/stringUtils";
 import translations from "@/data/i18n.json";
-export type Language = 'vi' | 'en';
 
 export const replaceAllProperties = (text: string, data: any, lang: string) => {
   const dictionary = Object.keys(data || {}).reduce((acc, key) => {
@@ -22,7 +21,7 @@ export const replaceAllProperties = (text: string, data: any, lang: string) => {
   return text;
 };
 
-export const getTranslation = (key: string, language: Language, props?: AppRouterProps): string => {
+export const getTranslation = (key: string, language: string, props?: AppRouterProps): string => {
   let text: string | undefined = translations[language][key as keyof typeof translations['vi']] || key;
   if (props) {
     text = replaceAllProperties(text, props.data_info, language);

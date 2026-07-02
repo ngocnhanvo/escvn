@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { Products } from '@/entities';
-
+import { getCheckoutUrlFromServer } from './woocommerce';
 interface CartState {
   // State
   items: Products[];
@@ -18,6 +18,7 @@ interface CartState {
 interface CartActions {
   // Public actions
   addToCart: (input: Products) => Promise<void>;
+  addAllToCart: (input: Products[], open: boolean) => Promise<void>;
   removeFromCart: (item: Products) => void;
   updateQuantity: (item: Products, quantity: number) => void;
   clearCart: () => void;
@@ -62,6 +63,10 @@ export const useCartStore = create<CartStore>()(
           set({ _initialized: true });
         },
 
+        addAllToCart: async (inputs: Products[], isOpen: boolean = true) => {
+          console.log('Adding all items to cart:', { items: inputs, addingItemId: null, isOpen: isOpen });
+          set({ items: inputs, addingItemId: null, isOpen: isOpen });
+        },
         /** Add item to cart - Local storage first */
         addToCart: async (input: Products, isOpen: boolean = true) => {
           set({ addingItemId: input._id, error: null });
@@ -115,18 +120,27 @@ export const useCartStore = create<CartStore>()(
 
         /** Checkout - Sync local cart to Wix server before redirecting */
         checkout: async () => {
-          set({ isCheckingOut: true, error: null });
           const { items } = get();
-
           if (items.length === 0) {
-            set({ isCheckingOut: false, error: 'Cart is empty' });
+            set({ error: 'Giỏ hàng của bạn đang trống.' });
             return;
           }
 
-          set({
-            isCheckingOut: true,
-            error: null,
-          });
+          set({ isCheckingOut: true, error: null });
+
+          try {
+            // Gọi Proxy để đồng bộ lên CoCart
+            const result = await getCheckoutUrlFromServer(items);
+            
+            if (result.url) {
+              // Chuyển hướng người dùng sang trang Checkout của WordPress
+              window.location.href = result.url;
+            }
+          } catch (err) {
+            set({ error: 'Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.' });
+          } finally {
+            set({ isCheckingOut: false });
+          }
         },
         /** Toggle cart drawer */
         toggleCart: () => {
@@ -184,8 +198,8 @@ export const useCart = (lang: string) => {
   }
 
   // Computed values
-  const itemCount = store.items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = store.items.reduce((sum, item) => sum + item.itemPrice[lang] * item.quantity, 0);
+  const itemCount = store.items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const totalPrice = store.items.reduce((sum, item) => sum + (item.itemPrice ? item.itemPrice[lang] : 0) * (item.quantity || 1), 0);
 
   return {
     // State
