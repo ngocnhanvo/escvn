@@ -13,7 +13,7 @@ export default function Home_04(props: home_04) {
     let currency = getCurrencyByKey('vi');
     let image = data?.items[0]?.image;
     return (
-        <section className="py-section-gap max-w-container-max mx-auto px-margin-desktop">
+        <section className="py-section-gap max-w-container-max mx-auto px-margin-desktop [content-visibility:auto] [contain-intrinsic-size:0_500px]">
             <motion.div
                 initial="hidden"
                 whileInView="visible"
@@ -29,8 +29,8 @@ export default function Home_04(props: home_04) {
                             sizes="(max-width: 640px) 100vw, 50vw"
                         />
                         <img
-                            width={916}
-                            height={719}
+                            width={651}
+                            height={511}
                             alt={image?.alt}
                             src={image?.src}
                         />

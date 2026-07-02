@@ -18,7 +18,7 @@ export async function processAndStoreImage({
   isPreview = false,
 }: ProcessImageOptions): Promise<ProcessedImageResult> {
   // Định nghĩa các kích thước chiều rộng (width) bạn muốn phân bổ
-  const targetWidths = [20, 40, 100, 400, 800, 1200];
+  const targetWidths = [20, 40, 100, 400, 600, 700, 800, 1200];
   // Kết quả mặc định dự phòng nếu gặp lỗi hoặc chạy ở Client
   const defaultResult: ProcessedImageResult = { src: imageUrl, alt: alt || '', srcSet: '', srcSets: {} };
   if (!imageUrl) return { src: '', srcSet: '', srcSets: {} };

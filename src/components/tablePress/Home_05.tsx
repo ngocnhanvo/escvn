@@ -12,7 +12,7 @@ export default function Home_05(props: home_05) {
         return null;
     let currency = getCurrencyByKey('vi');
     return (
-        <section className="bg-surface-container-low py-12 border-y border-border-subtle">
+        <section className="bg-surface-container-low py-12 border-y border-border-subtle [content-visibility:auto] [contain-intrinsic-size:0_500px]">
             <motion.div
                 initial="hidden"
                 whileInView="visible"

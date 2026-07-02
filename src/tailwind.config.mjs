@@ -3,6 +3,51 @@ export default {
     content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}', './public/**/*.html'],
     theme: {
         extend: {
+            //ESC
+            keyframes: {
+                'lightning': {
+                    '0%, 100%': {
+                        opacity: '0',
+                        transform: 'translate(0,0) rotate(-60deg) scale(0.8)',
+                        filter: 'drop-shadow(0 0 0px #fff)',
+                    },
+
+                    '5%': {
+                        opacity: '1',
+                        transform: 'translate(-1px,1px) rotate(-59deg) scale(1.05)',
+                        filter:
+                            'drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px #fde047)',
+                    },
+
+                    '8%': {
+                        opacity: '.4',
+                    },
+
+                    '10%': {
+                        opacity: '1',
+                        transform: 'translate(1px,-1px) rotate(-61deg) scale(1.1)',
+                        filter:
+                            'drop-shadow(0 0 8px #fff) drop-shadow(0 0 20px #fde047)',
+                    },
+
+                    '13%': {
+                        opacity: '.6',
+                    },
+
+                    '16%': {
+                        opacity: '1',
+                        transform: 'translate(-1px,-1px) rotate(-60deg) scale(1)',
+                    },
+
+                    '20%': {
+                        opacity: '0',
+                        transform: 'translate(0,0) rotate(-60deg) scale(.9)',
+                    },
+                }
+            },
+            animation: {
+                'lightning': 'lightning 2s ease-in-out infinite',
+            },
             fontSize: {
                 xs: ['0.75rem', { lineHeight: '1rem', letterSpacing: '-0.01em' }],
                 sm: ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '-0.01em' }],

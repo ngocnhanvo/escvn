@@ -141,7 +141,7 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
           });
           p.contents.push({
             type: 'shortcode',
-            shortcode: part.endsWith(suffix) ? part.slice(0, -suffix.length) : part,
+            shortcode: part,
             data: json
           });
         } else {
