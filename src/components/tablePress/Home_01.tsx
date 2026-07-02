@@ -27,16 +27,17 @@ export default function Home_01(props: home_01) {
                 <div className="h-1 w-16 bg-signal-red mx-auto mt-4 rounded-full" />
             </motion.div>
             <motion.div
+                initial="hidden"
+                whileInView="visible"
+                
+                variants={fadeInUp}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6"
             >
                 {data.items.map((service: any, index: number) => {
                     const IconComponent = IconMap[service.icon] || Cloud;
                     return (
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
+                        <div
                             key={data.id + index}
-                            variants={fadeInUp}
                             className="bg-white p-6 rounded-xl border border-border-subtle text-center hover:shadow-lg transition-shadow group flex flex-col items-center"
                         >
                             <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
@@ -57,7 +58,7 @@ export default function Home_01(props: home_01) {
                                     </span>
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
                     );
                 })}
             </motion.div>

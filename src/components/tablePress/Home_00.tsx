@@ -23,13 +23,6 @@ export default function Home_00(props: home_00) {
     const handleSearch = (e) => {
         handlePageLink(e, `/${checkdomain?.slug}?id=${searchValue}`, navigate);
     };
-
-    const sparks = [
-        { left: "10%", top: "35%", rotate: -30, scale: 1.5, zIndex: 0 },
-        { left: "20%", top: "42%", rotate: 15, scale: 1.4, zIndex: 20 },
-        { left: "33%", top: "30%", rotate: -45, scale: 1.2, zIndex: 30 },
-        { left: "50%", top: "42%", rotate: 20, scale: 0.7, zIndex: 40 },
-    ];
     return (
         <section
             ref={heroRef}
@@ -131,27 +124,17 @@ export default function Home_00(props: home_00) {
                     </div>
 
                     <div className="z-10 max-w-[586px] h-auto object-contain animate-float relative">
-                        {sparks.map((s, i) => (
-                            <div
-                                key={i}
-                                className="absolute w-4 h-8 animate-lightning"
-                                style={{
-                                    left: s.left,
-                                    top: s.top,
-                                    zIndex: s.zIndex,
-                                    zoom: s.scale,
-                                    clipPath:
-                                        "polygon(50% 0,100% 0,65% 42%,92% 42%,30% 100%,45% 60%,10% 60%)",
-                                    background: "#7dd3fc",
-                                    filter:
-                                        "drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px #38bdf8)",
-                                }}
-                            />
-                        ))}
                         <picture>
+                            {/* 1. Dành cho Mobile: Trình duyệt sẽ tải 1 pixel trong suốt siêu nhẹ thay vì ảnh gốc */}
+                            <source
+                                media="(max-width: 767px)"
+                                srcSet="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                            />
+                            {/* 2. Dành cho Tablet/Desktop: Chạy bình thường */}
                             <source
                                 srcSet={data.items[0]?.image?.srcSet} type="image/webp"
                                 sizes="586px"
+                                media="(min-width: 768px)"
                             />
                             <img
                                 className="drop-shadow-[0_0_25px_rgba(56,189,248,.6)]"

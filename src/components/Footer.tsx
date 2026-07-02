@@ -1,9 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Facebook, Youtube } from 'lucide-react';
+import { Facebook, Youtube } from '@/lib/effects';
 import { AppRouterProps, Pages } from '@/entities';
 import { getContent, getTranslation } from '@/lib/i18n';
 import { useLanguage } from '@/lib/LanguageContext';
-import { get } from 'react-hook-form';
 import { handlePageLink } from './PageTransition';
 
 export default function Footer(props: AppRouterProps) {
@@ -16,7 +15,7 @@ export default function Footer(props: AppRouterProps) {
   const legaldocument = props.pages?.find((a: Pages) => a.key === 'legaldocument' && a.lang === language);
 
   return (
-    <footer className="relative bg-surface-container-low pt-16 pb-8 overflow-hidden border-t border-border-subtle">
+    <footer className="relative bg-surface-container-low pt-16 pb-8 overflow-hidden border-t border-border-subtle [content-visibility:auto] [contain-intrinsic-size:0_500px]">
       {/* Decorative Background Layers (Overlay) */}
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[80px] animate-blob" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-blue-400/20 rounded-full blur-[70px] animate-blob animation-delay-2000" />
