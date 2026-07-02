@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BaseCrudService } from '@/integrations';
-import { Image } from '@/components/ui/image';
-import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft, X, Calendar, Clock } from 'lucide-react';
+import { ChevronRight, ChevronLeft, X } from 'lucide-react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import FooterSection from '@/components/FooterSection';
 import { AppRouterProps } from '@/entities';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -148,8 +144,6 @@ export default function AboutPage(props: AppRouterProps) {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <Footer {...props}/>
     </div>
   );
 }

@@ -2,7 +2,6 @@
 import { AppRouterProps } from '@/entities';
 
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import FooterSection from '@/components/FooterSection';
 import { returnCurrentPage, useLanguage } from '@/lib/LanguageContext';
 import { extractHTML } from '@/lib/components';
@@ -20,7 +19,6 @@ export default function HomePage(props: AppRouterProps) {
         {/* BLOCK 10 (CONTACTS) */}
         <FooterSection {...props} />
       </main>
-      <Footer {...props} />
     </div>
   );
 }

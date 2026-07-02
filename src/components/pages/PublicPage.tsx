@@ -54,8 +54,6 @@ export default function PublicPage(props: AppRouterProps) {
 
       <FooterSection {...props} />
       </main>
-
-      <Footer {...props}/>
     </div>
   );
 }

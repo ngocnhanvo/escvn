@@ -1,5 +1,4 @@
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { AppRouterProps } from '@/entities';
 import { useLanguage } from '@/lib/LanguageContext';
 import { getContent } from '@/lib/i18n';
@@ -51,7 +50,6 @@ export default function ErrorPage404(props: AppRouterProps) {
           </a>
         </div>
       </main>
-      <Footer {...props} />
     </div>
   );
 };

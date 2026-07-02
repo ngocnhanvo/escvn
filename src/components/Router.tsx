@@ -1,7 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate, Outlet, useParams, useLocation, useNavigate, ScrollRestoration } from 'react-router-dom';
-import ErrorPage500 from '@/integrations/errorHandlers/ErrorPage500';
-import ErrorPage404 from '@/integrations/errorHandlers/ErrorPage404';
+
+
 import { Loader2 } from 'lucide-react';
 import { AppRouterProps } from '@/entities';
 import { LanguageProvider } from '@/lib/LanguageContext';
@@ -67,9 +67,25 @@ const PageLoader = () => (
 // Layout component that includes ScrollToTop
 function LayoutWithLanguage(props: AppRouterProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   useEffect(() => {
     window.dispatchEvent(new Event('app:nav-end'));
   }, [location.pathname]);
+
+  useEffect(() => {
+    // Lắng nghe sự kiện chuyển trang từ Footer phát ra
+    const handleAstroNavigation = (e: Event) => {
+      const customEvent = e as CustomEvent<{ url: string }>;
+      const targetUrl = customEvent.detail.url;
+      
+      if (targetUrl) {
+        navigate(targetUrl); // Kích hoạt router chuyển trang mượt mà không load lại trang!
+      }
+    };
+
+    window.addEventListener('astro-navigate', handleAstroNavigation);
+    return () => window.removeEventListener('astro-navigate', handleAstroNavigation);
+  }, [navigate]);
 
   return (
     <>
@@ -95,6 +111,7 @@ function LanguageGuard({ children, ...props }: { children: React.ReactNode } & A
     })[0]?.lang;
   }
   if (!lang) {
+    const ErrorPage404 = lazy(() => import('@/integrations/errorHandlers/ErrorPage404'));
     return <ErrorPage404 {...props} />;
   }
 
@@ -127,6 +144,7 @@ const getRouterConfig = (props: AppRouterProps) => {
   });
 
   if(props.status == 404) {
+    const ErrorPage404 = lazy(() => import('@/integrations/errorHandlers/ErrorPage404'));
     children.push({
       index: false,
       path: "*",
@@ -134,6 +152,7 @@ const getRouterConfig = (props: AppRouterProps) => {
     });
   }
   else if(props.status == 500) {
+    const ErrorPage500 = lazy(() => import('@/integrations/errorHandlers/ErrorPage500'));
     children.push({
       index: false,
       path: "*",
@@ -144,8 +163,7 @@ const getRouterConfig = (props: AppRouterProps) => {
   return ([
     { // Route configuration
       path: "/", 
-      element: <LayoutWithLanguage {...props} />, // Use the new layout component
-      errorElement: <ErrorPage500 {...props} />,
+      element: <LayoutWithLanguage {...props} />,
       children: children
     },
   ])

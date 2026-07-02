@@ -1,8 +1,5 @@
-import { Link } from 'react-router-dom';
-import { Phone, Mail, Truck, CreditCard, RefreshCw, Facebook, Youtube, MapPin, Map } from 'lucide-react';
-import { Image } from '@/components/ui/image';
+import { MapPin, Map } from 'lucide-react';
 import { AppRouterProps } from '@/entities';
-import { getTranslation } from '@/lib/i18n';
 import { returnCurrentPage, useLanguage } from '@/lib/LanguageContext';
 import { motion } from 'framer-motion';
 
