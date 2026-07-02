@@ -23,19 +23,23 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '24' # Khuyên dùng bản LTS gõ gọn '20' hoặc '22', tự động lấy minor version mới nhất
+        cache: 'npm'
 
-    # Bước 3: Tự động tạo file .env từ GitHub Secret trước khi build
+    # Bước 3: Cài đặt thư viện (Chỉ chạy khi package-lock.json có thay đổi nhờ vào cache ở trên)
+    - name: Install dependencies
+      run: npm ci # Tối ưu hoàn toàn cho CI/CD, thay thế hoàn toàn cho npm install
+
+    # Bước 4: Tự động tạo file .env từ GitHub Secret trước khi build
     - name: Make env file
       run: |
         echo "${{ secrets.ENV_FILE }}" > .env
 
-    # Bước 4: Cài đặt thư viện và Build ra thư mục dist
-    - name: Install dependencies and Build
+    # Bước 5: Build dự án ra thư mục dist (Đã bỏ hoàn toàn npm install thừa ở đây)
+    - name: Build Project
       run: |
-        npm install
         npm run build # Lệnh này sẽ tạo ra thư mục 'dist' hoặc 'build'
 
-    # Bước 5: Nén toàn bộ nội dung bên trong thư mục dist thành file escvn.zip
+    # Bước 6: Nén toàn bộ nội dung bên trong thư mục dist thành file escvn.zip
     - name: Zip Build Folder
       run: |
         mkdir deploy
@@ -45,8 +49,7 @@ jobs:
 
         cd deploy
         zip -r ../escvn.zip .
-        cd ..
-    # Bước 5: Tự động sync (đồng bộ) thư mục dist lên Hosting qua tài khoản FTP
+    # Bước 7: Tự động sync (đồng bộ) thư mục dist lên Hosting qua tài khoản FTP
     - name: Sync files via FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
@@ -60,8 +63,8 @@ jobs:
           **
           !escvn.zip
 
-    # BƯỚC 6: Gọi file unzip.php từ xa để DirectAdmin tự giải nén
-    - name: Trigger API
+    # BƯỚC 8: Gọi file unzip.php từ xa để DirectAdmin tự giải nén
+    - name: Trigger Remote Unzip
       run: |
         source .env
         curl -s "$WC_URL/unzip.php"
