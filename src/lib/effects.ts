@@ -33,5 +33,7 @@ export {
   MousePointerClick,
   Puzzle,
   Award,
-  HelpCircle
+  HelpCircle,
+  Facebook, 
+  Youtube
 } from 'lucide-react';

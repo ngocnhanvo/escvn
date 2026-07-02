@@ -17,7 +17,7 @@ export default function FooterSection(props: AppRouterProps) {
   let label = dataMain?.items[0]?.label;
 
   return (
-    <section className="bg-white py-16 border-b border-border-subtle">
+    <section className="bg-white py-16 border-b border-border-subtle [content-visibility:auto] [contain-intrinsic-size:0_500px]">
       <motion.div
         initial="hidden"
         whileInView="visible"

@@ -38,6 +38,7 @@ export const Head = (props: HeadProps) => {
         rel="preload" 
         as="image" 
         fetchPriority="high"
+        media="(min-width: 768px)"
         /* Định nghĩa danh sách các file ảnh và kích thước chiều rộng (w) tương ứng */
         imageSrcSet={props.data_info?.mascot[props.lang]?.srcSet}
         /* Báo cho trình duyệt biết ở mỗi kích thước màn hình, ảnh này sẽ hiển thị rộng bao nhiêu */
