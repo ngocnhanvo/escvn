@@ -28,8 +28,6 @@ export default function ComboPage(props: AppRouterProps) {
         <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-b from-transparent to-background" />
       </section>
       </main>
-
-      <Footer {...props}/>
     </div>
   );
 }

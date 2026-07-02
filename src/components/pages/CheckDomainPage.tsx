@@ -129,7 +129,6 @@ export default function CheckDomainPage(props: AppRouterProps) {
           </FocusTrap>
         )}
       </main>
-      <Footer {...props} />
     </div>
   );
 }

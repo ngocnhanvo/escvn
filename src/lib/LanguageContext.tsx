@@ -1,11 +1,10 @@
 import React, { createContext, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Language } from './i18n';
 import { AppRouterProps, Pages } from '@/entities';
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: string;
+  setLanguage: (lang: string) => void;
 }
 
 // Định nghĩa danh sách ngôn ngữ phổ biến
@@ -74,14 +73,17 @@ export function LanguageProvider({ children, ...props }: { children: React.React
   const navigate = useNavigate();
   const location = useLocation();
 
-  const language: Language = (() => {
+  const language: string = (() => {
     return returnLang(props.pages, location.pathname);
   })();
 
-  const setLanguage = (newLang: Language) => {
+  const setLanguage = (newLang: string) => {
     let currentPath = returnCurrentPath(props.basename);
     // 1. Tìm mapping trang hiện tại để chuyển đổi slug chính xác dựa trên 'key' (nếu có)
     const currentPage = props.pages.find(p => p.slug === currentPath);
+    // Bắn tín hiệu ra ngoài để thằng Footer (đang nằm ở Astro) bắt được và đổi theo
+    const event = new CustomEvent('language-changed', { detail: { lang: newLang } });
+    window.dispatchEvent(event);
     if (currentPage) {
       // Tìm trang có cùng key nhưng thuộc ngôn ngữ đích
       let targetPage: any;

@@ -4,7 +4,6 @@ import {
   ShoppingCart,
   Menu,
   X,
-  Search,
   ChevronDown,
   ChevronRight,
   Award,
@@ -17,7 +16,6 @@ import { AppRouterProps, Pages } from '@/entities';
 import { handlePageLink } from '@/components/PageTransition';
 import { getTranslation, getContent } from '@/lib/i18n';
 import { useLanguage } from '@/lib/LanguageContext';
-import Cart from './Cart';
 import { Button } from './ui/button';
 
 export default function Header(props: AppRouterProps) {
@@ -211,7 +209,13 @@ export default function Header(props: AppRouterProps) {
                               <h3 className="text-lg font-bold text-primary mb-2">{header.text}</h3>
                             )}
                             {header.img && (
-                              <img src={header.img} alt={header.text || "Mega menu image"} className="mb-2 object-contain" />
+                              <img 
+                                srcSet={`data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7 1w, ${header.img} 1024w`}
+                                src={header.img} 
+                                alt={header.text || "Mega menu image"} 
+                                className="mb-2 object-contain" 
+                                sizes="(max-width: 767px) 1px, 1024px"
+                                />
                             )}
                             {item.mega
                               .filter((sub: any) => parseInt(sub.position) === colIndex)
