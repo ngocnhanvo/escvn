@@ -66,4 +66,5 @@ jobs:
     # BƯỚC 8: Gọi file unzip.php từ xa để DirectAdmin tự giải nén
     - name: Trigger Remote Unzip
       run: |
-        curl -s https://admin.escvn.com/unzip.php
+        source .env
+        curl -s "$WC_URL/unzip.php"
