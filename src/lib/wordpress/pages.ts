@@ -144,12 +144,6 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
             shortcode: part,
             data: json
           });
-        } else {
-          // Đây là đoạn HTML thông thường
-          p.contents.push({
-            type: 'html',
-            content: part
-          });
         }
       }
     }

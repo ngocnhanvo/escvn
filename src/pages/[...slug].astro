@@ -1,7 +1,6 @@
 ---
 import { Head, HeadProps } from "@/components/Head";
 import AppRouter from "@/components/Router";
-import Footer from "@/components/Footer";
 import "@/styles/global.css";
 import { generateAndSaveSitemap } from "@/lib/wordpress/sitemap";
 import { AppRouterProps } from "@/entities";
@@ -62,7 +61,6 @@ const headProps: HeadProps = {
     <div style="display:none">Build ID: {Date.now()}</div>
     <div id="root" class="w-full h-full">
       <AppRouter client:idle {...props} />
-      <Footer client:visible language={lang} {...props} />
     </div>
   </body>
 </html>
