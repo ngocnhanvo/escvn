@@ -1,48 +1,21 @@
-import { Facebook, Youtube } from '@/lib/effects';
+import { Link, useNavigate } from 'react-router-dom';
+import { Facebook, Youtube } from 'lucide-react';
 import { AppRouterProps, Pages } from '@/entities';
 import { getContent, getTranslation } from '@/lib/i18n';
-import { useEffect, useState } from 'react';
+import { useLanguage } from '@/lib/LanguageContext';
+import { handlePageLink } from './PageTransition';
 
-interface FooterProps extends AppRouterProps {
-  language: string;
-}
-
-export default function Footer(props: FooterProps) {
-  const [language, setCurrentLang] = useState(props.language);
-  
-  // 🚀 KẾT HỢP: Lắng nghe sự kiện đổi ngôn ngữ ngầm từ AppRouter (Cách 2)
-  useEffect(() => {
-    const handleLangChange = (e: Event) => {
-      const customEvent = e as CustomEvent<{ lang: string }>;
-      if (customEvent.detail.lang) {
-        setCurrentLang(customEvent.detail.lang); // Thay đổi ngôn ngữ lập tức không cần F5!
-      }
-    };
-
-    window.addEventListener('language-changed', handleLangChange);
-    return () => window.removeEventListener('language-changed', handleLangChange);
-  }, []);
-
-  // Cập nhật lại prop nếu Astro có render lại từ phía server (đảm bảo đồng bộ)
-  useEffect(() => {
-    setCurrentLang(props.language);
-  }, [props.language]);
-
+export default function Footer(props: AppRouterProps) {
+  const { language } = useLanguage();
+  const navigate = useNavigate();
   const privacy = props.pages?.find((a: Pages) => a.key === 'privacy' && a.lang === language);
   const protectpolicy = props.pages?.find((a: Pages) => a.key === 'protectpolicy' && a.lang === language);
   const payment = props.pages?.find((a: Pages) => a.key === 'payment' && a.lang === language);
   const terms = props.pages?.find((a: Pages) => a.key === 'terms' && a.lang === language);
   const legaldocument = props.pages?.find((a: Pages) => a.key === 'legaldocument' && a.lang === language);
 
-  const handleAstroLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
-    e.preventDefault();
-    const event = new CustomEvent('astro-navigate', { detail: { url: slug } });
-    window.dispatchEvent(new Event('app:nav-start'));
-    window.dispatchEvent(event);
-  };
-
   return (
-    <footer className="font-paragraph relative bg-surface-container-low pt-16 pb-8 overflow-hidden border-t border-border-subtle [content-visibility:auto] [contain-intrinsic-size:0_500px]">
+    <footer className="relative bg-surface-container-low pt-16 pb-8 overflow-hidden border-t border-border-subtle [content-visibility:auto] [contain-intrinsic-size:0_500px]">
       {/* Decorative Background Layers (Overlay) */}
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[80px] animate-blob" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-blue-400/20 rounded-full blur-[70px] animate-blob animation-delay-2000" />
@@ -253,68 +226,63 @@ export default function Footer(props: FooterProps) {
         </div>
         <div className="pt-8 flex flex-col items-center gap-4">
           <div className="flex flex-wrap justify-center gap-4 text-xs text-on-surface-variant opacity-80">
-            <a 
-              href={`/${privacy?.slug}`}
+            <Link 
+              to={`/${privacy?.slug}`}
               onClick={(e) => {
-                handleAstroLinkClick(e, `/${privacy.slug}`)
-                //handlePageLink(e, `/${privacy?.slug}`, navigate);
+                handlePageLink(e, `/${privacy?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
               {privacy?.label}
-            </a>
+            </Link>
             
             <span className="text-outline-variant">Ι</span>
             
-            <a 
-              href={`/${protectpolicy?.slug}`}
+            <Link 
+              to={`/${protectpolicy?.slug}`}
               onClick={(e) => {
-                handleAstroLinkClick(e, `/${protectpolicy.slug}`)
-                //handlePageLink(e, `/${protectpolicy?.slug}`, navigate);
+                handlePageLink(e, `/${protectpolicy?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
               {protectpolicy?.label}
-            </a>
+            </Link>
 
             <span className="text-outline-variant">Ι</span>
             
-            <a 
-              href={`/${payment?.slug}`}
+            <Link 
+              to={`/${payment?.slug}`}
               onClick={(e) => {
-                handleAstroLinkClick(e, `/${payment.slug}`)
-                //handlePageLink(e, `/${payment?.slug}`, navigate);
+                handlePageLink(e, `/${payment?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
               {payment?.label}
-            </a>
+            </Link>
 
             <span className="text-outline-variant">Ι</span>
             
-            <a 
-              href={`/${terms?.slug}`}
+            <Link 
+              to={`/${terms?.slug}`}
               onClick={(e) => {
-                handleAstroLinkClick(e, `/${terms.slug}`)
-                //handlePageLink(e, `/${terms?.slug}`, navigate);
+                handlePageLink(e, `/${terms?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
               {terms?.label}
-            </a>
-
+            </Link>
+            
             <span className="text-outline-variant">Ι</span>
 
-            <a 
-              href={`/${legaldocument?.slug}`}
+            <Link 
+              to={`/${legaldocument?.slug}`}
               onClick={(e) => {
-                handleAstroLinkClick(e, `/${legaldocument.slug}`)
-                //handlePageLink(e, `/${legaldocument?.slug}`, navigate);
+                handlePageLink(e, `/${legaldocument?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
               {legaldocument?.label}
-            </a>
+            </Link>
           </div>
           <p className="text-xs text-on-surface-variant opacity-60">
             {getTranslation('footer.domains.reserved', language)}

@@ -3,104 +3,117 @@ import { processAndStoreImage } from './imageProcessor';
 import { replaceAllProperties } from '../i18n';
 
 interface ProcessOptions {
-    tblshort: string;
-    wcUrl?: string;
-    publicDirBase?: string;
-    isPreview?: boolean;
-    data_info: WPInfo;
-    lang: string;
+  tblshort: string;
+  wcUrl?: string;
+  publicDirBase?: string;
+  isPreview?: boolean;
+  data_info: WPInfo;
+  lang: string;
 }
+
 export const imgRegex = /<img[^>]+src="([^">]+)"/g;
-export const getNestedValue = function(obj, pathString) {
-    if (!obj || !pathString) return undefined;
 
-    // 1. Dọn dẹp: Xóa tất cả dấu '?' (vì chúng ta sẽ tự handle an toàn)
-    // 2. Chuẩn hóa mảng: Thay '[0]' thành '.0' để dễ dùng split('.')
-    let cleanPath = pathString
-        .replace(/\?/g, '')
-        .replace(/\[(\d+)\]/g, '.$1');
-
-    // 3. Tách chuỗi thành mảng các key bằng dấu chấm
-    // Ví dụ: "_embedded.wp:featuredmedia.0.source_url" -> ["_embedded", "wp:featuredmedia", "0", "source_url"]
-    const keys = cleanPath.split('.').filter(Boolean);
-
-    // 4. Duyệt qua từng key một cách an toàn (tương tự optional chaining)
-    return keys.reduce((current, key) => {
-        return (current && current[key] !== undefined) ? current[key] : undefined;
-    }, obj);
+const getNestedValue = function(obj: any, pathString: string) {
+  if (!obj || !pathString) return undefined;
+  let cleanPath = pathString.replace(/\?/g, '').replace(/\[(\d+)\]/g, '.$1');
+  const keys = cleanPath.split('.').filter(Boolean);
+  return keys.reduce((current, key) => {
+    return (current && current[key] !== undefined) ? current[key] : undefined;
+  }, obj);
 }
 
-const processedtblPressCache = new Set<tablePress>();
+// 1. Chuyển sang dùng Map lưu Promise để tránh Race Condition toàn diện
+const processedtblPressCache = new Map<string, Promise<any>>();
+
 export async function processAndGetData({
-    tblshort,
-    wcUrl,
-    publicDirBase = 'tablepress',
-    isPreview = false,
-    data_info,
-    lang,
+  tblshort,
+  wcUrl,
+  isPreview = false,
+  data_info,
+  lang,
 }: ProcessOptions): Promise<any> {
+  
+  if (!tblshort) return {};
+
+  // 2. Kiểm tra nếu đang hoặc đã fetch shortcode này rồi thì ăn theo Promise đó luôn
+  if (processedtblPressCache.has(tblshort)) {
+    return processedtblPressCache.get(tblshort)!;
+  }
+
+  // 3. Tạo một Promise bao bọc toàn bộ tiến trình fetch và xử lý data
+  const tableProcessPromise = (async (): Promise<any> => {
     let json: any = {};
+    
     try {
-        const exist = Array.from(processedtblPressCache).find(item => item.shortcode === tblshort);
-        if (exist) {
-            return exist.json;
-        }
+      const response = await fetch(`${wcUrl}/wp-json/tablepress/v1/table/${tblshort}`);
+      if (!response.ok) return json;
+      
+      json = await response.json();
+      const linkAPI = json.meta?.api;
+      const isAPI = linkAPI?.length > 0;
 
-        const response = await fetch(`${wcUrl}/wp-json/tablepress/v1/table/${tblshort}`);
-        if (!response.ok) return json;
-        json = await response.json();
-        const linkAPI =  json.meta?.api;
-        const isAPI = linkAPI?.length > 0 ? true : false;
-        if (json.items) {
-            for (const item of json.items) {
-                let datasAPI:any;
-                for (const id of Object.keys(item)) {
-                    const value = String(item[id]);
-                    if(isAPI && id == 'api-key') {
-                        const responseAPI = await fetch(`${wcUrl}${linkAPI.replaceAll(id, value)}`);
-                        if (response.ok) {
-                            datasAPI = await responseAPI.json();
-                            item['keyAPI'] = value;
-                        }
-                    }
-                    else {
-                        if(id.startsWith('api-') && datasAPI?.length > 0) {
-                            const val = getNestedValue(datasAPI[0], value);
-                            item[id.substring(4)] = val ?? value;
-                        }
+      if (json.items && Array.isArray(json.items)) {
+        for (const item of json.items) {
+          let datasAPI: any = null;
 
-                        if (value.match(imgRegex)) {
-                            const tblPressmatches_imgs = Array.from(value.matchAll(imgRegex));
-                            for (const match of tblPressmatches_imgs) {
-                                const originalSrc = match[1];
-                                // Bỏ qua các ảnh dạng base64
-                                if (originalSrc && !originalSrc.startsWith('data:')) {
-                                    const storedTblPressImage = await processAndStoreImage({
-                                        imageUrl: originalSrc,
-                                        wcUrl: wcUrl,
-                                        publicDirBase: 'images/pages',
-                                        isPreview: isPreview,
-                                    });
-                                    item[id] = storedTblPressImage;
-                                }
-                            }
-                        }
-                        else {
-                            if (typeof item[id] === 'string')
-                                item[id] = replaceAllProperties(item[id], data_info, lang);
-                        }
-                    }
+          // Chạy vòng lặp qua các key của item
+          for (const id of Object.keys(item)) {
+            const value = String(item[id] ?? '');
+
+            // FIX lỗi logic: Check responseAPI.ok thay vì response.ok
+            if (isAPI && id === 'api-key') {
+              const responseAPI = await fetch(`${wcUrl}${linkAPI.replaceAll(id, value)}`);
+              if (responseAPI.ok) { // <-- Đã sửa từ `response.ok` thành `responseAPI.ok`
+                datasAPI = await responseAPI.json();
+                item['keyAPI'] = value;
+              }
+            } else {
+              if (id.startsWith('api-') && datasAPI?.length > 0) {
+                const val = getNestedValue(datasAPI[0], value);
+                item[id.substring(4)] = val ?? value;
+              }
+
+              if (value.match(imgRegex)) {
+                const tblPressmatches_imgs = Array.from(value.matchAll(imgRegex));
+                for (const match of tblPressmatches_imgs) {
+                  const originalSrc = match[1];
+                  if (originalSrc && !originalSrc.startsWith('data:')) {
+                    const storedTblPressImage = await processAndStoreImage({
+                      imageUrl: originalSrc,
+                      wcUrl: wcUrl,
+                      publicDirBase: 'images/pages',
+                      isPreview: isPreview,
+                    });
+                    item[id] = storedTblPressImage;
+                  }
                 }
+              } else {
+                if (typeof item[id] === 'string') {
+                  item[id] = replaceAllProperties(item[id], data_info, lang);
+                }
+              }
             }
+          }
         }
+      }
 
-        processedtblPressCache.add({
-            shortcode: tblshort,
-            json: json
-        });
+      return json;
+
     } catch (err) {
-        throw new Error(`Lỗi xử lý API tablepress ${tblshort}:`, err);
+      // Nếu lỗi thì xóa khỏi cache để lần sau có thể request lại
+      processedtblPressCache.delete(tblshort);
+      throw new Error(`Lỗi xử lý API tablepress ${tblshort}: ${err instanceof Error ? err.message : err}`);
     }
+  })();
 
-    return json;
+  // 4. Set Promise vào Map NGAY LẬP TỨC
+  processedtblPressCache.set(tblshort, tableProcessPromise);
+
+  // Giới hạn cache tối đa 500 table trong RAM (Tùy chọn cho SSR)
+  if (processedtblPressCache.size > 500) {
+    const firstKey = processedtblPressCache.keys().next().value;
+    if (firstKey) processedtblPressCache.delete(firstKey);
+  }
+
+  return tableProcessPromise;
 }

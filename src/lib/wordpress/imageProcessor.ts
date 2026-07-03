@@ -1,5 +1,6 @@
 import { ProcessedImageResult } from '@/entities';
-import {Agent, fetch as undiciFetch} from 'undici';
+import { Agent, fetch as undiciFetch } from 'undici';
+
 interface ProcessImageOptions {
   imageUrl: string;
   alt?: string;
@@ -7,8 +8,11 @@ interface ProcessImageOptions {
   publicDirBase?: string;
   isPreview?: boolean;
 }
+
 const agent = new Agent({ connect: { family: 4, timeout: 30000 } });
-const processedImagesCache = new Set<ProcessedImageResult>();
+
+// Cache lưu Promise để chia sẻ tiến trình xử lý giữa các request đồng thời
+const processedImagesCache = new Map<string, Promise<ProcessedImageResult>>();
 
 export async function processAndStoreImage({
   imageUrl,
@@ -17,108 +21,119 @@ export async function processAndStoreImage({
   publicDirBase = 'images',
   isPreview = false,
 }: ProcessImageOptions): Promise<ProcessedImageResult> {
-  // Định nghĩa các kích thước chiều rộng (width) bạn muốn phân bổ
-  const targetWidths = [20, 40, 100, 400, 600, 700, 800, 1200];
-  // Kết quả mặc định dự phòng nếu gặp lỗi hoặc chạy ở Client
-  const defaultResult: ProcessedImageResult = { src: imageUrl, alt: alt || '', srcSet: '', srcSets: {} };
-  if (!imageUrl) return { src: '', srcSet: '', srcSets: {} };
   
-  const exist = Array.from(processedImagesCache).find(item => item.src_key === imageUrl);
-   if (exist) {
-    return exist;
+  if (!imageUrl) return { src: '', srcSet: '', srcSets: {} };
+
+  // 1. Nếu đã hoặc ĐANG xử lý ảnh này, trả về Promise đó ngay lập tức
+  if (processedImagesCache.has(imageUrl)) {
+    return processedImagesCache.get(imageUrl)!;
   }
 
-  if (isPreview) { 
-    defaultResult.src = wcUrl + imageUrl;
-    defaultResult.srcSet = wcUrl + imageUrl;
-    for (const width of targetWidths) {
-      defaultResult.srcSets[width.toString()] = wcUrl + imageUrl;
-    }
-    return defaultResult;
-  }
+  // 2. Tạo một Promise bao bọc toàn bộ quá trình xử lý
+  const imageProcessPromise = (async (): Promise<ProcessedImageResult> => {
+    const targetWidths = [20, 40, 100, 400, 600, 700, 800, 1200];
+    const defaultResult: ProcessedImageResult = { src: imageUrl, alt: alt || '', srcSet: '', srcSets: {} };
 
-  if (import.meta.env.SSR || typeof window === 'undefined') {
-    const { writeFileSync, mkdirSync, existsSync } = await import('node:fs');
-    const path = await import('node:path');
-    const sharp = (await import('sharp')).default;
-
-    let absoluteImageUrl = imageUrl;
-    if (absoluteImageUrl.startsWith('/') && wcUrl) {
-      absoluteImageUrl = `${wcUrl.replace(/\/$/, '')}${absoluteImageUrl}`;
+    if (isPreview) {
+      const fullUrl = wcUrl ? `${wcUrl.replace(/\/$/, '')}/${imageUrl.replace(/^\//, '')}` : imageUrl;
+      defaultResult.src = fullUrl;
+      defaultResult.srcSet = fullUrl;
+      for (const width of targetWidths) {
+        defaultResult.srcSets[width.toString()] = fullUrl;
+      }
+      return defaultResult;
     }
 
-    const originalFilename = absoluteImageUrl.split('/').pop()?.split('?')[0];
-    if (!originalFilename) return defaultResult;
+    if (import.meta.env.SSR || typeof window === 'undefined') {
+      const { writeFileSync, mkdirSync, existsSync } = await import('node:fs');
+      const path = await import('node:path');
+      const sharp = (await import('sharp')).default;
 
-    const ext = path.extname(originalFilename);
-    const nameWithoutExt = path.basename(originalFilename, ext);
-
-    const publicDir = path.resolve('public', publicDirBase);
-
-    try {
-      if (!existsSync(publicDir)) {
-        mkdirSync(publicDir, { recursive: true });
+      let absoluteImageUrl = imageUrl;
+      if (absoluteImageUrl.startsWith('/') && wcUrl) {
+        absoluteImageUrl = `${wcUrl.replace(/\/$/, '')}${absoluteImageUrl}`;
       }
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // Timeout 10s
-      const res = await undiciFetch(absoluteImageUrl, { 
-        signal: controller.signal,
-        headers: { 'User-Agent': 'Astro-Image-Processor/1.0' },
-        dispatcher: agent,
-      });
-      clearTimeout(timeoutId);
-      if (res.ok) {
+      const originalFilename = absoluteImageUrl.split('/').pop()?.split('?')[0];
+      if (!originalFilename) return defaultResult;
+
+      const ext = path.extname(originalFilename);
+      const nameWithoutExt = path.basename(originalFilename, ext);
+      const publicDir = path.resolve('public', publicDirBase);
+
+      try {
+        if (!existsSync(publicDir)) {
+          mkdirSync(publicDir, { recursive: true });
+        }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // Timeout 60s như bạn set bên dưới
+        
+        const res = await undiciFetch(absoluteImageUrl, {
+          signal: controller.signal,
+          headers: { 'User-Agent': 'Astro-Image-Processor/1.0' },
+          dispatcher: agent,
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) return defaultResult;
+
         const buffer = await res.arrayBuffer();
         const nodeBuffer = Buffer.from(buffer);
 
-        // 1. Lưu ảnh gốc trước để dự phòng
+        // Lưu ảnh gốc
         const originalLocalPath = path.join(publicDir, originalFilename);
         if (!existsSync(originalLocalPath)) {
           writeFileSync(originalLocalPath, nodeBuffer);
         }
 
-        // 2. Lặp qua danh sách kích thước để cắt ảnh bằng Sharp
-        let srcSetPart: string[] = [];
-        let srcSetParts: any = {};
+        // Xử lý resize đa kích thước
+        const srcSetPart: string[] = [];
+        const srcSetParts: Record<string, string> = {};
+
         for (const width of targetWidths) {
-          // Tạo tên file mới theo định dạng: ten-anh-400w.webp
           const resizedFilename = `${nameWithoutExt}-${width}w.webp`;
           const resizedLocalPath = path.join(publicDir, resizedFilename);
           const resizedPublicUrl = `/${publicDirBase}/${resizedFilename}`;
 
           if (!existsSync(resizedLocalPath)) {
-            // Dùng sharp để vừa resize chiều rộng, vừa chuyển sang WebP
             await sharp(nodeBuffer)
-              .resize({ width: width, withoutEnlargement: true }) // withoutEnlargement giúp ảnh nhỏ không bị phóng đại vỡ hình
+              .resize({ width: width, withoutEnlargement: true })
               .webp({ quality: 80 })
               .toFile(resizedLocalPath);
           }
 
           srcSetPart.push(`${resizedPublicUrl} ${width}w`);
-          if(!srcSetParts)
-            srcSetParts = {[width.toString()]:resizedPublicUrl};
-          else
-            srcSetParts = { ...srcSetParts, [width.toString()]:resizedPublicUrl};
-          
+          srcSetParts[width.toString()] = resizedPublicUrl;
         }
 
-        // Bản mặc định (src) sẽ lấy bản lớn nhất từ srcSets (thường là 1200w)
         const defaultSrc = `/${publicDirBase}/${originalFilename}`;
-        var item = {
-          src_key: imageUrl,
+        return {
           src: defaultSrc,
           alt: alt || '',
           srcSet: srcSetPart.join(', '),
           srcSets: srcSetParts,
         };
-        processedImagesCache.add(item);
-        return item;
+
+      } catch (err) {
+        // Nếu lỗi xảy ra, XÓA Promise lỗi khỏi cache để request sau có thể thử lại
+        processedImagesCache.delete(imageUrl);
+        throw new Error(`Lỗi Server-side xử lý ảnh đa kích thước: ${err instanceof Error ? err.message : err}`);
       }
-    } catch (err) {
-      throw new Error(`Lỗi Server-side xử lý ảnh đa kích thước:`, err);
     }
+
+    return defaultResult;
+  })();
+
+  // 3. Đưa Promise vào Map NGAY LẬP TỨC để các request đồng thời khác ăn theo
+  processedImagesCache.set(imageUrl, imageProcessPromise);
+
+  // Giới hạn bộ nhớ cache (Tránh tràn RAM khi chạy SSR lâu dài)
+  if (processedImagesCache.size > 1000) {
+    const firstKey = processedImagesCache.keys().next().value;
+    if (firstKey) processedImagesCache.delete(firstKey);
   }
 
-  return defaultResult;
+  // 4. Chờ và trả ra kết quả cuối cùng
+  return imageProcessPromise;
 }

@@ -7,39 +7,6 @@ import { AppRouterProps } from '@/entities';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import { motion } from 'framer-motion';
 import { HelmetProvider } from 'react-helmet-async';
-// Lazy load các trang để giảm kích thước bundle ban đầu
-const components = import.meta.glob<{ default: any }>('../components/pages/*.tsx', { eager: false });
-export const modulePages = {};
-Object.entries(components).forEach(([path, importFn]) => {
-    const fileName = path.split('/').pop()?.replace('.tsx', '');
-    
-    if (fileName) {
-        // Sử dụng React.lazy để load component khi cần
-        const lazyComponent = lazy(() => 
-            (importFn as () => Promise<any>)().then((mod) => ({ default: mod.default }))
-        );
-        const key = fileName.toLowerCase();
-        modulePages[fileName] = lazyComponent;
-    }
-});
-// const modulePages = {
-//   HomePage: lazy(() => import('@/components/pages/HomePage')),
-//   AboutPage: lazy(() => import('@/components/pages/AboutPage')),
-//   ContactPage: lazy(() => import('@/components/pages/ContactPage')),
-//   DomainPage: lazy(() => import('@/components/pages/DomainPage')),
-//   HostingPage: lazy(() => import('@/components/pages/HostingPage')),
-//   EmailPage: lazy(() => import('@/components/pages/EmailPage')),
-//   ServerPage: lazy(() => import('@/components/pages/ServerPage')),
-//   SSLPage: lazy(() => import('@/components/pages/SSLPage')),
-//   ComboPage: lazy(() => import('@/components/pages/ComboPage')),
-//   WebsitePage: lazy(() => import('@/components/pages/WebsitePage')),
-//   ServicesPage: lazy(() => import('@/components/pages/ServicesPage')),
-//   PartnersPage: lazy(() => import('@/components/pages/PartnersPage')),
-//   SupportPage: lazy(() => import('@/components/pages/SupportPage')),
-//   PromotionPage: lazy(() => import('@/components/pages/PromotionPage')),
-//   MemberPage: lazy(() => import('@/components/pages/MemberPage')),
-//   PublicPage: lazy(() => import('@/components/pages/PublicPage'))
-// };
 
 // Hiệu ứng loading trang chuyên nghiệp hơn
 const PageLoader = () => (
@@ -53,7 +20,7 @@ const PageLoader = () => (
         Synchronizing Data...
       </span>
       <div className="w-32 h-[1px] bg-white/10 relative overflow-hidden">
-        <motion.div 
+        <motion.div
           className="absolute inset-0 bg-primary"
           initial={{ x: "-100%" }}
           animate={{ x: "100%" }}
@@ -67,25 +34,9 @@ const PageLoader = () => (
 // Layout component that includes ScrollToTop
 function LayoutWithLanguage(props: AppRouterProps) {
   const location = useLocation();
-  const navigate = useNavigate();
   useEffect(() => {
     window.dispatchEvent(new Event('app:nav-end'));
   }, [location.pathname]);
-
-  useEffect(() => {
-    // Lắng nghe sự kiện chuyển trang từ Footer phát ra
-    const handleAstroNavigation = (e: Event) => {
-      const customEvent = e as CustomEvent<{ url: string }>;
-      const targetUrl = customEvent.detail.url;
-      
-      if (targetUrl) {
-        navigate(targetUrl); // Kích hoạt router chuyển trang mượt mà không load lại trang!
-      }
-    };
-
-    window.addEventListener('astro-navigate', handleAstroNavigation);
-    return () => window.removeEventListener('astro-navigate', handleAstroNavigation);
-  }, [navigate]);
 
   return (
     <>
@@ -102,10 +53,10 @@ function LayoutWithLanguage(props: AppRouterProps) {
 
 function LanguageGuard({ children, ...props }: { children: React.ReactNode } & AppRouterProps) {
   let { lang } = useParams<{ lang: string }>();
-  if(!lang) {
+  if (!lang) {
     const pathParts = window.location.pathname.split(props.basename);
     lang = pathParts[1];
-    if(lang.startsWith('/')) lang = lang.substring(1);
+    if (lang.startsWith('/')) lang = lang.substring(1);
     lang = props.pages?.filter((a: any) => {
       return (a.slug ?? '') === (lang ?? '');
     })[0]?.lang;
@@ -127,23 +78,32 @@ const getRouterConfig = (props: AppRouterProps) => {
     //   element: <Navigate to="/trang-chu" replace />, // Redirect root to default language
     // }
   ];
-  props.pages.map(page => {
+
+  const pageModules = import.meta.glob('@/components/pages/*.tsx');
+  props.pages.forEach((page) => {
+    const modulePath = `/src/components/pages/${page.action}.tsx`; // Sửa lại path tuyệt đối theo dự án của bạn
+    const importFunc = pageModules[modulePath];
+    if (!importFunc) {
+      console.error(`Không tìm thấy file component cho action: ${page.action}`);
+      return;
+    }
+    const PageComponent = lazy(importFunc as () => Promise<any>);
     //if(!page.slug) return;
-    let item = { 
+    let item = {
       index: false,
-      path: page.slug, 
+      path: page.slug,
       element: (() => {
-      const PageComponent = modulePages[page.action];
-      return (
-        <LanguageGuard {...props}>
-          <PageComponent {...props} />
-        </LanguageGuard>
-      );
-    })() };
+        return (
+          <LanguageGuard {...props}>
+            <PageComponent {...props} />
+          </LanguageGuard>
+        );
+      })()
+    };
     children.push(item);
   });
 
-  if(props.status == 404) {
+  if (props.status == 404) {
     const ErrorPage404 = lazy(() => import('@/integrations/errorHandlers/ErrorPage404'));
     children.push({
       index: false,
@@ -151,7 +111,7 @@ const getRouterConfig = (props: AppRouterProps) => {
       element: <ErrorPage404 {...props} />
     });
   }
-  else if(props.status == 500) {
+  else if (props.status == 500) {
     const ErrorPage500 = lazy(() => import('@/integrations/errorHandlers/ErrorPage500'));
     children.push({
       index: false,
@@ -162,7 +122,7 @@ const getRouterConfig = (props: AppRouterProps) => {
 
   return ([
     { // Route configuration
-      path: "/", 
+      path: "/",
       element: <LayoutWithLanguage {...props} />,
       children: children
     },
@@ -181,7 +141,7 @@ export default function AppRouter(props: AppRouterProps) {
   }, [props]); // `props` ở đây là dữ liệu tĩnh từ Astro, nên `useEffect` chỉ chạy 1 lần
 
   if (!router) {
-    return <PageLoader/>;
+    return <PageLoader />;
   }
 
   return (

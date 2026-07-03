@@ -7,7 +7,7 @@ import { useLanguage, returnCurrentPage } from '@/lib/LanguageContext';
 
 import { getTranslation } from '@/lib/i18n';
 import {FocusTrap} from 'focus-trap-react';
-import { extractHTML } from '@/lib/components';
+import { useDynamicHtml } from '@/hooks/useDynamicHtml';
 // Kiểm tra xem User Agent có chứa các từ khóa của thiết bị di động không
 
 
@@ -16,7 +16,6 @@ export default function CheckDomainPage(props: AppRouterProps) {
   
   const { language, setLanguage } = useLanguage();
   const page = returnCurrentPage(props, language);
-  console.log(`page.contents`, page.content);
   const inputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const closePopup = () => {
@@ -85,6 +84,7 @@ export default function CheckDomainPage(props: AppRouterProps) {
     }
   };
 
+  const { content, isLoading } = useDynamicHtml(page, props, { handleWhois, inputRef });
   return (
     <div className="min-h-screen bg-background font-paragraph selection:bg-primary/20 selection:text-primary">
       <Header {...props} />
@@ -92,7 +92,7 @@ export default function CheckDomainPage(props: AppRouterProps) {
       <main id="main-content">
 
         {/* Content Section */}
-        {extractHTML(page, props, { handleWhois, inputRef })}
+        {isLoading ? <div>Loading...</div> : content}
 
         <FooterSection {...props} />
 
@@ -129,6 +129,7 @@ export default function CheckDomainPage(props: AppRouterProps) {
           </FocusTrap>
         )}
       </main>
+      <Footer {...props} />
     </div>
   );
 }
