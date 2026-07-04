@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, X } from 'lucide-react';
+import { DynamicIcon } from '@/lib/effects/icons';
 import Header from '@/components/Header';
 import FooterSection from '@/components/FooterSection';
 import { AppRouterProps } from '@/entities';
@@ -21,7 +21,7 @@ export default function AboutPage(props: AppRouterProps) {
 
   const nextImage = () => setCurrentIndex((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-
+  
   useEffect(() => {
     if (contentRef.current && page?.content) {
       // Tìm tất cả ảnh có class openBox trong nội dung động
@@ -108,7 +108,7 @@ export default function AboutPage(props: AppRouterProps) {
               className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-[1010]"
               onClick={() => setIsOpen(false)}
             >
-              <X size={32} />
+              <DynamicIcon name='X' size={32} />
             </button>
 
             {images.length > 1 && (
@@ -117,13 +117,13 @@ export default function AboutPage(props: AppRouterProps) {
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors bg-white/10 p-2 rounded-full z-[1010]"
                   onClick={(e) => { e.stopPropagation(); prevImage(); }}
                 >
-                  <ChevronLeft size={32} />
+                  <DynamicIcon name='ChevronLeft' size={32} />
                 </button>
                 <button
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors bg-white/10 p-2 rounded-full z-[1010]"
                   onClick={(e) => { e.stopPropagation(); nextImage(); }}
                 >
-                  <ChevronRight size={32} />
+                  <DynamicIcon name='ChevronRight' size={32} />
                 </button>
               </>
             )}

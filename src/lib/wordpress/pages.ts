@@ -1,8 +1,8 @@
-import { WPInfo, Pages } from '@/entities';
+import { WPInfo } from '@/entities/WPInfo';
+import { Pages } from '@/entities/Pages';
 import { processAndStoreImage } from './imageProcessor';
-import { replaceAllProperties } from '../i18n';
-import { getAvas } from '@/lib/avas_env';
-import { processAndGetData, imgRegex } from './tablePressProcessor';
+import { replaceAllProperties } from '../i18n/replaceAllProperties';
+import { processAndGetData, imgRegex, removeTargetImgRegex } from './tablePressProcessor';
 
 export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = false) {
   if (!WC_URL) {
@@ -89,6 +89,7 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
 
     // Xử lý trích xuất và lưu các ảnh nhúng trong nội dung HTML (Rich Text)
     if (p.content && (import.meta.env.SSR || typeof window === 'undefined')) {
+      p.content = p.content.replace(removeTargetImgRegex, '');
       const matches = Array.from(p.content.matchAll(imgRegex));
 
       for (const match of matches) {

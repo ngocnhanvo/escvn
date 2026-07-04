@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { AppRouterProps, Pages, tablePress } from '@/entities';
-import { Search } from '@/lib/effects';
-import { formatCurrencyValue, getCurrencyByKey } from '@/lib/stringUtils';
-import { handlePageLink } from '../PageTransition';
+import { useState, useRef } from 'react';
+import { AppRouterProps } from '@/entities/AppRouterProps';
+import { Pages } from '@/entities/Pages';
+import { formatCurrencyValue } from '@/lib/stringUtils/formatCurrencyValue';
+import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
+import { handlePageLink } from '../PageTransition/handlePageLink';
 import { useNavigate } from 'react-router-dom';
-import { scale } from 'framer-motion';
+import Search from 'lucide-react/dist/esm/icons/search';
 interface home_00 {
     page: Pages;
     data: any;

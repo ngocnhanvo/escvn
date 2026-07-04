@@ -1,14 +1,17 @@
-import { Pages, tablePress } from '@/entities';
-import { motion, fadeInUp, IconMap, ChevronRight, CheckCircle, HelpCircle } from '@/lib/effects';
-import { formatCurrencyValue, getCurrencyByKey } from '@/lib/stringUtils';
+import { Pages } from '@/entities/Pages';
+import { motion, fadeInUp } from '@/lib/effects/motion';
+import { formatCurrencyValue } from '@/lib/stringUtils/formatCurrencyValue';
+import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
+import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
 interface home_02 {
     page: Pages;
-    data: any; 
+    data: any;
 }
 export default function Home_02(props: home_02) {
     let language = props.page.lang;
     let data = props.data;
-    if(!data)
+    if (!data)
         return null;
     let currency = getCurrencyByKey('vi');
 
@@ -17,21 +20,17 @@ export default function Home_02(props: home_02) {
             {data.items.map((item, index) => {
                 let tags = item?.tags?.trim().split('\n').filter(i => i.trim() !== '');
                 let list = item?.list?.trim().split('\n').filter(i => i.trim() !== '');
-                const IconComponent = IconMap[item?.icon] || null;
                 if (index % 2 == 0) {
                     return !item ? null : (
                         <section className="bg-surface-container-low py-16 [content-visibility:auto] [contain-intrinsic-size:0_500px]">
-                            <div className="max-w-container-max mx-auto px-margin-desktop grid-cols-1 gap-16 items-center">
-                                <motion.div
-                                    className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-                                >
-                                    <motion.div
-                                        initial="hidden"
-                                        whileInView="visible"
-                                        viewport={{ once: true, margin: "-100px" }}
-                                        variants={fadeInUp}
-                                        className="space-y-6"
-                                    >
+                            <motion.div
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true, margin: "-100px" }}
+                                variants={fadeInUp}
+                                className="max-w-container-max mx-auto px-margin-desktop grid-cols-1 gap-16 items-center">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                                    <div className="space-y-6">
                                         {tags.length < 2 ? null : (
                                             <div className="flex flex-wrap gap-4 mb-4">
                                                 <span className="bg-blue-100 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase">
@@ -43,9 +42,12 @@ export default function Home_02(props: home_02) {
                                             </div>
                                         )}
 
-                                        {IconComponent == null ? null : (
+                                        {item?.icon && (
                                             <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-primary">
-                                                <IconComponent className="w-8 h-8" />
+                                                <span
+                                                    className="w-8 h-8 [&>svg]:!w-full [&>svg]:!h-full" // Bạn vẫn có thể ăn các class màu sắc của Tailwind ở đây
+                                                    dangerouslySetInnerHTML={{ __html: item.icon }}
+                                                />
                                             </div>
                                         )}
                                         <h2 className="font-headline-lg text-[32px] text-primary font-bold">
@@ -75,7 +77,7 @@ export default function Home_02(props: home_02) {
                                         <button className="bg-primary text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-primary/90 transition-colors shadow-md">
                                             {item.button}
                                         </button>
-                                    </motion.div>
+                                    </div>
                                     <div className="flex flex-col gap-8">
                                         <div className="w-full overflow-hidden rounded-2xl shadow-lg">
                                             <picture
@@ -93,14 +95,14 @@ export default function Home_02(props: home_02) {
                                             </picture>
                                         </div>
                                     </div>
-                                </motion.div>
-                            </div>
+                                </div>
+                            </motion.div>
                         </section>
                     )
                 }
                 else {
                     return !item ? null : (
-                        <section className="py-section-gap max-w-container-max mx-auto px-margin-desktop space-y-24 [content-visibility:auto] [contain-intrinsic-size:0_500px]">
+                        <section className="py-section-gap max-w-container-max mx-auto px-margin-desktop space-y-24">
                             <motion.div
                                 initial="hidden"
                                 whileInView="visible"
@@ -123,9 +125,12 @@ export default function Home_02(props: home_02) {
                                     </picture>
                                 </div>
                                 <div className="space-y-6">
-                                    {IconComponent == null ? null : (
+                                    {item?.icon && (
                                         <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-primary">
-                                            <IconComponent className="w-8 h-8" />
+                                            <span
+                                                className="w-8 h-8 [&>svg]:!w-full [&>svg]:!h-full"
+                                                dangerouslySetInnerHTML={{ __html: item.icon }}
+                                            />
                                         </div>
                                     )}
 

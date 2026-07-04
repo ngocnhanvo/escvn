@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { AppRouterProps, Pages, Products, tablePress } from '@/entities';
-import { formatCurrency, getCurrencyByKey } from '@/lib/stringUtils';
+import { AppRouterProps } from '@/entities/AppRouterProps';
+import { Pages } from '@/entities/Pages';
+import { Products } from '@/entities/Products';
+import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
+import { formatCurrency } from '@/lib/stringUtils/formatCurrency';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { getTranslation } from '@/lib/i18n';
-import { Search } from '@/lib/effects';
-import { useCart } from '@/integrations';
+import { getTranslation } from '@/lib/i18n/getTranslation';
+import { useCart } from '@/integrations/cms/cms-ecom/cart/useCartStore';
+import Search from 'lucide-react/dist/esm/icons/search';
 interface Checkdomain_00 {
     page: Pages;
     data: any;

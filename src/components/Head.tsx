@@ -1,4 +1,4 @@
-import { WPInfo } from "@/entities";
+import { WPInfo } from "@/entities/WPInfo";
 import interFont1 from "public/fonts/quicksand/v37/6xKtdSZaM9iE8KbpRA_hJFQNYuDyP7bh.woff2";
 import interFont2 from "public/fonts/quicksand/v37/6xKtdSZaM9iE8KbpRA_hJVQNYuDyP7bh.woff2";
 import interFont3 from "public/fonts/quicksand/v37/6xKtdSZaM9iE8KbpRA_hK1QNYuDyPw.woff2";
@@ -43,7 +43,6 @@ export const Head = (props: HeadProps) => {
         imageSrcSet={props.data_info?.mascot[props.lang]?.srcSet}
         /* Báo cho trình duyệt biết ở mỗi kích thước màn hình, ảnh này sẽ hiển thị rộng bao nhiêu */
         imageSizes="586px"
-        crossOrigin="anonymous" 
       />
       <link
       rel="preload"

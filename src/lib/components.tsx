@@ -1,5 +1,6 @@
 //components.tsx
-import { AppRouterProps, Pages } from '@/entities';
+import { AppRouterProps } from '@/entities/AppRouterProps';
+import { Pages } from '@/entities/Pages';
 import parse from 'html-react-parser';
 import React from 'react';
 const capitalizeFirstLetter = (str: string) => {

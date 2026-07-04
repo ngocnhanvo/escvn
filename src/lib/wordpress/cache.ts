@@ -1,11 +1,13 @@
 // src/lib/wordpress/cache.ts
-import { Pages, tablePress, WPInfo } from "@/entities";
-import { mergeJSON, mergeJSONReverse, replacePlaceholders } from "../stringUtils";
+import { Pages } from "@/entities/Pages";
+import { WPInfo } from "@/entities/WPInfo";
+import { mergeJSON,  } from "../stringUtils/mergeJSON";
+import { mergeJSONReverse } from "../stringUtils/mergeJSONReverse";
 import { getInfo } from "./info";
 import { getPages } from "./pages";
 import { getTablePress } from "./tablepress_pub";
 import menu_json from "@/data/menu.json";
-import { replaceAllProperties } from "../i18n";
+import { replaceAllProperties } from "../i18n/replaceAllProperties";
 import { processAndGetData } from "./tablePressProcessor";
 import { getAvas } from "../avas_env";
 

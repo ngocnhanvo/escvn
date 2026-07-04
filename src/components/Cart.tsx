@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useCart, BaseCrudService } from '@/integrations';
-import { X, Plus, Minus, ShoppingBag, CreditCard, Truck, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { useCart } from '@/integrations/cms/cms-ecom/cart/useCartStore';
 import { Image } from '@/components/ui/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AppRouterProps, Products } from '@/entities';
-import { formatCurrency, removeUnicode } from '@/lib/stringUtils';
+import { AppRouterProps } from '@/entities/AppRouterProps';
+import { formatCurrency } from '@/lib/stringUtils/formatCurrency';
 import { useLanguage } from '@/lib/LanguageContext';
-import { getTranslation } from '@/lib/i18n';
+import { getTranslation } from '@/lib/i18n/getTranslation';
+import ShoppingBag from 'lucide-react/dist/esm/icons/shopping-bag';
+import X from 'lucide-react/dist/esm/icons/shopping-bag';
+import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
+import Truck from 'lucide-react/dist/esm/icons/truck';
+import CreditCard from 'lucide-react/dist/esm/icons/credit-card';
+import Minus from 'lucide-react/dist/esm/icons/minus';
+import Plus from 'lucide-react/dist/esm/icons/plus';
 
 export default function Cart(props: AppRouterProps) {
   const { language } = useLanguage();
@@ -330,3 +336,5 @@ export default function Cart(props: AppRouterProps) {
     </AnimatePresence>
   );
 }
+
+

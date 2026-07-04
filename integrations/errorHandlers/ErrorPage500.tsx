@@ -1,6 +1,5 @@
-import { useRouteError, isRouteErrorResponse } from 'react-router-dom';
-import NotFoundPage from '@/integrations/errorHandlers/ErrorPage404';
-import { AppRouterProps } from '@/entities';
+import { useRouteError } from 'react-router-dom';
+import { AppRouterProps } from '@/entities/AppRouterProps';
 
 export default function ErrorPage500(props: AppRouterProps) {
   const error = useRouteError();

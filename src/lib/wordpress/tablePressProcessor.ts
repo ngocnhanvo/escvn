@@ -1,6 +1,23 @@
-import { Pages, tablePress, WPInfo } from '@/entities';
+import { WPInfo } from '@/entities/WPInfo';
 import { processAndStoreImage } from './imageProcessor';
-import { replaceAllProperties } from '../i18n';
+import { replaceAllProperties } from '../i18n/replaceAllProperties';
+import dynamicIconImports from "lucide-react/dynamicIconImports";
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+
+const lucideTags = Object.keys(dynamicIconImports);
+const kebabIconMap = new Map<string, string>();
+
+lucideTags.forEach((tag) => {
+  const cleanKey = tag.replace(/[-_\s]/g, "").toLowerCase();
+  kebabIconMap.set(cleanKey, tag);
+});
+
+const fixLucideIconName = function (userInput: string): string | null {
+  if (!userInput) return null;
+  const cleanInput = userInput.replace(/[-_\s]/g, "").toLowerCase();
+  return kebabIconMap.get(cleanInput) || null;
+};
 
 interface ProcessOptions {
   tblshort: string;
@@ -11,9 +28,10 @@ interface ProcessOptions {
   lang: string;
 }
 
+export const removeTargetImgRegex = new RegExp(`<img[^>]*class="[^"]*tablepress-attached-image[^"]*"[^>]*>`, 'g');
 export const imgRegex = /<img[^>]+src="([^">]+)"/g;
 
-const getNestedValue = function(obj: any, pathString: string) {
+const getNestedValue = function (obj: any, pathString: string) {
   if (!obj || !pathString) return undefined;
   let cleanPath = pathString.replace(/\?/g, '').replace(/\[(\d+)\]/g, '.$1');
   const keys = cleanPath.split('.').filter(Boolean);
@@ -24,7 +42,7 @@ const getNestedValue = function(obj: any, pathString: string) {
 
 // 1. Chuyển sang dùng Map lưu Promise để tránh Race Condition toàn diện
 const processedtblPressCache = new Map<string, Promise<any>>();
-
+const iconCache = new Map<string, string>();
 export async function processAndGetData({
   tblshort,
   wcUrl,
@@ -32,7 +50,7 @@ export async function processAndGetData({
   data_info,
   lang,
 }: ProcessOptions): Promise<any> {
-  
+
   if (!tblshort) return {};
 
   // 2. Kiểm tra nếu đang hoặc đã fetch shortcode này rồi thì ăn theo Promise đó luôn
@@ -43,11 +61,11 @@ export async function processAndGetData({
   // 3. Tạo một Promise bao bọc toàn bộ tiến trình fetch và xử lý data
   const tableProcessPromise = (async (): Promise<any> => {
     let json: any = {};
-    
+
     try {
       const response = await fetch(`${wcUrl}/wp-json/tablepress/v1/table/${tblshort}`);
       if (!response.ok) return json;
-      
+
       json = await response.json();
       const linkAPI = json.meta?.api;
       const isAPI = linkAPI?.length > 0;
@@ -71,6 +89,43 @@ export async function processAndGetData({
               if (id.startsWith('api-') && datasAPI?.length > 0) {
                 const val = getNestedValue(datasAPI[0], value);
                 item[id.substring(4)] = val ?? value;
+              }
+
+              if (id.startsWith('lucide-')) {
+                const key = id.substring(7);
+
+                if (!item[key] || !item[key][value]) {
+                  if (iconCache.has(value)) {
+                    item[key] = iconCache.get(value)!;
+                  } else {
+                    // Tìm ra tên file chuẩn (ví dụ: "circle-2")
+                    const kebabName = fixLucideIconName(value);
+
+                    if (kebabName) {
+                      try {
+                        // Import chính xác file .js bằng tên kebab-case đã được sửa
+                        const module = await import(
+                          `lucide-react/dist/esm/icons/${kebabName}.js`
+                        );
+                        const IconComponent = module.default;
+
+                        // Render sang SVG String gửi xuống Client
+                        const svgString = ReactDOMServer.renderToString(
+                          React.createElement(IconComponent, { size: 24 })
+                        );
+
+                        item[key] = svgString;
+                        iconCache.set(value, svgString);
+                      } catch (error) {
+                        console.error(`Không thể import file: ${kebabName}.js`, error);
+                        item[key] = '';
+                      }
+                    } else {
+                      console.warn(`Icon nhập từ CMS không tồn tại: "${value}"`);
+                      item[key] = '';
+                    }
+                  }
+                }
               }
 
               if (value.match(imgRegex)) {
