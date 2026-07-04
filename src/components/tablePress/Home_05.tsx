@@ -1,6 +1,8 @@
-import { Pages, tablePress } from '@/entities';
-import { motion, fadeInUp, IconMap, ChevronRight, ChevronLeft, HelpCircle } from '@/lib/effects';
-import { formatCurrencyValue, getCurrencyByKey } from '@/lib/stringUtils';
+import { Pages } from '@/entities/Pages';
+import { motion, fadeInUp } from '@/lib/effects/motion';
+import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
+import ChevronLeft from 'lucide-react/dist/esm/icons/chevron-left';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
 interface home_05 {
     page: Pages;
     data: any;

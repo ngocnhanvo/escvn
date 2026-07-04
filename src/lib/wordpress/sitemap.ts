@@ -1,5 +1,5 @@
-import { WPInfo, Pages } from '@/entities';
-
+import { WPInfo } from '@/entities/WPInfo';
+import { Pages } from '@/entities/Pages';
 /**
  * Tự động tạo file sitemap.xml dựa trên dữ liệu từ WordPress
  * Hàm này nên được gọi trong quá trình build (ví dụ: trong file trang chủ hoặc script build)

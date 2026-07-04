@@ -2,15 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FooterSection from '@/components/FooterSection';
-import { AppRouterProps } from '@/entities';
-import { useLanguage, returnCurrentPage } from '@/lib/LanguageContext';
+import { AppRouterProps } from '@/entities/AppRouterProps';
+import { useLanguage } from '@/lib/LanguageContext';
 
-import { getTranslation } from '@/lib/i18n';
+import { getTranslation } from '@/lib/i18n/getTranslation';
 import {FocusTrap} from 'focus-trap-react';
-import { useDynamicHtml } from '@/hooks/useDynamicHtml';
+import { extractHTML } from '@/lib/components';
+import { useMemo } from 'react';
+import { returnCurrentPage } from '@/lib/LanguageContext/returnCurrentPage';
+
 // Kiểm tra xem User Agent có chứa các từ khóa của thiết bị di động không
-
-
 
 export default function CheckDomainPage(props: AppRouterProps) {
   
@@ -83,8 +84,10 @@ export default function CheckDomainPage(props: AppRouterProps) {
       setWhoisData({ isOpen: true, content: 'Lỗi khi tải dữ liệu', loading: false });
     }
   };
-
-  const { content, isLoading } = useDynamicHtml(page, props, { handleWhois, inputRef });
+  
+  const content = useMemo(() => {
+    return extractHTML(page, props, { handleWhois, inputRef });
+  }, [page]);
   return (
     <div className="min-h-screen bg-background font-paragraph selection:bg-primary/20 selection:text-primary">
       <Header {...props} />
@@ -92,7 +95,7 @@ export default function CheckDomainPage(props: AppRouterProps) {
       <main id="main-content">
 
         {/* Content Section */}
-        {isLoading ? <div>Loading...</div> : content}
+        {content}
 
         <FooterSection {...props} />
 

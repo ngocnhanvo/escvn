@@ -1,8 +1,9 @@
-import { MapPin, Map } from 'lucide-react';
-import { AppRouterProps } from '@/entities';
-import { returnCurrentPage, useLanguage } from '@/lib/LanguageContext';
+import { AppRouterProps } from '@/entities/AppRouterProps';
+import { useLanguage } from '@/lib/LanguageContext';
+import { returnCurrentPage } from '@/lib/LanguageContext/returnCurrentPage';
 import { motion } from 'framer-motion';
-
+import Map from 'lucide-react/dist/esm/icons/award';
+import MapPin from 'lucide-react/dist/esm/icons/map-pin';
 export default function FooterSection(props: AppRouterProps) {
   const { language } = useLanguage();
   const page = returnCurrentPage(props, language);
@@ -25,7 +26,7 @@ export default function FooterSection(props: AppRouterProps) {
         }}
         className="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-12"
       >
-        <motion.div className="space-y-4">
+        <div className="space-y-4">
           <picture className="relative z-10 w-full h-full">
             <source
               srcSet={image.srcSet} type="image/webp"
@@ -41,9 +42,9 @@ export default function FooterSection(props: AppRouterProps) {
           <p className="text-sm text-on-surface-variant leading-relaxed">
             {label}
           </p>
-        </motion.div>
+        </div>
         {dataMain.items.map(item => (
-          <motion.div className="space-y-4">
+          <div className="space-y-4">
             <h3 className="font-bold text-primary text-lg flex items-center gap-2">
               <MapPin className="text-signal-red w-5 h-5" />
               {item.office}
@@ -62,7 +63,7 @@ export default function FooterSection(props: AppRouterProps) {
             >
               <Map size={16} /> {item.btn}
             </a>
-          </motion.div>
+          </div>
         ))}
       </motion.div>
     </section>

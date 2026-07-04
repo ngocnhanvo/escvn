@@ -1,35 +1,11 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { createBrowserRouter, RouterProvider, Navigate, Outlet, useParams, useLocation, useNavigate, ScrollRestoration } from 'react-router-dom';
-
-
-import { Loader2 } from 'lucide-react';
-import { AppRouterProps } from '@/entities';
+import React, { useState, useEffect, lazy, Suspense, useMemo } from 'react';
+import { createBrowserRouter, RouterProvider, Outlet, useParams, useLocation, ScrollRestoration } from 'react-router-dom';
+import { AppRouterProps } from '@/entities/AppRouterProps';
 import { LanguageProvider } from '@/lib/LanguageContext';
-import { motion } from 'framer-motion';
 import { HelmetProvider } from 'react-helmet-async';
+import { PageLoader } from './PageTransition/PageLoader';
 
-// Hiệu ứng loading trang chuyên nghiệp hơn
-const PageLoader = () => (
-  <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6">
-    <div className="relative">
-      <Loader2 className="w-12 h-12 text-primary animate-spin" />
-      <div className="absolute inset-0 blur-xl bg-primary/30 animate-pulse rounded-full" />
-    </div>
-    <div className="flex flex-col items-center gap-2">
-      <span className="font-mono text-[10px] tracking-[0.3em] text-primary/70 uppercase animate-pulse">
-        Synchronizing Data...
-      </span>
-      <div className="w-32 h-[1px] bg-white/10 relative overflow-hidden">
-        <motion.div
-          className="absolute inset-0 bg-primary"
-          initial={{ x: "-100%" }}
-          animate={{ x: "100%" }}
-          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-        />
-      </div>
-    </div>
-  </div>
-);
+
 
 // Layout component that includes ScrollToTop
 function LayoutWithLanguage(props: AppRouterProps) {
@@ -65,7 +41,6 @@ function LanguageGuard({ children, ...props }: { children: React.ReactNode } & A
     const ErrorPage404 = lazy(() => import('@/integrations/errorHandlers/ErrorPage404'));
     return <ErrorPage404 {...props} />;
   }
-
   // Nếu hợp lệ, cho phép hiển thị Component con (ở đây là HomePage)
   return <>{children}</>;
 }
@@ -89,16 +64,15 @@ const getRouterConfig = (props: AppRouterProps) => {
     }
     const PageComponent = lazy(importFunc as () => Promise<any>);
     //if(!page.slug) return;
+    
     let item = {
       index: false,
       path: page.slug,
-      element: (() => {
-        return (
-          <LanguageGuard {...props}>
-            <PageComponent {...props} />
-          </LanguageGuard>
-        );
-      })()
+      element: (
+        <LanguageGuard {...props}>
+          <PageComponent {...props} />
+        </LanguageGuard>
+      )
     };
     children.push(item);
   });
@@ -123,6 +97,7 @@ const getRouterConfig = (props: AppRouterProps) => {
   return ([
     { // Route configuration
       path: "/",
+      key: 'esc',
       element: <LayoutWithLanguage {...props} />,
       children: children
     },
@@ -130,16 +105,39 @@ const getRouterConfig = (props: AppRouterProps) => {
 };
 
 export default function AppRouter(props: AppRouterProps) {
-  const [router, setRouter] = useState<ReturnType<typeof createBrowserRouter> | null>(null);
+  // const [router, setRouter] = useState<ReturnType<typeof createBrowserRouter> | null>(null);
+
+  // useEffect(() => {
+  //   // Ưu tiên basename từ props (cho bản nháp), nếu không có mới dùng env
+  //   const routerInstance = createBrowserRouter(getRouterConfig(props), {
+  //     basename: props.basename || import.meta.env.BASE_NAME || '/',
+  //   });
+  //   setRouter(routerInstance);
+  // }, [props]); // `props` ở đây là dữ liệu tĩnh từ Astro, nên `useEffect` chỉ chạy 1 lần
+
+  // State theo dõi xem component đã thực sự mount thành công ở Client chưa
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Ưu tiên basename từ props (cho bản nháp), nếu không có mới dùng env
-    const routerInstance = createBrowserRouter(getRouterConfig(props), {
+    setIsMounted(true); // Chỉ chạy duy nhất 1 lần sau khi đặt chân lên trình duyệt
+  }, []);
+
+  const routerConfig = useMemo(() => {
+    return getRouterConfig(props);
+  }, [props.pages?.length, props.status]);
+
+  const router = useMemo(() => {
+    // Nếu ở Server HOẶC chưa mount xong ở Client, không tạo router
+    if (import.meta.env.SSR || !isMounted) {
+      return null;
+    }
+
+    return createBrowserRouter(routerConfig, {
       basename: props.basename || import.meta.env.BASE_NAME || '/',
     });
-    setRouter(routerInstance);
-  }, [props]); // `props` ở đây là dữ liệu tĩnh từ Astro, nên `useEffect` chỉ chạy 1 lần
+  }, [isMounted, props.basename]);
 
+  // Server và Client (First Render) đều sẽ đi qua nhánh này -> Trả về HTML khớp nhau y hệt
   if (!router) {
     return <PageLoader />;
   }

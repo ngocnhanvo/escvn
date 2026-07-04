@@ -1,4 +1,4 @@
-import { tablePress } from "@/entities";
+import { tablePress } from "@/entities/tablePress";
 
 export async function getTablePress(WC_URL: string, isPreview: boolean = false) {
   if (!WC_URL) {

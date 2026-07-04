@@ -2,13 +2,19 @@
 import { Head, HeadProps } from "@/components/Head";
 import AppRouter from "@/components/Router";
 import "@/styles/global.css";
-import { AppRouterProps } from "@/entities";
-import { returnLang } from "@/lib/LanguageContext";
-import {PageTransition}  from '@/components/PageTransition';
+import { AppRouterProps } from "@/entities/AppRouterProps";
+import { returnLang } from "@/lib/LanguageContext/returnLang";
+import {PageTransition}  from '@/components/PageTransition/PageTransition';
 import { getSharedWordPressData } from "@/lib/wordpress/cache";
+import { getAvas } from "@/lib/avas_env";
+export const avas = getAvas(null);
+export const WC_URL_CLIENT = avas.WC_URL_CLIENT;
+export const WC_URL = avas.WC_URL;
 
-const WC_URL_CLIENT = import.meta.env.WC_URL_CLIENT || process.env.WC_URL_CLIENT;
-export const { data_info, pages, menus } = await getSharedWordPressData();
+export const { data_info, pages, menus } = await getSharedWordPressData(
+  avas,
+  false,
+);
 
 const props: AppRouterProps = {
   basename: '/',
