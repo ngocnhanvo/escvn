@@ -14,7 +14,7 @@ export default function Home_05(props: home_05) {
         return null;
     let currency = getCurrencyByKey('vi');
     return (
-        <section className="bg-surface-container-low py-12 border-y border-border-subtle [content-visibility:auto] [contain-intrinsic-size:0_500px]">
+        <section className="bg-surface-container-low py-12 border-y border-border-subtle">
             <motion.div
                 initial="hidden"
                 whileInView="visible"
@@ -45,6 +45,7 @@ export default function Home_05(props: home_05) {
                                 />
                                 <img
                                     className="h-20 w-auto object-contain"
+                                    height={80}
                                     alt={item.label}
                                     src={item.image?.src}
                                 />

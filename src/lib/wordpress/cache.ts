@@ -1,7 +1,7 @@
 // src/lib/wordpress/cache.ts
 import { Pages } from "@/entities/Pages";
 import { WPInfo } from "@/entities/WPInfo";
-import { mergeJSON,  } from "../stringUtils/mergeJSON";
+import { mergeJSON, } from "../stringUtils/mergeJSON";
 import { mergeJSONReverse } from "../stringUtils/mergeJSONReverse";
 import { getInfo } from "./info";
 import { getPages } from "./pages";
@@ -10,12 +10,14 @@ import menu_json from "@/data/menu.json";
 import { replaceAllProperties } from "../i18n/replaceAllProperties";
 import { processAndGetData } from "./tablePressProcessor";
 import { getAvas } from "../avas_env";
+import fs from "node:fs";
+import path from "node:path";
 
-export let WC_URL;
 // Biến lưu trữ tạm thời trong quá trình build
 let cachedData: { data_info: WPInfo; pages: Pages[]; menus: any } | null = null;
 
 export async function getSharedWordPressData(avas: any, preview: boolean = false) {
+    let WC_URL;
     if (avas)
         WC_URL = avas.WC_URL;
     else {
@@ -53,5 +55,33 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
     // Lưu vào cache
     cachedData = { data_info, pages, menus };
 
+    // 🌟 [BƯỚC THẦN THÁNH]: Ghi trực tiếp ra file public JSON phục vụ Client Hydrate tại đây.
+    // Vì nằm sau lệnh check cachedData, khối lệnh này cam kết chỉ thực thi DUY NHẤT 1 LẦN khi build.
+    // 1. Ghi file cấu hình chung (Giữ data_info, menus; hút mỡ pages)
+    const minimalPages = pages.map(({ key, lang, slug, slugP, action, title, label }) => ({
+        key, lang, slug, slugP, action, title, label
+    }));
+
+    const dirPath = "./public/data";
+    const filePath = path.join(dirPath, "cms-common.json");
+
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
+
+    fs.writeFileSync(
+        filePath,
+        JSON.stringify({ data_info, menus, pages: minimalPages }) // thêm null, 2 để format JSON cho đẹp
+    );
+
+    // 2. Ghi các file nội dung riêng lẻ cho từng trang theo slug
+    for (const page of pages) {
+        const fileSlug = page.slug === "/" || page.slug === "" ? "default" : page.slug.replace(/^\/|\/$/g, "");
+        fs.writeFileSync(
+            `./public/data/page-${fileSlug}.json`,
+            JSON.stringify(page)
+        );
+    }
+    console.log("✅ [Astro Build] Tách file JSON thành công!");
     return cachedData;
 }

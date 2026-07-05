@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AppRouterProps } from '@/entities/AppRouterProps';
 import { returnLang } from './returnLang';
 import { returnCurrentPath } from './returnCurrentPath';
+import { handlePageLink } from '@/components/PageTransition/handlePageLink';
 
 interface LanguageContextType {
   language: string;
@@ -41,20 +42,11 @@ export function LanguageProvider({ children, ...props }: { children: React.React
         targetPage = props.pages.find(p => p.key === currentPage.key && p.lang === newLang);
 
       if (targetPage) {
-        navigate(`/${targetPage.slug}${location.search}${location.hash}`);
+        handlePageLink(null, targetPage, `/${targetPage.slug}${location.search}${location.hash}`, navigate);
+        //navigate();
         return;
       }
     }
-
-    const pathSegments = location.pathname.split('/').filter(Boolean);
-    if (pathSegments[0] === 'vi' || pathSegments[0] === 'en') {
-      pathSegments[0] = newLang;
-    } else {
-      pathSegments.unshift(newLang);
-    }
-
-    const newPath = `/${pathSegments.join('/')}${location.search}${location.hash}`;
-    navigate(newPath);
   }, [navigate, location.pathname, location.search, location.hash, props.basename, props.pages]);
 
   // 3. QUAN TRỌNG NHẤT: Memoize object value của Context

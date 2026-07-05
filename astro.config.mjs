@@ -78,7 +78,18 @@ export default defineConfig({
               console.log('🧹 Đã dọn sạch public/images/');
             }
 
-            // 2. Di chuyển robots.txt và sitemap.xml
+            // 2. Di chuyển thư mục data
+            const srcDir2 = path.join(process.cwd(), 'public/data');
+            const destDir2 = fileURLToPath(new URL('data/', dir));
+
+            if (existsSync(srcDir2)) {
+              cpSync(srcDir2, destDir2, { recursive: true, force: true });
+              console.log('✅ Đã copy toàn bộ data sang dist/');
+              rmSync(srcDir2, { recursive: true, force: true });
+              console.log('🧹 Đã dọn sạch public/data/');
+            }
+
+            // 3. Di chuyển robots.txt và sitemap.xml
             const filesToMove = ['robots.txt', 'sitemap.xml'];
             filesToMove.forEach(file => {
               const srcFile = path.join(process.cwd(), 'public', file);

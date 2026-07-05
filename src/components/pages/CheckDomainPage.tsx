@@ -3,19 +3,20 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FooterSection from '@/components/FooterSection';
 import { AppRouterProps } from '@/entities/AppRouterProps';
-import { useLanguage } from '@/lib/LanguageContext';
+import { useLanguage } from '@/context/LanguageContext/index';
 
 import { getTranslation } from '@/lib/i18n/getTranslation';
 import {FocusTrap} from 'focus-trap-react';
-import { extractHTML } from '@/lib/components';
+import { extractHTML } from '@/lib/componentsReg/extractHTML';
 import { useMemo } from 'react';
-import { returnCurrentPage } from '@/lib/LanguageContext/returnCurrentPage';
+import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
+import { globalStore } from '@/services/globalStore';
 
 // Kiểm tra xem User Agent có chứa các từ khóa của thiết bị di động không
 
 export default function CheckDomainPage(props: AppRouterProps) {
-  
-  const { language, setLanguage } = useLanguage();
+  props = globalStore.getCommonData(); 
+  const { language } = useLanguage();
   const page = returnCurrentPage(props, language);
   const inputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);

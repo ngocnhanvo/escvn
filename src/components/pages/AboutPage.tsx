@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { DynamicIcon } from '@/lib/effects/icons';
 import Header from '@/components/Header';
 import FooterSection from '@/components/FooterSection';
 import { AppRouterProps } from '@/entities';
-import { useLanguage } from '@/lib/LanguageContext';
+import { useLanguage } from '@/context/LanguageContext';
 import NotFoundPage from '../../../integrations/errorHandlers/ErrorPage404';
 import { motion, AnimatePresence } from 'framer-motion';
+import ChevronLeft from 'lucide-react/dist/esm/icons/chevron-left';
+import X from 'lucide-react/dist/esm/icons/x';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
+import { globalStore } from '@/services/globalStore';
 
 export default function AboutPage(props: AppRouterProps) {
-  const navigate = useNavigate();
+  props = globalStore.getCommonData();
   const { language, setLanguage } = useLanguage();
   const page = props.pages.find((a: any) => a.key === 'about' && a.lang === language);
 
@@ -108,7 +111,7 @@ export default function AboutPage(props: AppRouterProps) {
               className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-[1010]"
               onClick={() => setIsOpen(false)}
             >
-              <DynamicIcon name='X' size={32} />
+              <X size={32} />
             </button>
 
             {images.length > 1 && (
@@ -117,13 +120,13 @@ export default function AboutPage(props: AppRouterProps) {
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors bg-white/10 p-2 rounded-full z-[1010]"
                   onClick={(e) => { e.stopPropagation(); prevImage(); }}
                 >
-                  <DynamicIcon name='ChevronLeft' size={32} />
+                  <ChevronLeft size={32} />
                 </button>
                 <button
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors bg-white/10 p-2 rounded-full z-[1010]"
                   onClick={(e) => { e.stopPropagation(); nextImage(); }}
                 >
-                  <DynamicIcon name='ChevronRight' size={32} />
+                  <ChevronRight size={32} />
                 </button>
               </>
             )}

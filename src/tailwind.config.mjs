@@ -86,6 +86,10 @@ export default {
                 'destructive': '#EF4444',
                 'destructive-foreground': '#FFFFFF'
             },
+            screens: {
+                // Tạo hẳn một breakpoint mới tên là 'header-breakpoint' ứng với 800px
+                'mn-mb': '800px',
+            },
         },
     },
     future: {

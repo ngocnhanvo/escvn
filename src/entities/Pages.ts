@@ -35,6 +35,8 @@ export interface Pages {
   image?: Record<string, ProcessedImageResult>,
   ogImage?: string,
   mega?: Pages[],
+  megaHeader?: any,
+  position?: any,
   header?: boolean,
   tablePress?: tablePress[]
 }

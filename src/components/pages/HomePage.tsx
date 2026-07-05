@@ -3,13 +3,14 @@ import { AppRouterProps } from '@/entities/AppRouterProps';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FooterSection from '@/components/FooterSection';
-import { useLanguage } from '@/lib/LanguageContext';
-import { extractHTML } from '@/lib/components';
+import { useLanguage } from '@/context/LanguageContext/index';
+import { extractHTML } from '@/lib/componentsReg/extractHTML';
 import { useMemo } from 'react';
-import { returnCurrentPage } from '@/lib/LanguageContext/returnCurrentPage';
+import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
+import { globalStore } from '@/services/globalStore';
 // --- Main Page Component ---
 export default function HomePage(props: AppRouterProps) {
-  
+  props = globalStore.getCommonData(); 
   const { language } = useLanguage();
   const page = returnCurrentPage(props, language);
 

@@ -22,7 +22,7 @@ export default function Home_00(props: home_00) {
     const [searchValue, setSearchValue] = useState("");
     const checkdomain = props.props?.pages?.find((a: Pages) => a.key === 'checkdomain' && a.lang === language);
     const handleSearch = (e) => {
-        handlePageLink(e, `/${checkdomain?.slug}?id=${searchValue}`, navigate);
+        handlePageLink(e, checkdomain, `/${checkdomain?.slug}?id=${searchValue}`, navigate);
     };
     return (
         <section
@@ -133,7 +133,7 @@ export default function Home_00(props: home_00) {
                             />
                             {/* 2. Dành cho Tablet/Desktop: Chạy bình thường */}
                             <source
-                                srcSet={data.items[0]?.image?.srcSet} type="image/webp"
+                                srcSet={props.props.data_info.mascot[language]?.srcSet} type="image/webp"
                                 sizes="586px"
                                 media="(min-width: 768px)"
                             />
@@ -144,8 +144,8 @@ export default function Home_00(props: home_00) {
                                 fetchPriority="high"
                                 loading="eager"
                                 decoding="async"
-                                alt={data.items[0]?.image?.alt}
-                                src={data.items[0]?.image?.src}
+                                alt={props.props.data_info.mascot[language]?.alt}
+                                src={props.props.data_info.mascot[language]?.src}
                             />
                         </picture>
                     </div>

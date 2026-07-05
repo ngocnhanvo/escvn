@@ -1,6 +1,6 @@
 //useDynamicHtml.tsx
 import { useState, useEffect } from 'react';
-import { extractHTML } from '@/lib/components'; // Đường dẫn tới file extractHTML của bạn
+import { extractHTML } from '@/lib/componentsReg/extractHTML'; // Đường dẫn tới file extractHTML của bạn
 
 export function useDynamicHtml(page: any, props: any, more: any = {}) {
   const [content, setContent] = useState<any>(null);

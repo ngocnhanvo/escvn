@@ -1,6 +1,6 @@
 import Header from '@/components/Header';
 import { AppRouterProps } from '@/entities/AppRouterProps';
-import { useLanguage } from '@/lib/LanguageContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { getContent } from '@/lib/i18n/getContent';
 
 export default function ErrorPage404(props: AppRouterProps) {
