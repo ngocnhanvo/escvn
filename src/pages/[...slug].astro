@@ -4,7 +4,7 @@ import AppRouter from "@/components/Router";
 import "@/styles/global.css";
 import { generateAndSaveSitemap } from "@/lib/wordpress/sitemap";
 import { AppRouterProps } from "@/entities/AppRouterProps";
-import { returnLang } from "@/lib/LanguageContext/returnLang";
+import { returnLang } from "@/context/LanguageContext/returnLang";
 import { PageTransition } from "@/components/PageTransition/PageTransition";
 import { getSharedWordPressData } from "@/lib/wordpress/cache";
 import { getAvas } from "@/lib/avas_env";
@@ -34,11 +34,17 @@ export async function getStaticPaths() {
   });
 }
 
+// const minimalPages = pages.map(p => ({ 
+//   slug: p.slug, 
+//   lang: p.lang, 
+//   action: p.action,
+//   key: p.key
+// }));
+
 const props: AppRouterProps = {
   basename: "/",
-  pages: pages,
-  menus: menus,
-  data_info: data_info,
+  pages: [],
+  menus: [],
   status: 200,
 };
 const lang = returnLang(pages, Astro.url.pathname, props.basename);

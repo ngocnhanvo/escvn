@@ -4,7 +4,7 @@ import { Image } from '@/components/ui/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppRouterProps } from '@/entities/AppRouterProps';
 import { formatCurrency } from '@/lib/stringUtils/formatCurrency';
-import { useLanguage } from '@/lib/LanguageContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { getTranslation } from '@/lib/i18n/getTranslation';
 import ShoppingBag from 'lucide-react/dist/esm/icons/shopping-bag';
 import X from 'lucide-react/dist/esm/icons/shopping-bag';

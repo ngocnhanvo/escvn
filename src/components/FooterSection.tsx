@@ -1,6 +1,6 @@
 import { AppRouterProps } from '@/entities/AppRouterProps';
-import { useLanguage } from '@/lib/LanguageContext';
-import { returnCurrentPage } from '@/lib/LanguageContext/returnCurrentPage';
+import { useLanguage } from '@/context/LanguageContext';
+import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
 import { motion } from 'framer-motion';
 import Map from 'lucide-react/dist/esm/icons/award';
 import MapPin from 'lucide-react/dist/esm/icons/map-pin';

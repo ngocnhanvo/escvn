@@ -13,7 +13,7 @@ export default function Home_03(props: home_03) {
     let currency = getCurrencyByKey('vi');
 
     return (
-        <section className="bg-surface-container-low py-section-gap [content-visibility:auto] [contain-intrinsic-size:0_500px]">
+        <section className="bg-surface-container-low py-section-gap">
             <motion.div
                 initial="hidden"
                 whileInView="visible"

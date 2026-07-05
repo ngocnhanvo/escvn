@@ -1,46 +1,53 @@
-export const mergeJSON = (pages:any, menu:any) => {
-  // Bước 1: Tạo Map từ pages.json để tra cứu nhanh theo định dạng "key_lang"
-  const pagesMap = {};
-  pages.forEach(page => {
-      const uniqueKey = `${page.key}_${page.lang}`;
-      pagesMap[uniqueKey] = page;
-  });
+export const mergeJSON = (pages: any, menu: any) => {
+    // Bước 1: Tạo Map từ pages.json để tra cứu nhanh theo định dạng "key_lang"
+    const pagesMap = {};
+    pages.forEach(page => {
+        const uniqueKey = `${page.key}_${page.lang}`;
+        pagesMap[uniqueKey] = page;
+    });
 
-  // Hàm hỗ trợ gộp dữ liệu: Chỉ thêm vào nếu target chưa có thuộc tính đó
-  function mergeData(targetItem) {
-      const uniqueKey = `${targetItem.key}_${targetItem.lang}`;
-      const sourceItem = pagesMap[uniqueKey];
+    // Hàm hỗ trợ gộp dữ liệu
+    function mergeData(targetItem) {
+        const uniqueKey = `${targetItem.key}_${targetItem.lang}`;
+        const sourceItem = pagesMap[uniqueKey];
 
-      if (sourceItem) {
-          // Lặp qua các thuộc tính của page
-          for (const prop in sourceItem) {
-              // Nếu menu chưa có thuộc tính này (undefined) thì mới thêm vào
-              if (targetItem[prop] === undefined) {
-                  targetItem[prop] = sourceItem[prop];
-              }
-          }
-      }
-  }
+        if (sourceItem) {
+            // Danh sách các thuộc tính muốn BỎ QUA hoàn toàn, không gộp sang
+            const ignoredProps = ['contents', 'content', 'image', 'tablePress'];
 
-  // Bước 2 & 3: Duyệt qua menu.json và bổ sung dữ liệu
-  const updatedMenu = menu.map(menuItem => {
-      // Tạo một bản sao để tránh thay đổi trực tiếp dữ liệu gốc
-      let newItem = { ...menuItem };
+            // Lặp qua các thuộc tính của page
+            for (const prop in sourceItem) {
+                // Nếu thuộc tính nằm trong danh sách bỏ qua -> Bỏ qua, chạy sang vòng lặp kế tiếp
+                if (ignoredProps.includes(prop)) {
+                    continue; 
+                }
 
-      // Bổ sung dữ liệu cho cấp ngoài cùng của menu
-      mergeData(newItem);
+                // Nếu menu chưa có thuộc tính này (undefined) thì mới thêm vào
+                if (targetItem[prop] === undefined) {
+                    targetItem[prop] = sourceItem[prop];
+                }
+            }
+        }
+    }
 
-      // Bước 4: Xử lý mảng con 'mega' nếu có
-      if (newItem.mega && Array.isArray(newItem.mega)) {
-          newItem.mega = newItem.mega.map(megaItem => {
-              let newMegaItem = { ...megaItem };
-              mergeData(newMegaItem);
-              return newMegaItem;
-          });
-      }
+    // Bước 2 & 3: Duyệt qua menu.json và bổ sung dữ liệu
+    const updatedMenu = menu.map(menuItem => {
+        let newItem = { ...menuItem };
 
-      return newItem;
-  });
+        // Bổ sung dữ liệu cho cấp ngoài cùng của menu
+        mergeData(newItem);
 
-  return updatedMenu;
+        // Bước 4: Xử lý mảng con 'mega' nếu có
+        if (newItem.mega && Array.isArray(newItem.mega)) {
+            newItem.mega = newItem.mega.map(megaItem => {
+                let newMegaItem = { ...megaItem };
+                mergeData(newMegaItem);
+                return newMegaItem;
+            });
+        }
+
+        return newItem;
+    });
+
+    return updatedMenu;
 }

@@ -1,13 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/integrations/cms/cms-ecom/cart/useCartStore';
 import { AppRouterProps } from '@/entities/AppRouterProps';
 import { Pages } from '@/entities/Pages';
 import { handlePageLink } from '@/components/PageTransition/handlePageLink';
 import { getTranslation } from '@/lib/i18n/getTranslation';
-import { useLanguage } from '@/lib/LanguageContext';
+import { useLanguage } from '@/context/LanguageContext/index';
 import { Button } from './ui/button';
-import { useMediaQuery } from '@/lib/effects/useMediaQuery';
 import { Desktop } from './Menu/Desktop';
 import { Mobile } from './Menu/Mobile';
 import Award from 'lucide-react/dist/esm/icons/award';
@@ -17,6 +16,7 @@ import ShoppingCart from 'lucide-react/dist/esm/icons/shopping-cart';
 import X from 'lucide-react/dist/esm/icons/x';
 import Menu from 'lucide-react/dist/esm/icons/menu';
 import MapPin from 'lucide-react/dist/esm/icons/map-pin';
+
 export default function Header(props: AppRouterProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -25,13 +25,14 @@ export default function Header(props: AppRouterProps) {
   const { language, setLanguage } = useLanguage();
   const { itemCount, actions } = useCart(language);
   const data_info = props.data_info;
+
   let navItems = props.menus.filter((a: Pages) => {
     if (!a.slug) return false;
     return a.lang === language && (a.header ?? true) == true;
   });
 
-  const link_home = '/' + props.pages.find((a: Pages) => a.key === 'home' && a.lang === language && a.slug != undefined).slug;
-  const link_about = '/' + props.pages.find((a: Pages) => a.key === 'about' && a.lang === language && a.slug != undefined).slug;
+  const page_home = props.pages.find((a: Pages) => a.key === 'home' && a.lang === language && a.slug != undefined);
+  const page_about = props.pages.find((a: Pages) => a.key === 'about' && a.lang === language && a.slug != undefined);
   const link_member = 'https://member.esc.vn';
 
   const isActive = (page: Pages) => {
@@ -65,8 +66,6 @@ export default function Header(props: AppRouterProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const isDesktop = useMediaQuery("(min-width: 800px)");
-  const isMobile = !isDesktop;
   return (
     <>
       <div className="relative overflow-hidden bg-[#b00c3b] text-white py-1 shadow-inner">
@@ -81,8 +80,9 @@ export default function Header(props: AppRouterProps) {
             </span>
           </div>
           <div className="flex items-center gap-5 text-[11px] font-bold">
-            <div className="hidden md:flex items-center gap-4 border-r border-white/20 pr-5">
-              <Link onClick={(e) => handlePageLink(e, link_about, navigate)} to={link_about} className="hover:text-yellow-400 transition-colors uppercase tracking-tight">
+            {/* Ẩn link phụ dưới 800px, hiện khi từ 800px trở lên */}
+            <div className="hidden mn-mb:flex items-center gap-4 border-r border-white/20 pr-5">
+              <Link onClick={(e) => handlePageLink(e, page_about, `/${page_about.slug}`, navigate)} to={`/${page_about.slug}`} className="hover:text-yellow-400 transition-colors uppercase tracking-tight">
                 {getTranslation('header.top.about', language)}
               </Link>
               <Link to={link_member} className="hover:text-yellow-400 transition-colors uppercase tracking-tight">
@@ -108,6 +108,7 @@ export default function Header(props: AppRouterProps) {
           </div>
         </div>
       </div>
+
       {/* BLOCK 1 (NAV) */}
       <header className={`w-full z-50 sticky top-0 transition-all duration-300 ${isScrolled
         ? 'bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20'
@@ -115,7 +116,7 @@ export default function Header(props: AppRouterProps) {
         }`}>
         <div className={`max-w-container-max mx-auto px-margin-desktop transition-all duration-300 flex justify-between items-center relative ${isScrolled ? 'h-20 py-3' : 'h-24 py-4'
           }`}>
-          <a href={link_home} className="flex items-center">
+          <a href={`/${page_home.slug}`} className="flex items-center">
             <picture className="relative z-10 w-full h-full">
               <source
                 srcSet={props.data_info?.logo[language].srcSet} type="image/webp"
@@ -131,9 +132,10 @@ export default function Header(props: AppRouterProps) {
               />
             </picture>
           </a>
-          {isDesktop && (
-            <Desktop isActive={isActive} navItems={navItems} navigate={navigate} />
-          )}
+
+          {/* 1. MENU DESKTOP: Ẩn mặc định, chỉ block khi màn hình >= 800px */}
+          <Desktop isActive={isActive} navItems={navItems} navigate={navigate} />
+
           <div className="flex items-center gap-2">
             <Button
               aria-label="Toggle Cart"
@@ -149,34 +151,31 @@ export default function Header(props: AppRouterProps) {
                 </span>
               )}
             </Button>
-            {/* Nút Toggle Menu Mobile */}
-            {isMobile && (
-              <button
-                className="p-2 text-primary hover:bg-gray-100 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="Toggle Menu"
-              >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            )}
+
+            {/* 2. NÚT TOGGLE MENU MOBILE: Hiện ở mobile, ẩn hoàn toàn khi màn hình >= 800px */}
+            <button
+              className="p-2 text-primary hover:bg-gray-100 rounded-lg transition-colors block mn-mb:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Menu"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
 
-        {/* Nội dung Menu cho Mobile */}
-        {isMobile && (
-          <Mobile
-            navItems={navItems}
-            navigate={navigate}
-            isActive={isActive}
-            setMobileMenuOpen={setMobileMenuOpen}
-            language={language}
-            link_about={link_about}
-            link_member={link_member}
-            mobileMenuOpen={mobileMenuOpen}
-            getTranslation={getTranslation}
-          />
-        )}
+        <Mobile
+          navItems={navItems}
+          navigate={navigate}
+          isActive={isActive}
+          setMobileMenuOpen={setMobileMenuOpen}
+          language={language}
+          page_about={page_about}
+          link_member={link_member}
+          mobileMenuOpen={mobileMenuOpen}
+          getTranslation={getTranslation}
+        />
       </header>
+
       {/* BLOCK 2 (HOTLINE) */}
       <div className="bg-[#0D47A1] text-white py-3">
         <div className="menu-support max-w-container-max mx-auto px-margin-desktop flex flex-wrap justify-between items-center gap-4 text-sm">

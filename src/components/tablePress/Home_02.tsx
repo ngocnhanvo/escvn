@@ -22,7 +22,7 @@ export default function Home_02(props: home_02) {
                 let list = item?.list?.trim().split('\n').filter(i => i.trim() !== '');
                 if (index % 2 == 0) {
                     return !item ? null : (
-                        <section className="bg-surface-container-low py-16 [content-visibility:auto] [contain-intrinsic-size:0_500px]">
+                        <section className="bg-surface-container-low py-16">
                             <motion.div
                                 initial="hidden"
                                 whileInView="visible"

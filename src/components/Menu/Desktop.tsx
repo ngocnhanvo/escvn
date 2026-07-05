@@ -2,25 +2,29 @@ import { Pages } from "@/entities/Pages";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavigateFunction } from "react-router-dom";
 import { handlePageLink } from "../PageTransition/handlePageLink";
-import { DynamicIcon } from "@/lib/effects/icons";
+import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down';
+import X from 'lucide-react/dist/esm/icons/x';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
 
-interface Desktop {
+interface DesktopProps {
     navItems: Pages[];
     navigate: NavigateFunction;
-    isActive: (page: Pages) => boolean
+    isActive: (page: Pages) => boolean;
 }
-export const Desktop = (props: Desktop) => {
+
+export const Desktop = (props: DesktopProps) => {
     const menuRef = useRef<HTMLElement>(null);
     const navItems = props.navItems;
     const navigate = props.navigate;
     const isActive = props.isActive;
-    // 1. Khai báo object ánh xạ class rõ ràng ngoài hàm Render để Tailwind biên dịch tĩnh được class
+
     const gridColsMap: Record<number, string> = {
         1: "grid-cols-1",
         2: "grid-cols-2",
         3: "grid-cols-3",
         4: "grid-cols-4"
     };
+
     const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
 
     useEffect(() => {
@@ -38,13 +42,14 @@ export const Desktop = (props: Desktop) => {
         };
     }, [activeMegaMenu]);
 
-    return <nav ref={menuRef} className="flex items-center text-sm font-bold h-full">
-        {navItems.map((item: any) => {
+    {/* TÍCH HỢP CLASS: ẩn mặc định ở mobile, chỉ flex khi màn hình >= 800px (mn-mb) */ }
+    return <nav ref={menuRef} className="hidden mn-mb:flex items-center text-sm font-bold h-full">
+        {navItems.map((item: Pages) => {
             const hasMega = item.mega && item.mega.length > 0;
             const isOpen = activeMegaMenu === item.slug;
-            // 2. Thay thế đoạn code hiển thị Menu của anh bằng cấu trúc chuẩn này:
             const totalCols = item.megaHeader?.length || 3;
             const gridClass = gridColsMap[totalCols] || "grid-cols-3";
+
             return (
                 <div
                     key={item.slug}
@@ -60,14 +65,14 @@ export const Desktop = (props: Desktop) => {
                                 e.preventDefault();
                                 setActiveMegaMenu(item.slug);
                             } else {
-                                handlePageLink(e, `/${item.slug}`, navigate);
+                                handlePageLink(e, item, `/${item.slug}`, navigate);
                                 setActiveMegaMenu(null);
                             }
                         }}
                         to={`/${item.slug}`}
                     >
                         {item.label}
-                        {hasMega && <DynamicIcon name='ChevronDown' size={14} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
+                        {hasMega && <ChevronDown size={14} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
                     </Link>
 
                     {hasMega && (
@@ -83,7 +88,7 @@ export const Desktop = (props: Desktop) => {
                                     className="absolute top-4 right-4 p-2 bg-primary text-white shadow-lg hover:bg-signal-red hover:scale-110 rounded-full z-50 flex items-center justify-center group/close"
                                     title="Đóng menu"
                                 >
-                                    <DynamicIcon name='X' size={20} strokeWidth={3} className="transition-transform group-hover/close:rotate-90" />
+                                    <X size={20} strokeWidth={3} className="transition-transform group-hover/close:rotate-90" />
                                 </button>
                                 {item.megaHeader.map((header: any, colIndex: number) => (
                                     <div key={colIndex} className="flex flex-col gap-4">
@@ -97,11 +102,12 @@ export const Desktop = (props: Desktop) => {
                                                 alt={header.text || "Mega menu image"}
                                                 className="mb-2 object-contain"
                                                 sizes="(max-width: 767px) 1px, 1024px"
+                                                loading="lazy"
                                             />
                                         )}
                                         {item.mega
-                                            .filter((sub: any) => parseInt(sub.position) === colIndex)
-                                            .map((sub: any) => {
+                                            .filter((sub: Pages) => parseInt(sub.position) === colIndex)
+                                            .map((sub: Pages) => {
                                                 const isSubActive = isActive(sub);
                                                 return (
                                                     <Link
@@ -111,7 +117,7 @@ export const Desktop = (props: Desktop) => {
                                                             : "hover:bg-slate-50 border-transparent hover:border-border-subtle"
                                                             }`}
                                                         onClick={(e) => {
-                                                            handlePageLink(e, `/${sub.slug}`, navigate);
+                                                            handlePageLink(e, sub, `/${sub.slug}`, navigate);
                                                             setActiveMegaMenu(null);
                                                         }}
                                                         to={`/${sub.slug}`}
@@ -119,7 +125,7 @@ export const Desktop = (props: Desktop) => {
                                                         <div className={`font-bold transition-colors flex items-center justify-between ${isSubActive ? "text-signal-red" : "text-primary group-hover/sub:text-signal-red"
                                                             }`}>
                                                             <span className="text-lg">{sub.label}</span>
-                                                            <DynamicIcon name='ChevronRight' size={16} className={`transition-all ${isSubActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 group-hover/sub:opacity-100 group-hover/sub:translate-x-0"
+                                                            <ChevronRight size={16} className={`transition-all ${isSubActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 group-hover/sub:opacity-100 group-hover/sub:translate-x-0"
                                                                 }`} />
                                                         </div>
                                                         {sub.description && (

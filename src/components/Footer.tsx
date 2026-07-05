@@ -3,7 +3,7 @@ import { AppRouterProps } from '@/entities/AppRouterProps';
 import { Pages } from '@/entities/Pages';
 import { getContent } from '@/lib/i18n/getContent';
 import { getTranslation } from '@/lib/i18n/getTranslation';
-import { useLanguage } from '@/lib/LanguageContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { handlePageLink } from './PageTransition/handlePageLink';
 import React from 'react';
 import Facebook from 'lucide-react/dist/esm/icons/facebook';
@@ -238,7 +238,7 @@ function Footer(props: AppRouterProps) {
             <Link
               to={`/${privacy?.slug}`}
               onClick={(e) => {
-                handlePageLink(e, `/${privacy?.slug}`, navigate);
+                handlePageLink(e, privacy, `/${privacy?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
@@ -250,7 +250,7 @@ function Footer(props: AppRouterProps) {
             <Link
               to={`/${protectpolicy?.slug}`}
               onClick={(e) => {
-                handlePageLink(e, `/${protectpolicy?.slug}`, navigate);
+                handlePageLink(e, protectpolicy, `/${protectpolicy?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
@@ -262,7 +262,7 @@ function Footer(props: AppRouterProps) {
             <Link
               to={`/${payment?.slug}`}
               onClick={(e) => {
-                handlePageLink(e, `/${payment?.slug}`, navigate);
+                handlePageLink(e, payment, `/${payment?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
@@ -274,7 +274,7 @@ function Footer(props: AppRouterProps) {
             <Link
               to={`/${terms?.slug}`}
               onClick={(e) => {
-                handlePageLink(e, `/${terms?.slug}`, navigate);
+                handlePageLink(e, terms, `/${terms?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
@@ -286,7 +286,7 @@ function Footer(props: AppRouterProps) {
             <Link
               to={`/${legaldocument?.slug}`}
               onClick={(e) => {
-                handlePageLink(e, `/${legaldocument?.slug}`, navigate);
+                handlePageLink(e, legaldocument, `/${legaldocument?.slug}`, navigate);
               }}
               className="hover:text-signal-red transition-colors"
             >
