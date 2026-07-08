@@ -43,3 +43,4 @@ docs/*
 !.yarn/sdks
 !.yarn/versions
 /.continue/rules
+/.cache/images/pages

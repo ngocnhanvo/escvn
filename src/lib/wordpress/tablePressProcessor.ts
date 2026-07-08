@@ -4,6 +4,7 @@ import { replaceAllProperties } from '../i18n/replaceAllProperties';
 import dynamicIconImports from "lucide-react/dynamicIconImports";
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { getNestedValue } from '../effects/getNestedValue';
 
 const lucideTags = Object.keys(dynamicIconImports);
 const kebabIconMap = new Map<string, string>();
@@ -30,15 +31,6 @@ interface ProcessOptions {
 
 export const removeTargetImgRegex = new RegExp(`<img[^>]*class="[^"]*tablepress-attached-image[^"]*"[^>]*>`, 'g');
 export const imgRegex = /<img[^>]+src="([^">]+)"/g;
-
-const getNestedValue = function (obj: any, pathString: string) {
-  if (!obj || !pathString) return undefined;
-  let cleanPath = pathString.replace(/\?/g, '').replace(/\[(\d+)\]/g, '.$1');
-  const keys = cleanPath.split('.').filter(Boolean);
-  return keys.reduce((current, key) => {
-    return (current && current[key] !== undefined) ? current[key] : undefined;
-  }, obj);
-}
 
 // 1. Chuyển sang dùng Map lưu Promise để tránh Race Condition toàn diện
 const processedtblPressCache = new Map<string, Promise<any>>();

@@ -11,6 +11,8 @@ export default function Home_01(props: home_01) {
     let data = props.data;
     if (!data)
         return null;
+    if (!data.items)
+        return null;
     let currency = getCurrencyByKey('vi');
 
     return (

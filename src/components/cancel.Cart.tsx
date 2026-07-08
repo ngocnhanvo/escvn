@@ -7,13 +7,12 @@ import { formatCurrency } from '@/lib/stringUtils/formatCurrency';
 import { useLanguage } from '@/context/LanguageContext';
 import { getTranslation } from '@/lib/i18n/getTranslation';
 import ShoppingBag from 'lucide-react/dist/esm/icons/shopping-bag';
-import X from 'lucide-react/dist/esm/icons/shopping-bag';
+import X from 'lucide-react/dist/esm/icons/x'; // Changed from 'lucide-react/dist/esm/icons/shopping-bag' to 'lucide-react/dist/esm/icons/x'
 import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
 import Truck from 'lucide-react/dist/esm/icons/truck';
 import CreditCard from 'lucide-react/dist/esm/icons/credit-card';
 import Minus from 'lucide-react/dist/esm/icons/minus';
 import Plus from 'lucide-react/dist/esm/icons/plus';
-
 export default function Cart(props: AppRouterProps) {
   const { language } = useLanguage();
   const { items, totalPrice: subtotal, isOpen, actions } = useCart(language);
@@ -251,9 +250,14 @@ export default function Cart(props: AppRouterProps) {
                           <h3 className="text-lg text-primary mb-1">
                             {item.itemName[language]}
                           </h3>
-                          <p className="font-paragraph text-base text-linkcolor">
-                            {formatCurrency(item.itemPrice[language], item.itemCurrency[language])}
-                          </p>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                            <p className="font-paragraph text-base text-linkcolor">
+                              {formatCurrency(item.itemPrice[language], item.itemCurrency[language])}
+                            </p>
+                            <p className="font-paragraph text-sm text-primary/70">
+                              {getTranslation('cart.subtotal', language, props)}: {formatCurrency(item.itemPrice[language] * item.quantity, item.itemCurrency[language])}
+                            </p>
+                          </div>
                         </div>
 
                         {/* Quantity Controls */}
@@ -277,20 +281,19 @@ export default function Cart(props: AppRouterProps) {
                             >
                               <Plus className="w-4 h-4" />
                             </button>
-                          </div>
-
+                      </div>
                           <button
                             onClick={() => actions.removeFromCart(item)}
                             className="font-paragraph text-sm text-destructive hover:text-destructive/80 transition-colors"
                           >
                             {getTranslation('cart.remove', language, props)}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                </button>
+              </div>
+                </div>
+                  </div>
                   ))}
                 </div>
-              )}
+      )}
             </div>
 
             {/* Bottom Panel */}
@@ -301,8 +304,8 @@ export default function Cart(props: AppRouterProps) {
                   <span className="text-xl text-primary">
                     {getTranslation('cart.total', language, props)} {/* Giờ là Subtotal */}
                   </span>
-                  <span className="text-2xl text-primary">
-                    {formatCurrency(subtotal, currency)}
+                  <span className="text-2xl text-primary font-bold">
+                  {formatCurrency(subtotal, currency)}
                   </span>
                 </div>
 
@@ -311,7 +314,6 @@ export default function Cart(props: AppRouterProps) {
                     {submitError}
                   </div>
                 )}
-
                 <button
                   type="button"
                   onClick={() => { setStep('checkout'); }}

@@ -10,11 +10,13 @@ import ChevronLeft from 'lucide-react/dist/esm/icons/chevron-left';
 import X from 'lucide-react/dist/esm/icons/x';
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
 import { globalStore } from '@/services/globalStore';
+import { returnCurrentPage, returnCurrentPageAsync } from '@/context/LanguageContext/returnCurrentPage';
 
+let page = await returnCurrentPageAsync();
 export default function AboutPage(props: AppRouterProps) {
   props = globalStore.getCommonData();
-  const { language, setLanguage } = useLanguage();
-  const page = props.pages.find((a: any) => a.key === 'about' && a.lang === language);
+  const { language } = useLanguage();
+  page = returnCurrentPage(props, language);
 
   // Lightbox State
   const [isOpen, setIsOpen] = useState(false);

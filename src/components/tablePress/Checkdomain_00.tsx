@@ -8,6 +8,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getTranslation } from '@/lib/i18n/getTranslation';
 import { useCart } from '@/integrations/cms/cms-ecom/cart/useCartStore';
 import Search from 'lucide-react/dist/esm/icons/search';
+import { mapProducts } from '@/lib/wordpress/products/mapProduct';
+import { initI18n } from '@/context/LanguageContext/getNameLang';
 interface Checkdomain_00 {
     page: Pages;
     data: any;
@@ -17,18 +19,23 @@ interface Checkdomain_00 {
 }
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
+let skip = 0;
 export default function Checkdomain_00(props: Checkdomain_00) {
     let language = props.page.lang;
     let data = props.data;
     if (!data)
         return null;
+
     let currency = getCurrencyByKey('vi');
     const contentRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchName, setSearchName] = useState('');
     const idFromUrl = searchParams.get('id');
+    if (skip === 0) {
+        mapProducts(props.props.data_products, data.items);
+        skip = 1;
+    }
     const VN_DOMAINS = data.items.filter((item: any) => item?.tld && item?.tld?.endsWith('.vn')) || [];
     const INTL_DOMAINS = data.items.filter((item: any) => item?.tld && !item?.tld?.endsWith('.vn')) || [];
     const handleWhois = props.handleWhois || (() => { });
@@ -74,7 +81,6 @@ export default function Checkdomain_00(props: Checkdomain_00) {
             handleSearch(idFromUrl.trim().toLowerCase());
         }
     }, [idFromUrl]);
-
     return (
         <section className="max-w-[1300px] mx-auto px-margin-desktop">
             <div className="space-y-12 article-content" ref={contentRef}>
@@ -226,17 +232,23 @@ function DomainBlock({ title, domains, currentSearch, onWhois, currency, languag
     );
 }
 
-function DomainItem({ keyAPI, name, tld, priceReg, priceRenew, onWhois, currency, language, isSpecialView = false }) {
+function DomainItem({
+    keyAPI, name, tld,
+    itemPriceRegister, itemPriceRenew,
+    itemPriceRegisterSale, itemPriceRenewSale,
+    onWhois, currency, language,
+    isSpecialView = false, variations }) {
+    
     const [isAvailable, setIsAvailable] = useState<boolean | null | 'timeout'>(null);
     const [retryCount, setRetryCount] = useState(0);
     const [isAdding, setIsAdding] = useState(false);
     const domainName = name ? `${name}${tld}` : `example${tld}`;
-    const { items, actions } = useCart(language);
+    const { items, actions, cartKey } = useCart(language);
     useEffect(() => {
         if (!name) return;
         setIsAvailable(null); // Reset trạng thái khi bắt đầu fetch
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
         fetch(`/api/checkdomain`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -245,7 +257,7 @@ function DomainItem({ keyAPI, name, tld, priceReg, priceRenew, onWhois, currency
         })
             .then(res => res.json())
             .then(data => {
-                setIsAvailable(data.status === "0");
+                setIsAvailable(data.status.toString().startsWith("0"));
             })
             .catch((err) => {
                 if (err.name === 'AbortError') {
@@ -265,7 +277,8 @@ function DomainItem({ keyAPI, name, tld, priceReg, priceRenew, onWhois, currency
         };
     }, [name, tld, retryCount]);
 
-    const isInCart = items.some(item => item._id === keyAPI);
+
+    const isInCart = items.some(item => item._name == domainName);
 
     const ariaLabel = isAvailable === null ?
         getTranslation("checkdomain.loading", language) :
@@ -274,6 +287,13 @@ function DomainItem({ keyAPI, name, tld, priceReg, priceRenew, onWhois, currency
             isAvailable ?
                 (isInCart ? getTranslation("checkdomain.btnDaChon", language) : getTranslation("checkdomain.btnChon", language)) :
                 getTranslation("checkdomain.btnwhois", language);
+
+        
+    const itemV = variations?.[language]?.[0];
+    const itemV_Id = itemV?.variation_id || keyAPI;
+    const priceReg = itemPriceRegister?.[language];
+    const priceRenew = itemPriceRenew?.[language];
+    const priceRegSale = itemPriceRegisterSale?.[language];
 
     return (
         <div className={`flex items-center justify-between px-4 py-4 hover:bg-slate-50 transition-colors rounded-xl group gap-4 ${isSpecialView ? 'bg-white shadow-sm border border-indigo-200' : ''}`}>
@@ -289,11 +309,32 @@ function DomainItem({ keyAPI, name, tld, priceReg, priceRenew, onWhois, currency
                     {domainName}
                 </span>
                 <div className="text-slate-400 font-medium break-all">
+                    {/* Đăng ký */}
                     {priceReg !== null && priceReg !== undefined && (
-                        <>{getTranslation("checkdomain.dangky", language)}: <span className="text-slate-600">{formatCurrency(priceReg, currency.code)}</span> / </>
+                        <>
+                            {getTranslation("checkdomain.dangky", language)}:&nbsp;
+                            <span className="text-slate-600">
+                                {priceRegSale !== null && priceRegSale !== undefined && priceRegSale < priceReg ? (
+                                    <>
+                                        <span className="line-through text-sm text-gray-400 mr-1">{formatCurrency(priceReg, currency.code)}</span>
+                                        <span>{formatCurrency(priceRegSale, currency.code)}</span>
+                                    </>
+                                ) : (
+                                    <span>{formatCurrency(priceReg, currency.code)}</span>
+                                )}
+                            </span>
+                            /
+                        </>
                     )}
+
+                    {/* Gia hạn */}
                     {priceRenew !== null && priceRenew !== undefined && (
-                        <>{getTranslation("checkdomain.giahan", language)}: <span className="text-slate-600">{formatCurrency(priceRenew, currency.code)}</span></>
+                        <>
+                            {getTranslation("checkdomain.giahan", language)}:&nbsp;
+                            <span className="text-slate-600">
+                                <span>{formatCurrency(priceRenew, currency.code)}</span>
+                            </span>
+                        </>
                     )}
                 </div>
             </div>
@@ -311,18 +352,33 @@ function DomainItem({ keyAPI, name, tld, priceReg, priceRenew, onWhois, currency
                         else {
                             setIsAdding(true);
                             try {
-                                const response = await fetch(`/api/cart`, {
+                                const response = await fetch(`/api/cart/add`, {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ _id: keyAPI, quantity: 1, lang: language })
+                                    body: JSON.stringify({ 
+                                        _id: itemV_Id,
+                                        quantity: 1, 
+                                        lang: language, 
+                                        name: domainName, 
+                                        cartKey: cartKey 
+                                    })
                                 });
                                 const result = await response.json();
                                 if (result.ok) {
-                                    const data: Products[] = result.msg;
-                                    if(data && data.length > 0) {
-                                        console.log('Adding to cart:', data);
+                                    const data: any = result.msg;
+                                    if (data && data.cart_key) {
                                         actions.clearCart();
-                                        actions.addAllToCart(data, false);
+                                        const data_items: Products[] = data.items.map((item: any): Products => ({
+                                            item_key: data.item_key,
+                                            _id: itemV_Id,
+                                            _name: item.cart_item_data?._name,
+                                            itemName: initI18n(item.name),
+                                            quantity: item.quantity?.value,
+                                            itemPriceCart: initI18n(item.price),
+                                            itemCurrency: initI18n(data.currency.currency_code),
+                                            variations
+                                        }));
+                                        actions.addAllToCart(data_items, false, data.cart_key, data.totals?.total_tax);
                                     }
                                     else {
                                         throw new Error(result.msg);
@@ -331,7 +387,7 @@ function DomainItem({ keyAPI, name, tld, priceReg, priceRenew, onWhois, currency
                                 else {
                                     throw new Error(result.msg || 'Unknown error');
                                 }
-                            } 
+                            }
                             catch (error) {
                                 onWhois(`Error: ${error}`);
                             }
@@ -344,8 +400,8 @@ function DomainItem({ keyAPI, name, tld, priceReg, priceRenew, onWhois, currency
                     className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all 
             ${isAvailable === null || isAdding ? "bg-slate-50 text-slate-400 cursor-wait" :
                             isInCart && isAvailable === true ? "bg-slate-100 text-slate-500 cursor-default" :
-                            isAvailable === 'timeout' ? "bg-orange-50 text-orange-600" :
-                                isAvailable ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
+                                isAvailable === 'timeout' ? "bg-orange-50 text-orange-600" :
+                                    isAvailable ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
                         }`}
                 >
                     {ariaLabel}

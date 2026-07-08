@@ -6,15 +6,16 @@ import FooterSection from '@/components/FooterSection';
 import { AppRouterProps } from '@/entities/AppRouterProps';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext/index';
-import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
+import { returnCurrentPage, returnCurrentPageAsync } from '@/context/LanguageContext/returnCurrentPage';
 import { extractHTML } from '@/lib/componentsReg/extractHTML';
 import { globalStore } from '@/services/globalStore';
-
+let page = await returnCurrentPageAsync();
 export default function PublicPage(props: AppRouterProps) {
   props = globalStore.getCommonData();
   const navigate = useNavigate();
-  const { language, setLanguage } = useLanguage();
-  const page = returnCurrentPage(props, language);
+  const { language } = useLanguage();
+  page = returnCurrentPage(props, language);
+  console.log(`page`, page);
   const contentRef = useRef<HTMLDivElement>(null);
   const content = useMemo(() => {
     return extractHTML(page, props);

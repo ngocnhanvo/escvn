@@ -1,4 +1,4 @@
-import { ProcessedImageResult } from '@/entities';
+import { ProcessedImageResult } from '@/entities/ProcessedImageResult';
 import { Agent, fetch as undiciFetch } from 'undici';
 
 interface ProcessImageOptions {

@@ -3,7 +3,8 @@ import { globalStore } from "./globalStore";
 export const pageService = {
   // Lấy bùa chống cache
   getCacheBuster() {
-    return `?t=${new Date().getTime()}`;
+    const buildTime = import.meta.env.VITE_BUILD_TIME || '';
+    return buildTime ? `?v=${buildTime}` : '';
   },
 
   // 1. GIỮ NGUYÊN: Fetch cấu hình chung lúc F5 / vào trang lần đầu
@@ -24,10 +25,13 @@ export const pageService = {
     }
   },
 
-  // 2. Fetch trang chi tiết (Đã tích hợp check cache từ globalStore)
+  // 3. Fetch trang chi tiết (Đã tích hợp check cache từ globalStore)
   async getPageData(identifier: string): Promise<any> {
     try {
       let slug = identifier;
+      if(!slug)
+        slug = '/';
+      console.log(`slug`, slug);
       if (slug.includes("/")) {
         const cleanPath = slug.split('?')[0].split('#')[0];
         slug = cleanPath === "/" ? "default" : cleanPath.replace(/^\/|\/$/g, "");
