@@ -6,17 +6,19 @@ import FooterSection from '@/components/FooterSection';
 import { useLanguage } from '@/context/LanguageContext/index';
 import { extractHTML } from '@/lib/componentsReg/extractHTML';
 import { useMemo } from 'react';
-import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
+import { returnCurrentPage, returnCurrentPageAsync } from '@/context/LanguageContext/returnCurrentPage';
 import { globalStore } from '@/services/globalStore';
 // --- Main Page Component ---
+let page = await returnCurrentPageAsync();
 export default function HomePage(props: AppRouterProps) {
-  props = globalStore.getCommonData(); 
+  props = globalStore.getCommonData();
   const { language } = useLanguage();
-  const page = returnCurrentPage(props, language);
+  page = returnCurrentPage(props, language);
+  console.log(`page`, page);
 
   const content = useMemo(() => {
     return extractHTML(page, props);
-  }, [page]);
+  }, [page, language]);
   return (
     <div className="min-h-screen bg-background font-paragraph selection:bg-primary/20 selection:text-primary">
       <Header {...props} />

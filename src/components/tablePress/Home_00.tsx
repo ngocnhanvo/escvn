@@ -16,6 +16,8 @@ export default function Home_00(props: home_00) {
     let data = props.data;
     if (!data)
         return null;
+    if (!data.items)
+        return null;
     let currency = getCurrencyByKey('vi');
     const heroRef = useRef<HTMLElement>(null);
     const navigate = useNavigate();

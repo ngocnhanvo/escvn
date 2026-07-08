@@ -1,6 +1,5 @@
-import { Products, WPInfo, Pages } from '@/entities';
+import { WPInfo } from '@/entities/WPInfo';
 import { processAndStoreImage } from './imageProcessor';
-import { stripHtmlAndUnescape } from '@/lib/stringUtils';
 
 export async function getInfo(WC_URL, isPreview: boolean = false) {
   if (!WC_URL) {
@@ -166,9 +165,7 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
 
       return p;
     }));
-  } catch (error) {
-    console.error(`❌ LỖI fetch Info:`, error);
-    // Trả về đối tượng rỗng để tránh lỗi undefined trong các component React
-    return [];
+  } catch (err) {
+    throw new Error(`Lỗi Info.ts: ${err instanceof Error ? err.message : err}`);
   }
 }

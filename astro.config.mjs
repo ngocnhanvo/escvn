@@ -110,6 +110,10 @@ export default defineConfig({
     }
   ],
   vite: {
+    // Cấu hình xóa cache trình duyệt client sau khi build 
+    define: {
+      'import.meta.env.VITE_BUILD_TIME': JSON.stringify(new Date().getTime())
+    },
     ssr: {
       external: ['node:buffer', 'node:fs', 'node:path'],
       noExternal: [/.*/],

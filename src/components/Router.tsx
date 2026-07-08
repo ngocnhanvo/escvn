@@ -86,7 +86,7 @@ const getRouterConfig = (props: AppRouterProps) => {
   }
 
   return [{
-    path: "/",
+    path: props.basename,
     key: 'esc',
     element: <LayoutWithLanguage {...props} />,
     children: children
@@ -94,6 +94,7 @@ const getRouterConfig = (props: AppRouterProps) => {
 };
 
 export default function AppRouter(props: AppRouterProps) {
+  globalStore.setBaseName(props.basename);
   const [isInitialized, setIsInitialized] = useState(false);
   const [router, setRouter] = useState<any>(null);
 
@@ -103,9 +104,10 @@ export default function AppRouter(props: AppRouterProps) {
       if (!isClient) return;
 
       // 1. Phân tích slug hiện tại từ URL thanh địa chỉ
-      const pathname = window.location.pathname;
+      let pathname = window.location.pathname;
+      pathname = pathname.substring(0, 1) + pathname.substring(props.basename.length);
       const cleanPath = pathname.split('?')[0].split('#')[0];
-      const currentSlug = cleanPath === "/" ? "default" : cleanPath.replace(/^\/|\/$/g, "");
+      const currentSlug = cleanPath === '/' ? "default" : cleanPath.replace(/^\/|\/$/g, "");
 
       // 2. Tải song song cả 2 file JSON mồi ban đầu
       const [common, pageDetail] = await Promise.all([

@@ -10,6 +10,8 @@ export default function Home_04(props: home_04) {
     let data = props.data;
     if (!data)
         return null;
+    if(!data?.items)
+        return null;
     let currency = getCurrencyByKey('vi');
     let image = data?.items[0]?.image;
     return (

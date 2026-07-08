@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { Products } from '@/entities';
 import { getCheckoutUrlFromServer } from './woocommerce';
+import { Coupons } from '@/entities/Coupons';
 interface CartState {
   // State
   items: Products[];
@@ -10,15 +11,20 @@ interface CartState {
   addingItemId: string | null;
   isCheckingOut: boolean;
   error: string | null;
-
+  cartKey?: string;
+  total_tax?: number;
+  subtotal?: number;
+  discount_total?: number;
+  total?: number;
+  coupons?: Coupons[];
   // Internal
   _initialized: boolean;
 }
 
 interface CartActions {
   // Public actions
-  addToCart: (input: Products) => Promise<void>;
-  addAllToCart: (input: Products[], open: boolean) => Promise<void>;
+  addToCart: (input: Products, open: boolean, cartKey?: string, total_tax?: number) => Promise<void>;
+  addAllToCart: (input: Products[], open: boolean, cartKey?: string, total_tax?: number, subtotal?: number, discount_total?: number, total?: number, coupons?: Coupons[]) => Promise<void>;
   removeFromCart: (item: Products) => void;
   updateQuantity: (item: Products, quantity: number) => void;
   clearCart: () => void;
@@ -26,7 +32,7 @@ interface CartActions {
   toggleCart: () => void;
   openCart: () => void;
   closeCart: () => void;
-  
+
   // Internal
   _fetchCart: () => Promise<void>;
   _sendQuantityUpdate: (lineItemId: string, quantity: number) => Promise<void>;
@@ -50,6 +56,12 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       // Initial state
       items: [],
+      cartKey: null,
+      total_tax: null,
+      subtotal: null,
+      discount_total: null,
+      total: null,
+      coupons: [],
       isOpen: false,
       isLoading: false,
       addingItemId: null,
@@ -63,13 +75,31 @@ export const useCartStore = create<CartStore>()(
           set({ _initialized: true });
         },
 
-        addAllToCart: async (inputs: Products[], isOpen: boolean = true) => {
-          console.log('Adding all items to cart:', { items: inputs, addingItemId: null, isOpen: isOpen });
-          set({ items: inputs, addingItemId: null, isOpen: isOpen });
+        addAllToCart: async (
+          inputs: Products[],
+          isOpen: boolean = true,
+          cartKey: string = '',
+          total_tax: number = 0,
+          subtotal: number = 0,
+          discount_total: number = 0,
+          total: number = 0,
+          coupons?: Coupons[]
+        ) => {
+          set({ 
+            items: inputs, 
+            addingItemId: null, 
+            isOpen: isOpen, 
+            cartKey, 
+            total_tax,
+            subtotal,
+            discount_total,
+            total,
+            coupons
+          });
         },
         /** Add item to cart - Local storage first */
-        addToCart: async (input: Products, isOpen: boolean = true) => {
-          set({ addingItemId: input._id, error: null });
+        addToCart: async (input: Products, isOpen: boolean = true, cartKey: string = '', total_tax: number = 0) => {
+          set({ addingItemId: input._id, error: null, cartKey, total_tax });
           const { items } = get();
           const existingItem = items.find((i) => i._id === input._id);
 
@@ -89,7 +119,7 @@ export const useCartStore = create<CartStore>()(
 
           set({ items: newItems, addingItemId: null, isOpen: isOpen });
           if (typeof document !== 'undefined') {
-            document.body.style.overflow = isOpen ? 'hidden': '';
+            document.body.style.overflow = isOpen ? 'hidden' : '';
           }
         },
 
@@ -111,7 +141,7 @@ export const useCartStore = create<CartStore>()(
         },
 
         /** Internal: No-op for local-first cart */
-        _sendQuantityUpdate: async () => {},
+        _sendQuantityUpdate: async () => { },
 
         /** Clear all items from cart */
         clearCart: () => {
@@ -131,7 +161,7 @@ export const useCartStore = create<CartStore>()(
           try {
             // Gọi Proxy để đồng bộ lên CoCart
             const result = await getCheckoutUrlFromServer(items);
-            
+
             if (result.url) {
               // Chuyển hướng người dùng sang trang Checkout của WordPress
               window.location.href = result.url;
@@ -175,6 +205,7 @@ export const useCartStore = create<CartStore>()(
       partialize: (state) => ({
         items: state.items,
         isOpen: state.isOpen,
+        cartKey: state.cartKey
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -211,6 +242,12 @@ export const useCart = (lang: string) => {
     addingItemId: store.addingItemId,
     isCheckingOut: store.isCheckingOut,
     error: store.error,
+    cartKey: store.cartKey,
+    total_tax: store.total_tax,
+    subtotal: store.subtotal,
+    discount_total: store.discount_total,
+    total: store.total,
+    coupons: store.coupons,
     // Actions
     actions: store.actions,
   };

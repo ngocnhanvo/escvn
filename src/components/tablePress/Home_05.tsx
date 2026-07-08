@@ -10,7 +10,7 @@ interface home_05 {
 export default function Home_05(props: home_05) {
     let language = props.page.lang;
     let data = props.data;
-    if(!data)
+    if(!data && !data.items)
         return null;
     let currency = getCurrencyByKey('vi');
     return (

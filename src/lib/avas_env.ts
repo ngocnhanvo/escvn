@@ -17,5 +17,6 @@ export const getAvas = (locals: App.Locals) => {
         WC_URL: getEnv('WC_URL'),
         WOO_KEY: getEnv('WOO_KEY'),
         WOO_SECRET: getEnv('WOO_SECRET'),
+        cache: getEnv('cache'),
     };
 };

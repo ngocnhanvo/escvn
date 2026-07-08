@@ -1,12 +1,22 @@
 // src/services/globalStore.ts
 export const globalStore = {
   commonData: null as any,
+  productData: null as any,
   currentPageData: null as any,
-
+  baseName: '/' as string,
+  getCacheBuster() {
+    const buildTime = import.meta.env.VITE_BUILD_TIME || '';
+    return buildTime ? `?v=${buildTime}` : '';
+  },
+  setBaseName(data: string) {
+    this.baseName = data;
+  },
   setCommonData(data: any) {
     this.commonData = data;
   },
-
+  setProductData(data: any) {
+    this.productData = data;
+  },
   setCurrentPageData(data: any) {
     this.currentPageData = data;
     
@@ -35,10 +45,30 @@ export const globalStore = {
     return null;
   },
 
+  getBaseName() {
+    return this.baseName;
+  },
   getCommonData() {
     return this.commonData;
   },
+  async getProductData(WC_URL_CLIENT: string = '') {
+    if(this.productData && this.productData.length > 0)
+      return this.productData;
 
+    try {
+      const res = await fetch(`${WC_URL_CLIENT}/data/cms-products.json${this.getCacheBuster()}`);
+      if (!res.ok) throw new Error("Không thể tải cấu hình sản phẩm");
+      
+      const data = await res.json();
+      
+      // Đẩy vào store để lưu trữ làm gốc
+      this.productData = data;
+      return data;
+    } catch (error) {
+      console.error("Lỗi getProductData:", error);
+      return null;
+    }
+  },
   getCurrentPageData() {
     return this.currentPageData;
   }

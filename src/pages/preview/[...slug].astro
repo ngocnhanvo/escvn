@@ -3,11 +3,9 @@ export const prerender = false; // Chế độ SSR để lấy dữ liệu độ
 import { Head, HeadProps } from "@/components/Head";
 import AppRouter from "@/components/Router";
 import "@/styles/global.css";
-import { AppRouterProps } from "@/entities";
-import { mergeJSON, mergeJSONReverse } from "@/lib/stringUtils";
+import { AppRouterProps } from "@/entities/AppRouterProps";
 import { returnLang } from "@/context/LanguageContext/returnLang";
 import {PageTransition}  from '@/components/PageTransition/PageTransition';
-import menu_json from "@/data/menu.json";
 import { getAvas } from '@/lib/avas_env';
 import { getSharedWordPressData } from "@/lib/wordpress/cache";
 export const avas = getAvas(null);
@@ -16,10 +14,10 @@ export const WC_URL = avas.WC_URL;
 export const { data_info, pages, menus } = await getSharedWordPressData(avas, true);
 
 const props: AppRouterProps = {
-  basename: '/preview',
-  pages: mergeJSONReverse(pages, menu_json),
-  menus: mergeJSON(pages, menu_json),
-  data_info: data_info
+  basename: "/preview",
+  pages: [],
+  menus: [],
+  status: 200,
 };
 const lang = returnLang(pages, Astro.url.pathname, props.basename);
 // Sử dụng Astro.url để lấy URL chính xác, đảm bảo không bị lỗi double slash

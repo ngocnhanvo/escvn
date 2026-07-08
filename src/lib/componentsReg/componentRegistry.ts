@@ -22,6 +22,8 @@ function getComponentName(shortcode: string, lang: string) {
   return capitalizeFirstLetter(shortcode);
 }
 
+
+
 export async function registerPageComponents(page: Pages) {
   const tasks: Promise<any>[] = [];
 
@@ -61,7 +63,9 @@ export function getRegisteredComponent(
   shortcode: string,
   lang: string
 ): React.ComponentType<any> | null {
-  return registry.get(getComponentName(shortcode, lang)) ?? null;
+  const name = getComponentName(shortcode, lang);
+  console.log(`registry`, registry);
+  return registry.get(name) ?? null;
 }
 
 export function isPageRegistered(page: Pages) {

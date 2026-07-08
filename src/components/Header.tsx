@@ -16,15 +16,16 @@ import ShoppingCart from 'lucide-react/dist/esm/icons/shopping-cart';
 import X from 'lucide-react/dist/esm/icons/x';
 import Menu from 'lucide-react/dist/esm/icons/menu';
 import MapPin from 'lucide-react/dist/esm/icons/map-pin';
-
+import { getAvas } from '@/lib/avas_env';
 export default function Header(props: AppRouterProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
-  const { itemCount, actions } = useCart(language);
+  const { itemCount, cartKey } = useCart(language);
   const data_info = props.data_info;
+  const avas = getAvas(null);
 
   let navItems = props.menus.filter((a: Pages) => {
     if (!a.slug) return false;
@@ -33,6 +34,7 @@ export default function Header(props: AppRouterProps) {
 
   const page_home = props.pages.find((a: Pages) => a.key === 'home' && a.lang === language && a.slug != undefined);
   const page_about = props.pages.find((a: Pages) => a.key === 'about' && a.lang === language && a.slug != undefined);
+  const page_cart = props.pages.find((a: Pages) => a.key === 'cart' && a.lang === language && a.slug != undefined);
   const link_member = 'https://member.esc.vn';
 
   const isActive = (page: Pages) => {
@@ -138,11 +140,13 @@ export default function Header(props: AppRouterProps) {
 
           <div className="flex items-center gap-2">
             <Button
-              aria-label="Toggle Cart"
+              aria-label="Navigate Cart"
               variant="ghost"
               size="default"
               className="relative hover:bg-accent/10 transition-colors duration-200 [&_svg]:size-auto"
-              onClick={actions.toggleCart}
+              onClick={(e) => {
+                handlePageLink(e, page_cart, `/${page_cart.slug}`, navigate);
+              }}
             >
               <ShoppingCart className="h-5 w-5 text-primary" />
               {itemCount > 0 && (
