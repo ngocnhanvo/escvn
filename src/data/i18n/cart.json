@@ -1,0 +1,66 @@
+{
+    "cart": {
+        "vi": "Giỏ hàng",
+        "en": "Cart"
+    },
+    "checkout": {
+        "vi": "Thanh toán",
+        "en": "Checkout"
+    },
+    "complete": {
+        "vi": "Hoàn tất",
+        "en": "Complete"
+    },
+    "cart_title": {
+        "vi": "Giỏ hàng của bạn",
+        "en": "Your cart"
+    },
+    "cart_empty": {
+        "vi": "Giỏ hàng trống.",
+        "en": "Your cart is empty."
+    },
+    "cart_shop_now": {
+        "vi": "Tiếp tục mua sắm",
+        "en": "Shop now"
+    },
+    "cart_select": {
+        "vi": "Chọn một dòng",
+        "en": "Sel"
+    },
+    "product": {
+        "vi": "Sản phẩm",
+        "en": "Product"
+    },
+    "quantity": {
+        "vi": "Số lượng",
+        "en": "Quantity"
+    },
+    "price": {
+        "vi": "Đơn giá",
+        "en": "Price"
+    },
+    "summary_title": {
+        "vi": "Tổng cộng",
+        "en": "Total"
+    },
+    "summary_total": {
+        "vi": "Tổng tiền",
+        "en": "Total"
+    },
+    "summary_subtotal": {
+        "vi": "Tạm tính",
+        "en": "Subtotal"
+    },
+    "summary_discount": {
+        "vi": "Giảm giá",
+        "en": "Discount"
+    },
+    "summary_tax": {
+        "vi": "Thuế",
+        "en": "Tax"
+    },
+    "submit_button": {
+        "vi": "Tiến hành thanh toán",
+        "en": "Proceed to checkout"
+    }
+}

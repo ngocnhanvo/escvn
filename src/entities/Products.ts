@@ -29,4 +29,10 @@ export interface Products {
   collectionId?: string;
   isFeatured?: Record<string, boolean>;
   variations?: Record<string, Variations[]>, 
+  totals?: {
+    subtotal?: number,
+    subtotal_tax?: number,
+    total?: number,
+    tax?: number
+  }
 }

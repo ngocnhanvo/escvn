@@ -10,6 +10,7 @@ export const WOO_SECRET = avas.WOO_SECRET;
 
 export async function sync_coupons(cartKey: string, codes: string[]) {
     const link = `${WC_URL}/wp-json/cocart/v2/cart/update${cartKey ? `?cart_key=${cartKey}` : ''}`;
+    console.log('namespace', 'sync-coupons-db');
     const res = await fetch(link,
         {
             method: "POST",
@@ -18,7 +19,7 @@ export async function sync_coupons(cartKey: string, codes: string[]) {
                 "Cart-Key": cartKey,
             },
             body: JSON.stringify({
-                namespace: "sync-coupons",
+                namespace: "sync-coupons-db",
                 data: {
                     "coupons": codes
                 },
@@ -43,17 +44,17 @@ export const GET: APIRoute = async ({ request }) => {
         // const data = await response.json();
 
         // Áp dụng mã giảm giá
-        const products = await globalStore.getProductData(avas.WC_URL_CLIENT);
-        const coupons: Coupons[] = [...new Set(products.flatMap(item => item.coupons_dktm || []))];
-        const uniqueCouponCodes = [
-            ...new Set(
-                coupons
-                    .map(c => c.coupon_code?.trim())
-                    .filter(Boolean)
-            ),
-        ];
+        // const products = await globalStore.getProductData(avas.WC_URL_CLIENT);
+        // const coupons: Coupons[] = [...new Set(products.flatMap(item => item.coupons_dktm || []))];
+        // const uniqueCouponCodes = [
+        //     ...new Set(
+        //         coupons
+        //             .map(c => c.coupon_code?.trim())
+        //             .filter(Boolean)
+        //     ),
+        // ];
 
-        const data = await sync_coupons(cartKey, uniqueCouponCodes);
+        const data = await sync_coupons(cartKey, []);
 
         return new Response(JSON.stringify({ ok: true, data }), {
             headers: { 'content-type': 'application/json' }
