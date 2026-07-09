@@ -1,0 +1,154 @@
+{
+  "cart": {
+    "vi": "Giỏ hàng",
+    "en": "Cart"
+  },
+  "checkout": {
+    "vi": "Thanh toán",
+    "en": "Checkout"
+  },
+  "complete": {
+    "vi": "Hoàn tất",
+    "en": "Complete"
+  },
+  "login_text": {
+    "vi": "Nếu trước đây bạn đã mua hàng của chúng tôi, vui lòng đăng nhập. Nếu bạn là khách hàng mới, vui lòng tiếp tục nhập phần thông tin thanh toán.",
+    "en": "If you have purchased from us before, please log in. If you are a new customer, please continue to enter your billing information."
+  },
+  "login_username": {
+    "vi": "Nhập tài khoản hoặc email...",
+    "en": "Enter username or email..."
+  },
+  "login_password": {
+    "vi": "••••••••",
+    "en": "••••••••"
+  },
+  "login_button": {
+    "vi": "Đăng nhập",
+    "en": "Login"
+  },
+  "login_remember": {
+    "vi": "Ghi nhớ mật khẩu",
+    "en": "Remember me"
+  },
+  "login_lost_password": {
+    "vi": "Quên mật khẩu?",
+    "en": "Forgot password?"
+  },
+  "billing_title": {
+    "vi": "Thông tin thanh toán",
+    "en": "Billing information"
+  },
+  "billing_personal": {
+    "vi": "Cá nhân",
+    "en": "Personal"
+  },
+  "billing_organization": {
+    "vi": "Tổ chức",
+    "en": "Organization"
+  },
+  "billing_name": {
+    "vi": "Tên chủ thể *",
+    "en": "Full name *"
+  },
+  "billing_id_number": {
+    "vi": "CCCD/MSDN",
+    "en": "ID/Tax ID"
+  },
+  "billing_phone": {
+    "vi": "Số điện thoại *",
+    "en": "Phone number *"
+  },
+  "billing_email": {
+    "vi": "Email *",
+    "en": "Email *"
+  },
+  "billing_address": {
+    "vi": "Địa chỉ *",
+    "en": "Address *"
+  },
+  "billing_create_account": {
+    "vi": "Tạo tài khoản mới?",
+    "en": "Create an account?"
+  },
+  "billing_note": {
+    "vi": "Ghi chú đơn hàng",
+    "en": "Order notes"
+  },
+  "cart_title": {
+    "vi": "Giỏ hàng của bạn",
+    "en": "Your cart"
+  },
+  "cart_empty": {
+    "vi": "Giỏ hàng trống.",
+    "en": "Your cart is empty."
+  },
+  "cart_shop_now": {
+    "vi": "Mua sắm",
+    "en": "Shop now"
+  },
+  "cart_select": {
+    "vi": "Chọn một dòng",
+    "en": "Sel"
+  },
+  "summary_title": {
+    "vi": "Tổng cộng",
+    "en": "Total"
+  },
+  "summary_subtotal": {
+    "vi": "Tạm tính",
+    "en": "Subtotal"
+  },
+  "summary_discount": {
+    "vi": "Giảm giá",
+    "en": "Discount"
+  },
+  "summary_tax": {
+    "vi": "Thuế",
+    "en": "Tax"
+  },
+  "payment_title": {
+    "vi": "Phương thức thanh toán",
+    "en": "Payment method"
+  },
+  "payment_bacs": {
+    "vi": "Chuyển khoản ngân hàng",
+    "en": "Bank transfer"
+  },
+  "payment_paypal": {
+    "vi": "PayPal (Đang bảo trì)",
+    "en": "PayPal (Under maintenance)"
+  },
+  "policy_privacy_text": {
+    "vi": "Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng, tăng trải nghiệm sử dụng website, và cho các mục đích cụ thể khác đã được mô tả trong",
+    "en": "Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our"
+  },
+  "policy_privacy_link": {
+    "vi": "chính sách bảo mật",
+    "en": "privacy policy"
+  },
+  "terms_text": {
+    "vi": "Tôi đồng ý với",
+    "en": "I agree to the"
+  },
+  "terms_link": {
+    "vi": "Thỏa thuận sử dụng",
+    "en": "Terms of use"
+  },
+  "terms_and": {
+    "vi": "và",
+    "en": "and"
+  },
+  "terms_policy_link": {
+    "vi": "Chính sách bảo vệ dữ liệu cá nhân",
+    "en": "Personal data protection policy"
+  },
+  "submit_button": {
+    "vi": "Thanh toán",
+    "en": "Place order"
+  },
+  "more_maintain": {
+    "vi": "Đang bảo trì",
+    "en": "Under maintenance"
+  }
+}
