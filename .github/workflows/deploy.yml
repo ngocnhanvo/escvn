@@ -18,16 +18,24 @@ jobs:
     - name: Get latest code
       uses: actions/checkout@v4
 
-    # Bước 2: Cài đặt NodeJS chuẩn trên server ảo
+    # Bước 2: Cài đặt NodeJS (Bỏ dòng cache: 'npm' đi)
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '24' # Khuyên dùng bản LTS gõ gọn '20' hoặc '22', tự động lấy minor version mới nhất
-        cache: 'npm'
+        node-version: '24'
 
-    # Bước 3: Cài đặt thư viện (Chỉ chạy khi package-lock.json có thay đổi nhờ vào cache ở trên)
+    # Bước 2.5: Cache trực tiếp thư mục node_modules đã giải nén
+    - name: Cache Node Modules
+      id: node-modules-cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-v1-${{ hashFiles('**/package-lock.json') }}
+
+    # Bước 3: Chỉ chạy npm ci NẾU package-lock.json có thay đổi (cache bị miss)
     - name: Install dependencies
-      run: npm ci # Tối ưu hoàn toàn cho CI/CD, thay thế hoàn toàn cho npm install
+      if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      run: npm ci
 
     # Bước 4: Tự động tạo file .env từ GitHub Secret trước khi build
     - name: Make env file
@@ -59,6 +67,8 @@ jobs:
         local-dir: ./                      # Nhớ kiểm tra xem dự án của bạn build ra 'dist' hay 'build' hay 'out' nhé
         server-dir: /public_html/               # Thư mục đích trên hosting DirectAdmin
         dangerous-clean-slate: false
+        include: |
+          escvn.zip
         exclude: |                              # Ép bỏ qua mọi thứ khác, chỉ đẩy đúng file zip
           **
           !escvn.zip
