@@ -7,17 +7,17 @@ export const mapProducts = function (products_server: Products[], products_clien
 
     let keyClients = [];
     products_client.forEach(item => {
-        let itemP = products_server.find(a => String(a._id) == String(item._id) || String(a._id) == String(item.key));
+        let itemP = products_server?.find(a => String(a?._id) == String(item?._id) || String(a?._id) == String(item?.key));
         let laBienThe = false;
         if (!itemP) {
-            itemP = products_server.find(serverProduct => {
+            itemP = products_server?.find(serverProduct => {
                 // Lấy danh sách các ngôn ngữ có trong item
-                const languages = Object.keys(item.slug);
+                const languages = Object.keys(item?.slug || {});
 
                 // Kiểm tra: Có bất kỳ ngôn ngữ nào mà slug của server khớp với slug của item ko?
-                return languages.some(lang =>
-                    serverProduct.slug[lang] &&
-                    serverProduct.slug[lang] === item.slug[lang]
+                return languages?.some(lang =>
+                    serverProduct?.slug?.[lang] &&
+                    serverProduct?.slug?.[lang] === item?.slug?.[lang]
                 );
             });
 
@@ -30,7 +30,8 @@ export const mapProducts = function (products_server: Products[], products_clien
             if (key === 'key') {
                 item.keyAPI = val;
                 keyClients.push(key);
-            } else if (key.startsWith('api-')) {
+            } 
+            else if (key.startsWith('api-')) {
                 const keyClient = key.slice(4);
                 item[keyClient] = getNestedValue(itemP, val.toString());
                 keyClients.push(keyClient);

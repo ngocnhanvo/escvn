@@ -13,10 +13,8 @@ import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
 import { globalStore } from '@/services/globalStore';
 
 // Kiểm tra xem User Agent có chứa các từ khóa của thiết bị di động không
-const dataproduct = await globalStore.getProductData();
 export default function CheckDomainPage(props: AppRouterProps) {
   props = globalStore.getCommonData();
-  props.data_products = dataproduct;
   const { language } = useLanguage();
   const page = returnCurrentPage(props, language);
   const inputRef = useRef<HTMLInputElement>(null);

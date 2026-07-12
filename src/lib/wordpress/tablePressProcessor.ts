@@ -5,6 +5,8 @@ import dynamicIconImports from "lucide-react/dynamicIconImports";
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { getNestedValue } from '../effects/getNestedValue';
+import { mapProducts } from './products/mapProduct';
+import { Products } from '@/entities/Products';
 
 const lucideTags = Object.keys(dynamicIconImports);
 const kebabIconMap = new Map<string, string>();
@@ -14,7 +16,7 @@ lucideTags.forEach((tag) => {
   kebabIconMap.set(cleanKey, tag);
 });
 
-const fixLucideIconName = function (userInput: string): string | null {
+const fixLucideIconName = (userInput: string): string | null => {
   if (!userInput) return null;
   const cleanInput = userInput.replace(/[-_\s]/g, "").toLowerCase();
   return kebabIconMap.get(cleanInput) || null;
@@ -26,137 +28,157 @@ interface ProcessOptions {
   publicDirBase?: string;
   isPreview?: boolean;
   data_info: WPInfo;
+  products: Products[];
   lang: string;
 }
 
-export const removeTargetImgRegex = new RegExp(`<img[^>]*class="[^"]*tablepress-attached-image[^"]*"[^>]*>`, 'g');
+export const removeTargetImgRegex = /<img[^>]*class="[^"]*tablepress-attached-image[^"]*"[^>]*>/g;
 export const imgRegex = /<img[^>]+src="([^">]+)"/g;
+export const imgRegexFull = /<img([\s\S]*?)src="([^"]+)"([\s\S]*?)>/gi;
+export const tblPressRegex = /\[table id=\s*([a-zA-Z0-9_-]+)\s*\/]/g;
+export function clearTablePressCache(): void {
+  processedtblPressCache.clear();
+  iconCache.clear();
+}
 
-// 1. Chuyển sang dùng Map lưu Promise để tránh Race Condition toàn diện
 const processedtblPressCache = new Map<string, Promise<any>>();
 const iconCache = new Map<string, string>();
+
+/**
+ * Helper: Xử lý phần import Icon chuyển thành chuỗi SVG String
+ */
+async function processIcon(value: string, key: string, item: any): Promise<void> {
+  if (item[key]?.[value]) return;
+  if (iconCache.has(value)) {
+    item[key] = iconCache.get(value)!;
+    return;
+  }
+
+  const kebabName = fixLucideIconName(value);
+  if (!kebabName) {
+    console.warn(`Icon nhập từ CMS không tồn tại: "${value}"`);
+    item[key] = '';
+    return;
+  }
+
+  try {
+    const module = await import(`lucide-react/dist/esm/icons/${kebabName}.js`);
+    const svgString = ReactDOMServer.renderToString(
+      React.createElement(module.default, { size: 24 })
+    );
+    item[key] = svgString;
+    iconCache.set(value, svgString);
+  } catch (error) {
+    console.error(`Không thể import file: ${kebabName}.js`, error);
+    item[key] = '';
+  }
+}
+
+/**
+ * Helper: Xử lý logic cho từng Field (id) bên trong một Item
+ */
+async function processItemField(
+  id: string, 
+  item: any, 
+  context: { wcUrl?: string; isPreview: boolean; isAPI: boolean; linkAPI?: string; data_info: WPInfo; lang: string },
+  state: { datasAPI: any }
+): Promise<void> {
+  const value = String(item[id] ?? '');
+
+  // 1. Xử lý API Key
+  if (id === 'api-key' && context.isAPI) {
+    try {
+      const responseAPI = await fetch(`${context.wcUrl}${context.linkAPI?.replaceAll(id, value)}`);
+      if (responseAPI.ok) {
+        state.datasAPI = await responseAPI.json();
+        item['keyAPI'] = value;
+      }
+    } catch (e) {
+      console.error(`Lỗi fetch API Key: ${id}`, e);
+    }
+    return;
+  }
+
+  // 2. Xử lý data lồng từ API
+  if (id.startsWith('api-') && state.datasAPI?.length > 0) {
+    const val = getNestedValue(state.datasAPI[0], value);
+    item[id.substring(4)] = val ?? value;
+  }
+
+  // 3. Xử lý Lucide Icon
+  if (id.startsWith('lucide-')) {
+    await processIcon(value, id.substring(7), item);
+    return;
+  }
+
+  // 4. Xử lý Image hoặc Đổi ngôn ngữ i18n
+  if (value.match(imgRegex)) {
+    const matches = Array.from(value.matchAll(imgRegex));
+    for (const match of matches) {
+      const originalSrc = match[1];
+      if (originalSrc && !originalSrc.startsWith('data:')) {
+        item[id] = await processAndStoreImage({
+          imageUrl: originalSrc,
+          wcUrl: context.wcUrl,
+          publicDirBase: 'images/pages',
+          isPreview: context.isPreview,
+        });
+      }
+    }
+  } else if (typeof item[id] === 'string') {
+    item[id] = replaceAllProperties(item[id], context.data_info, context.lang);
+  }
+}
+
+/**
+ * Hàm main xử lý dữ liệu từ TablePress Shortcode
+ */
 export async function processAndGetData({
   tblshort,
   wcUrl,
-  isPreview = false,
   data_info,
+  products,
   lang,
+  isPreview = false
 }: ProcessOptions): Promise<any> {
-
   if (!tblshort) return {};
+  if (processedtblPressCache.has(tblshort)) return processedtblPressCache.get(tblshort)!;
 
-  // 2. Kiểm tra nếu đang hoặc đã fetch shortcode này rồi thì ăn theo Promise đó luôn
-  if (processedtblPressCache.has(tblshort)) {
-    return processedtblPressCache.get(tblshort)!;
-  }
-
-  // 3. Tạo một Promise bao bọc toàn bộ tiến trình fetch và xử lý data
   const tableProcessPromise = (async (): Promise<any> => {
-    let json: any = {};
-
     try {
       const response = await fetch(`${wcUrl}/wp-json/tablepress/v1/table/${tblshort}`);
-      if (!response.ok) return json;
+      if (!response.ok) return {};
 
-      json = await response.json();
-      const linkAPI = json.meta?.api;
-      const isAPI = linkAPI?.length > 0;
+      const json = await response.json();
+      const linkAPI: string = json.meta?.api;
+      const isAPI = linkAPI?.startsWith('/wp-json') || linkAPI?.startsWith('https://');
+      const isProduct = linkAPI === 'Product';
 
-      if (json.items && Array.isArray(json.items)) {
-        for (const item of json.items) {
-          let datasAPI: any = null;
+      if (Array.isArray(json.items)) {
+        const context = { wcUrl, isPreview, isAPI, linkAPI, data_info, lang };
 
-          // Chạy vòng lặp qua các key của item
+        // TỐI ƯU: Sử dụng Promise.all để xử lý song song các item thay vì dùng vòng lặp tuần tự
+        await Promise.all(json.items.map(async (item: any) => {
+          const state = { datasAPI: null }; // Lưu state cục bộ của mỗi item
           for (const id of Object.keys(item)) {
-            const value = String(item[id] ?? '');
-
-            // FIX lỗi logic: Check responseAPI.ok thay vì response.ok
-            if (isAPI && id === 'api-key') {
-              const responseAPI = await fetch(`${wcUrl}${linkAPI.replaceAll(id, value)}`);
-              if (responseAPI.ok) { // <-- Đã sửa từ `response.ok` thành `responseAPI.ok`
-                datasAPI = await responseAPI.json();
-                item['keyAPI'] = value;
-              }
-            } else {
-              if (id.startsWith('api-') && datasAPI?.length > 0) {
-                const val = getNestedValue(datasAPI[0], value);
-                item[id.substring(4)] = val ?? value;
-              }
-
-              if (id.startsWith('lucide-')) {
-                const key = id.substring(7);
-
-                if (!item[key] || !item[key][value]) {
-                  if (iconCache.has(value)) {
-                    item[key] = iconCache.get(value)!;
-                  } else {
-                    // Tìm ra tên file chuẩn (ví dụ: "circle-2")
-                    const kebabName = fixLucideIconName(value);
-
-                    if (kebabName) {
-                      try {
-                        // Import chính xác file .js bằng tên kebab-case đã được sửa
-                        const module = await import(
-                          `lucide-react/dist/esm/icons/${kebabName}.js`
-                        );
-                        const IconComponent = module.default;
-
-                        // Render sang SVG String gửi xuống Client
-                        const svgString = ReactDOMServer.renderToString(
-                          React.createElement(IconComponent, { size: 24 })
-                        );
-
-                        item[key] = svgString;
-                        iconCache.set(value, svgString);
-                      } catch (error) {
-                        console.error(`Không thể import file: ${kebabName}.js`, error);
-                        item[key] = '';
-                      }
-                    } else {
-                      console.warn(`Icon nhập từ CMS không tồn tại: "${value}"`);
-                      item[key] = '';
-                    }
-                  }
-                }
-              }
-
-              if (value.match(imgRegex)) {
-                const tblPressmatches_imgs = Array.from(value.matchAll(imgRegex));
-                for (const match of tblPressmatches_imgs) {
-                  const originalSrc = match[1];
-                  if (originalSrc && !originalSrc.startsWith('data:')) {
-                    const storedTblPressImage = await processAndStoreImage({
-                      imageUrl: originalSrc,
-                      wcUrl: wcUrl,
-                      publicDirBase: 'images/pages',
-                      isPreview: isPreview,
-                    });
-                    item[id] = storedTblPressImage;
-                  }
-                }
-              } else {
-                if (typeof item[id] === 'string') {
-                  item[id] = replaceAllProperties(item[id], data_info, lang);
-                }
-              }
-            }
+            await processItemField(id, item, context, state);
           }
+        }));
+
+        if (isProduct) {
+          mapProducts(products, json.items);
         }
       }
-
       return json;
-
     } catch (err) {
-      // Nếu lỗi thì xóa khỏi cache để lần sau có thể request lại
       processedtblPressCache.delete(tblshort);
       throw new Error(`Lỗi xử lý API tablepress ${tblshort}: ${err instanceof Error ? err.message : err}`);
     }
   })();
 
-  // 4. Set Promise vào Map NGAY LẬP TỨC
   processedtblPressCache.set(tblshort, tableProcessPromise);
 
-  // Giới hạn cache tối đa 500 table trong RAM (Tùy chọn cho SSR)
+  // Giới hạn cache tối đa 500 table trong RAM
   if (processedtblPressCache.size > 500) {
     const firstKey = processedtblPressCache.keys().next().value;
     if (firstKey) processedtblPressCache.delete(firstKey);

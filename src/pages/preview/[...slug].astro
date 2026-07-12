@@ -8,15 +8,16 @@ import { returnLang } from "@/context/LanguageContext/returnLang";
 import {PageTransition}  from '@/components/PageTransition/PageTransition';
 import { getAvas } from '@/lib/avas_env';
 import { getSharedWordPressData } from "@/lib/wordpress/cache";
-export const avas = getAvas(null);
-export const WC_URL_CLIENT = avas.WC_URL_CLIENT;
-export const WC_URL = avas.WC_URL;
-export const { data_info, pages, menus } = await getSharedWordPressData(avas, true);
-
+const avas = getAvas(null);
+const WC_URL_CLIENT = avas.WC_URL_CLIENT;
+const WC_URL = avas.WC_URL;
+const { data_info, pages, menus, data_products } = await getSharedWordPressData(avas, true);
 const props: AppRouterProps = {
   basename: "/preview",
-  pages: [],
-  menus: [],
+  pages,
+  menus,
+  data_info,
+  data_products,
   status: 200,
 };
 const lang = returnLang(pages, Astro.url.pathname, props.basename);

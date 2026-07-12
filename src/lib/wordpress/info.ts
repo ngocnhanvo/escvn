@@ -17,7 +17,7 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
       const response = await fetch(
         `${WC_URL}/wp-json/wp/v2/thong-tin-chung?_embed=true&status=publish&per_page=${perPage}&page=${page}`
       );
-      
+
       if (!response.ok) break;
 
       const data = await response.json();
@@ -109,62 +109,41 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
       }
     });
 
-    // Xử lý lưu ảnh static cho tất cả template đã gom nhóm
-    return await Promise.all(Object.values(unifiedPages).map(async (p: WPInfo): Promise<WPInfo> => {
-      if (p.favicon) {
-        for (const id of Object.keys(p.favicon)) {
-          const store = await processAndStoreImage({
-            imageUrl: p.favicon[id].src,
-            alt: p.favicon[id].alt,
-            wcUrl: WC_URL,
-            publicDirBase: 'images/pages', // Lưu vào thư mục riêng cho sản phẩm
-            isPreview: isPreview, // Truyền trạng thái preview
-          });
-          p.favicon[id] = store;
-        }
-      }
+    // Định nghĩa các key chứa danh sách ảnh cần xử lý để lặp qua
+    const imageKeys: Array<keyof WPInfo> = ['favicon', 'logo', 'image', 'mascot'];
 
-      if (p.logo) {
-        for (const id of Object.keys(p.logo)) {
-          const store = await processAndStoreImage({
-            imageUrl: p.logo[id].src,
-            alt: p.logo[id].alt,
-            wcUrl: WC_URL,
-            publicDirBase: 'images/pages', // Lưu vào thư mục riêng cho sản phẩm
-            isPreview: isPreview, // Truyền trạng thái preview
-          });
-          p.logo[id] = store;
-        }
-      }
+    return await Promise.all(
+      Object.values(unifiedPages).map(async (p: WPInfo): Promise<WPInfo> => {
+        const promises: Promise<void>[] = [];
 
-      if (p.image) {
-        for (const id of Object.keys(p.image)) {
-          const store = await processAndStoreImage({
-            imageUrl: p.image[id].src,
-            alt: p.image[id].alt,
-            wcUrl: WC_URL,
-            publicDirBase: 'images/pages', // Lưu vào thư mục riêng cho sản phẩm
-            isPreview: isPreview, // Truyền trạng thái preview
-          });
-          p.image[id] = store;
-        }
-      }
+        for (const key of imageKeys) {
+          const imageGroup = p[key];
+          if (!imageGroup) continue;
 
-      if (p.mascot) {
-        for (const id of Object.keys(p.mascot)) {
-          const store = await processAndStoreImage({
-            imageUrl: p.mascot[id].src,
-            alt: p.mascot[id].alt,
-            wcUrl: WC_URL,
-            publicDirBase: 'images/pages', // Lưu vào thư mục riêng cho sản phẩm
-            isPreview: isPreview, // Truyền trạng thái preview
-          });
-          p.mascot[id] = store;
-        }
-      }
+          // Duyệt qua từng ảnh trong group (favicon, logo...)
+          for (const id of Object.keys(imageGroup)) {
+            const targetImage = imageGroup[id];
 
-      return p;
-    }));
+            // Tạo promise xử lý ảnh và đẩy vào mảng để chạy song song
+            const promise = processAndStoreImage({
+              imageUrl: targetImage.src,
+              alt: targetImage.alt,
+              wcUrl: WC_URL,
+              publicDirBase: 'images/pages',
+              isPreview: isPreview,
+            }).then((store) => {
+              imageGroup[id] = store; // Cập nhật lại giá trị sau khi xử lý xong
+            });
+
+            promises.push(promise);
+          }
+        }
+
+        // Đợi tất cả ảnh của trang này xử lý xong song song
+        await Promise.all(promises);
+        return p;
+      })
+    );
   } catch (err) {
     throw new Error(`Lỗi Info.ts: ${err instanceof Error ? err.message : err}`);
   }

@@ -5,16 +5,17 @@ import { mergeJSON, } from "../stringUtils/mergeJSON";
 import { mergeJSONReverse } from "../stringUtils/mergeJSONReverse";
 import { getInfo } from "./info";
 import { getPages } from "./pages";
-import { getTablePress } from "./tablepress_pub";
+import { getTablePress } from "./tablepress";
 import menu_json from "@/data/menu.json";
 import { replaceAllProperties } from "../i18n/replaceAllProperties";
-import { processAndGetData } from "./tablePressProcessor";
+import { clearTablePressCache, processAndGetData } from "./tablePressProcessor";
 import { getAvas } from "../avas_env";
 import fs from "node:fs";
 import path from "node:path";
 import { getProducts } from "./products";
 import { Products } from "@/entities/Products";
 import { copyDirectory } from '@/lib/effects/copyDirectory';
+import { clearProcessedImagesCache } from "./imageProcessor";
 // Biến lưu trữ tạm thời trong quá trình build
 let cachedData: { data_info: WPInfo; pages: Pages[]; menus: any, data_products: Products[] } | null = null;
 
@@ -60,16 +61,24 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         avas = getAvas(null);
         WC_URL = avas.WC_URL;
     }
+    clearTablePressCache();
+    clearProcessedImagesCache();
     // Nếu đã có dữ liệu trong bộ nhớ rồi thì trả về luôn, không fetch lại nữa
-    if (cachedData) {
+    let enableCache = String(avas.cache).toLowerCase() === 'true';
+    let folder = "./public/data", folderIMG = "./public/images", isLoaded = false;
+    if (preview) {
+        enableCache = false;
+        cachedData = undefined;
+        isLoaded = true;
+    }
+    else if (cachedData) {
         return cachedData;
     }
 
     const CACHE_DIR = path.join(process.cwd(), ".cache");
     const filePathCache = path.join(CACHE_DIR, "data.json");
     const filePathCacheIMG = path.join(CACHE_DIR, "images");
-
-    const enableCache = String(avas.cache).toLowerCase() === 'true';
+    const filePathCacheProducts = path.join(CACHE_DIR, "products.json");
     console.log(`enableCache`, enableCache);
     if (enableCache) {
         try {
@@ -86,7 +95,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
     if (cachedData?.pages?.length > 0) {
         skipFetch = true;
         const srcDir = filePathCacheIMG;
-        const destDir = path.join("./public/images");
+        const destDir = path.join(folderIMG);
         copyDirectory(srcDir, destDir);
     }
 
@@ -99,23 +108,32 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         console.log(`✅ Info.ts xong trong ${(endTime - startTime) / 1000} giây.`);
 
         startTime = Date.now();
-        const data_tablePress = await getTablePress(WC_URL, preview);
-        endTime = Date.now();
-        console.log(`✅ Tablepress_pub.ts xong trong ${(endTime - startTime) / 1000} giây.`);
-
-        startTime = Date.now();
         let pages = await getPages(WC_URL, data_info, preview);
         endTime = Date.now();
         console.log(`✅ Pages.ts xong trong ${(endTime - startTime) / 1000} giây.`);
 
         startTime = Date.now();
-        const data_products = await getProducts(WC_URL, pages, preview);
+        let data_products = [];
+        if (fs.existsSync(filePathCacheProducts)) {
+            const fileContentProduct = fs.readFileSync(filePathCacheProducts, 'utf-8');
+            if (fileContentProduct)
+                data_products = JSON.parse(fileContentProduct);
+        }
+        data_products = await getProducts(data_products, WC_URL, pages, preview);
+        writeJsonFile(filePathCacheProducts, data_products);
+
         endTime = Date.now();
         console.log(`✅ Products.ts xong trong ${(endTime - startTime) / 1000} giây.`);
+        startTime = Date.now();
+        const pagestblPress = pages.filter(page => page.contents?.length > 0);
+        const data_tablePress = await getTablePress(WC_URL, pagestblPress, data_info, data_products, preview);
+        endTime = Date.now();
+        console.log(`✅ Tablepress.ts xong trong ${(endTime - startTime) / 1000} giây.`);
 
         pages = mergeJSONReverse(pages, menu_json);
         let menus = mergeJSON(pages, menu_json);
         for (const page of pages) {
+            page.isLoaded = isLoaded;
             page.title = replaceAllProperties(page.title, data_info, page.lang);
             page.description = replaceAllProperties(page.description, data_info, page.lang);
             let tblPressLang = data_tablePress.filter((a) => { return a.shortcode.endsWith(`_${page.lang}`) });
@@ -124,6 +142,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
                     tblshort: table.shortcode,
                     wcUrl: WC_URL,
                     data_info: data_info,
+                    products: data_products,
                     lang: page.lang,
                     isPreview: preview
                 });
@@ -132,34 +151,37 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
             }
         }
         cachedData = { data_info, pages, menus, data_products };
-        writeJsonFile(filePathCache, cachedData);
-        const srcDir = path.join("./public/images");
-        const destDir = filePathCacheIMG;
-        copyDirectory(srcDir, destDir);
+
+        if (!preview) {
+            writeJsonFile(filePathCache, cachedData);
+            const srcDir = path.join(folderIMG);
+            const destDir = filePathCacheIMG;
+            copyDirectory(srcDir, destDir);
+        }
     }
 
-    // 🌟 [BƯỚC THẦN THÁNH]: Ghi trực tiếp ra file public JSON phục vụ Client Hydrate tại đây.
-    // Vì nằm sau lệnh check cachedData, khối lệnh này cam kết chỉ thực thi DUY NHẤT 1 LẦN khi build.
-    // 1. Ghi file cấu hình chung (Giữ data_info, menus; hút mỡ pages)
-    const minimalPages = cachedData.pages.map(({ key, lang, slug, slugP, action, title, label }) => ({
-        key, lang, slug, slugP, action, title, label
-    }));
+    if (!preview) {
+        const minimalPages = cachedData.pages.map(({ key, lang, slug, slugP, action, title, label }) => ({
+            key, lang, slug, slugP, action, title, label
+        }));
 
-    let filePath = path.join("./public/data", "cms-common.json");
-    const jsonData = { data_info: cachedData.data_info, menus: cachedData.menus, pages: minimalPages };
-    writeJsonFile(filePath, jsonData);
+        let filePath = path.join(folder, "cms-common.json");
+        const jsonData = { data_info: cachedData.data_info, menus: cachedData.menus, pages: minimalPages };
+        writeJsonFile(filePath, jsonData);
 
-    filePath = path.join("./public/data", "cms-products.json");
-    writeJsonFile(filePath, cachedData.data_products);
+        filePath = path.join(folder, "cms-products.json");
+        writeJsonFile(filePath, cachedData.data_products);
 
-    // 2. Ghi các file nội dung riêng lẻ cho từng trang theo slug
-    for (const page of cachedData.pages) {
-        const fileSlug = page.slug === "/" || page.slug === "" ? "default" : page.slug.replace(/^\/|\/$/g, "");
-        fs.writeFileSync(
-            `./public/data/page-${fileSlug}.json`,
-            JSON.stringify(page)
-        );
+        // 2. Ghi các file nội dung riêng lẻ cho từng trang theo slug
+        for (const page of cachedData.pages) {
+            const fileSlug = page.slug === "/" || page.slug === "" ? "default" : page.slug.replace(/^\/|\/$/g, "");
+            fs.writeFileSync(
+                `${folder}/page-${fileSlug}.json`,
+                JSON.stringify(page)
+            );
+        }
+        console.log("✅ [Astro Build] Tách file JSON thành công!");
     }
-    console.log("✅ [Astro Build] Tách file JSON thành công!");
+
     return cachedData;
 }
