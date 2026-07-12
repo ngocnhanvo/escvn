@@ -19,23 +19,19 @@ interface Checkdomain_00 {
 }
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-let skip = 0;
+
 export default function Checkdomain_00(props: Checkdomain_00) {
     let language = props.page.lang;
     let data = props.data;
     if (!data)
         return null;
-
     let currency = getCurrencyByKey('vi');
     const contentRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchName, setSearchName] = useState('');
     const idFromUrl = searchParams.get('id');
-    if (skip === 0) {
-        mapProducts(props.props.data_products, data.items);
-        skip = 1;
-    }
+
     const VN_DOMAINS = data.items.filter((item: any) => item?.tld && item?.tld?.endsWith('.vn')) || [];
     const INTL_DOMAINS = data.items.filter((item: any) => item?.tld && !item?.tld?.endsWith('.vn')) || [];
     const handleWhois = props.handleWhois || (() => { });

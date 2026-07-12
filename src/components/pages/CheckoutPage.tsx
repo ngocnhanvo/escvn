@@ -13,10 +13,10 @@ import { initI18n } from '@/context/LanguageContext/getNameLang';
 import Select from 'react-select';
 import { handlePageLink } from '../PageTransition';
 import { Link, useNavigate } from 'react-router-dom';
-import { fetchCart, removeItem, syncCartState, updateQuantity } from '@/lib/utils/cart';
+import { fetchCart, removeItem, updateQuantity } from '@/lib/utils/cart';
 import { Pages } from '@/entities/Pages';
 import mtlang from '@/data/i18n/checkout.json';
-let pagePrivacy: Pages, pageTerms: Pages, pageProtectpolicy: Pages, pageCart: Pages;
+let pagePrivacy: Pages, pageTerms: Pages, pageProtectpolicy: Pages, pageCart: Pages, pageHome: Pages;
 const dataproduct = await globalStore.getProductData();
 export default function CheckoutPage(props: AppRouterProps) {
     const { language } = useLanguage();
@@ -37,6 +37,8 @@ export default function CheckoutPage(props: AppRouterProps) {
             pageProtectpolicy = props.pages.find(a => a.key == 'protectpolicy' && a.lang == language);
         if (!pageCart)
             pageCart = props.pages.find(a => a.key == 'cart' && a.lang == language);
+        if(!pageHome)
+            pageHome = props.pages.find(a=>a.key == 'home' && a.lang == language);
     }
 
     useEffect(() => {
@@ -46,8 +48,6 @@ export default function CheckoutPage(props: AppRouterProps) {
     const currency = items?.[0]?.itemCurrency?.[language];
 
     const [showCoupons, setShowCoupons] = useState(false);
-
-    const [isCreateAccount, setIsCreateAccount] = useState(false);
 
     // 1. Nếu bạn muốn quản lý dữ liệu Đăng nhập bằng react-hook-form độc lập
     const { register: registerLogin,
@@ -116,13 +116,16 @@ export default function CheckoutPage(props: AppRouterProps) {
             });
             const result = await response.json();
             if (result.ok) {
-                localStorage.setItem('redirect', result.data.redirect);
+                actions.clearCart();
                 window.location.href = result.data.redirect;
             }
+            else {
+                alert(result.msg);
+                setLoading(false);
+            }
         } catch (error) {
-            console.error('Failed to update quantity:', error);
-        } finally {
             setLoading(false);
+            console.error('Failed to update quantity:', error);
         }
     };
 
@@ -343,7 +346,7 @@ export default function CheckoutPage(props: AppRouterProps) {
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-blue-600 text-sm">
                                                         <button type="button" onClick={() => setShowCoupons(!showCoupons)} className="flex items-center gap-1 hover:underline font-medium">
-                                                            <span>Giảm giá</span>
+                                                            <span>{mtlang?.summary_discount?.[language]}</span>
                                                             <span className="text-[10px] bg-blue-100 px-1.5 py-0.5 rounded-full">{coupons.length}</span>
                                                         </button>
                                                         <span>- {formatCurrency(discount_total, currency)}</span>

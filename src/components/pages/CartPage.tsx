@@ -16,20 +16,21 @@ import { fetchCart, removeItem, updateQuantity } from '@/lib/utils/cart';
 import { Pages } from '@/entities/Pages';
 import mtlang from '@/data/i18n/cart.json';
 const dataproduct = await globalStore.getProductData();
-let pageCheckout:Pages;
+let pageCheckout: Pages, pageHome: Pages;
 export default function CartPage(props: AppRouterProps) {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const { items, cartKey, actions, total_tax, subtotal, discount_total, total, coupons } = useCart(language);
-  console.log(`items`, items);
   const [loading, setLoading] = useState(true);
   if (!loading) {
     props = globalStore.getCommonData();
     props.data_products = dataproduct;
     mapProducts(props.data_products, items);
-    if(!pageCheckout) {
-      pageCheckout = props.pages.find(a=>a.key == 'checkout' && a.lang == language);
-    }
+    if (!pageCheckout)
+      pageCheckout = props.pages.find(a => a.key == 'checkout' && a.lang == language);
+
+    if (!pageHome)
+      pageHome = props.pages.find(a => a.key == 'home' && a.lang == language);
   }
 
   useEffect(() => {
@@ -91,7 +92,7 @@ export default function CartPage(props: AppRouterProps) {
                   {(!items || items.length === 0) ? (
                     <div className="text-center py-12">
                       <p className="text-gray-500 mb-4">{mtlang?.cart_empty?.[language]}</p>
-                      <a href="/" className="inline-block bg-black text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-800">
+                      <a href={`/${pageHome?.slug}`} className="inline-block bg-black text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-800">
                         {mtlang?.cart_shop_now?.[language]}
                       </a>
                     </div>
@@ -179,14 +180,14 @@ export default function CartPage(props: AppRouterProps) {
                                   <div className="flex items-center gap-2 text-right">
                                     <button
                                       className="w-8 h-8 border rounded hover:bg-gray-100"
-                                      onClick={() => 
+                                      onClick={() =>
                                         updateQuantity(item.item_key, Math.max(1, item.quantity - 1), cartKey, actions, initI18n, setLoading)
                                       }
                                     >-</button>
                                     <span className="w-8 text-center font-medium">{item.quantity}</span>
                                     <button
                                       className="w-8 h-8 border rounded hover:bg-gray-100"
-                                      onClick={() => 
+                                      onClick={() =>
                                         updateQuantity(item.item_key, item.quantity + 1, cartKey, actions, initI18n, setLoading)
                                       }
                                     >+</button>

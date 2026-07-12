@@ -52,7 +52,7 @@ export const globalStore = {
     return this.commonData;
   },
   async getProductData(WC_URL_CLIENT: string = '') {
-    if(this.productData && this.productData.length > 0)
+    if(this.productData)
       return this.productData;
 
     try {
@@ -62,7 +62,7 @@ export const globalStore = {
       const data = await res.json();
       
       // Đẩy vào store để lưu trữ làm gốc
-      this.productData = data;
+      globalStore.setProductData(data);
       return data;
     } catch (error) {
       console.error("Lỗi getProductData:", error);

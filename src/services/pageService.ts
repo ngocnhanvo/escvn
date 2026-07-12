@@ -31,7 +31,6 @@ export const pageService = {
       let slug = identifier;
       if(!slug)
         slug = '/';
-      console.log(`slug`, slug);
       if (slug.includes("/")) {
         const cleanPath = slug.split('?')[0].split('#')[0];
         slug = cleanPath === "/" ? "default" : cleanPath.replace(/^\/|\/$/g, "");

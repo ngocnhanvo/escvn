@@ -5,7 +5,7 @@ import { LanguageProvider } from '@/context/LanguageContext';
 import { HelmetProvider } from 'react-helmet-async';
 import { PageLoader } from './PageTransition/PageLoader';
 import PageBootstrap from '@/lib/componentsReg/PageBootstrap';
-
+import ErrorPage500 from '@/integrations/errorHandlers/ErrorPage500';
 // Import kho lưu trữ toàn cục và thư viện fetch dữ liệu
 import { globalStore } from '@/services/globalStore';
 import { pageService } from '@/services/pageService';
@@ -14,7 +14,7 @@ const isClient = typeof window !== 'undefined';
 
 function LayoutWithLanguage(props: AppRouterProps) {
   const location = useLocation();
-  
+
   useEffect(() => {
     window.dispatchEvent(new Event('app:nav-end'));
   }, [location.pathname]);
@@ -33,7 +33,7 @@ function LayoutWithLanguage(props: AppRouterProps) {
 
 function LanguageGuard({ children, ...props }: { children: React.ReactNode } & AppRouterProps) {
   let { lang } = useParams<{ lang: string }>();
-  
+
   // Đọc trực tiếp data mới nhất từ RAM biến toàn cục ra để kiểm tra ngôn ngữ
   const latestCommonData = globalStore.getCommonData();
   const activePages = latestCommonData?.pages || props.pages || [];
@@ -42,15 +42,15 @@ function LanguageGuard({ children, ...props }: { children: React.ReactNode } & A
     const pathParts = window.location.pathname.split(props.basename || '/');
     let dynamicLang = pathParts[1];
     if (dynamicLang.startsWith('/')) dynamicLang = dynamicLang.substring(1);
-    
+
     lang = activePages?.find((a: any) => (a.slug ?? '') === (dynamicLang ?? ''))?.lang;
   }
-  
+
   if (!lang) {
     const ErrorPage404 = lazy(() => import('@/integrations/errorHandlers/ErrorPage404'));
     return <ErrorPage404 {...props} />;
   }
-  
+
   return <>{children}</>;
 }
 
@@ -63,7 +63,7 @@ const getRouterConfig = (props: AppRouterProps) => {
       const modulePath = `/src/components/pages/${page.action}.tsx`;
       const importFunc = pageModules[modulePath];
       if (!importFunc) return;
-      
+
       const PageComponent = lazy(importFunc as () => Promise<any>);
 
       children.push({
@@ -85,10 +85,12 @@ const getRouterConfig = (props: AppRouterProps) => {
     children.push({ index: false, path: "*", element: <ErrorPage404 {...props} /> });
   }
 
+  //Đừng đổi path này
   return [{
-    path: props.basename,
+    path: '/',
     key: 'esc',
     element: <LayoutWithLanguage {...props} />,
+    errorElement: <ErrorPage500 {...props} />,
     children: children
   }];
 };
@@ -109,23 +111,35 @@ export default function AppRouter(props: AppRouterProps) {
       const cleanPath = pathname.split('?')[0].split('#')[0];
       const currentSlug = cleanPath === '/' ? "default" : cleanPath.replace(/^\/|\/$/g, "");
 
-      // 2. Tải song song cả 2 file JSON mồi ban đầu
-      const [common, pageDetail] = await Promise.all([
-        pageService.getCommonData(),
-        pageService.getPageData(currentSlug)
-      ]);
+      let data_info, menus, pages;
+      if (props.basename == '/preview') {
+        data_info = props.data_info;
+        menus = props.menus;
+        pages = props.pages;
+        //const pageDetail = props.pages.find(s => s.slug == cleanPath);
+        globalStore.setCommonData({ menus, pages, data_info });
+        globalStore.setProductData(props.data_products);
+        //globalStore.setCurrentPageData(pageDetail);
+      }
+      else {
+        const [common, pageDetail] = await Promise.all([
+          pageService.getCommonData(),
+          pageService.getPageData(currentSlug)
+        ]);
 
-      // 3. Đập thẳng vào biến toàn cục tĩnh trong RAM
-      if (common) globalStore.setCommonData(common);
-      if (pageDetail) globalStore.setCurrentPageData(pageDetail);
+        // 3. Đập thẳng vào biến toàn cục tĩnh trong RAM
+        if (common) globalStore.setCommonData(common);
+        if (pageDetail) globalStore.setCurrentPageData(pageDetail);
 
-      // 4. Dựng cấu hình Router dựa trên mảng sơ đồ đường dẫn cố định
-      const stablePages = common?.pages || props.pages || [];
+        data_info = common?.data_info || props.data_info;
+        menus = common?.menus || props.menus;
+        pages = common?.pages || props.pages || [];
+      }
       const routerConfig = getRouterConfig({
         ...props,
-        data_info: common?.data_info || props.data_info,
-        menus: common?.menus || props.menus,
-        pages: stablePages,
+        data_info,
+        menus,
+        pages
       });
 
       if (routerConfig) {
@@ -133,7 +147,7 @@ export default function AppRouter(props: AppRouterProps) {
           basename: props.basename || import.meta.env.BASE_NAME || '/',
         }));
       }
-      
+
       setIsInitialized(true);
     }
 
@@ -144,14 +158,13 @@ export default function AppRouter(props: AppRouterProps) {
   return (
     <HelmetProvider>
       {/* 1. Màn hình Loader: Tự động fade-out giảm opacity xuống 0 và ẩn đi khi hệ thống đã init xong */}
-      <div 
-        className={`fixed inset-0 z-[9999] transition-opacity duration-500 ease-in-out pointer-events-none ${
-          !isInitialized ? 'opacity-100' : 'opacity-0 visibility-hidden'
-        }`}
+      <div
+        className={`fixed inset-0 z-[9999] transition-opacity duration-500 ease-in-out pointer-events-none ${!isInitialized ? 'opacity-100' : 'opacity-0 visibility-hidden'
+          }`}
       >
         <PageLoader />
       </div>
-      
+
       {/* 2. Khung chứa Router: Fade-in hiện lên mượt mà sau khi dữ liệu đã nạp xong vào RAM toàn cục */}
       <div className={`transition-opacity duration-500 ${isInitialized ? 'opacity-100' : 'opacity-0'}`}>
         {router && <RouterProvider router={router} />}

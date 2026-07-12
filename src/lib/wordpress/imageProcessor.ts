@@ -10,13 +10,28 @@ interface ProcessImageOptions {
 }
 
 const agent = new Agent({ connect: { family: 4, timeout: 30000 } });
-
-// Cache lưu Promise để chia sẻ tiến trình xử lý giữa các request đồng thời
 const processedImagesCache = new Map<string, Promise<ProcessedImageResult>>();
+const TARGET_WIDTHS = [20, 40, 100, 400, 600, 700, 800, 1200];
+
+// Cache module imports để tránh việc load đi load lại trong runtime
+let fsModule: typeof import('node:fs') | null = null;
+let pathModule: typeof import('node:path') | null = null;
+let sharpModule: any = null;
+
+export function clearProcessedImagesCache(): void {
+  processedImagesCache.clear();
+}
+
+async function loadModules() {
+  if (!fsModule) fsModule = await import('node:fs');
+  if (!pathModule) pathModule = await import('node:path');
+  if (!sharpModule) sharpModule = (await import('sharp')).default;
+  return { fs: fsModule, path: pathModule, sharp: sharpModule };
+}
 
 export async function processAndStoreImage({
   imageUrl,
-  alt,
+  alt = '',
   wcUrl,
   publicDirBase = 'images',
   isPreview = false,
@@ -24,30 +39,25 @@ export async function processAndStoreImage({
   
   if (!imageUrl) return { src: '', srcSet: '', srcSets: {} };
 
-  // 1. Nếu đã hoặc ĐANG xử lý ảnh này, trả về Promise đó ngay lập tức
   if (processedImagesCache.has(imageUrl)) {
     return processedImagesCache.get(imageUrl)!;
   }
 
-  // 2. Tạo một Promise bao bọc toàn bộ quá trình xử lý
   const imageProcessPromise = (async (): Promise<ProcessedImageResult> => {
-    const targetWidths = [20, 40, 100, 400, 600, 700, 800, 1200];
-    const defaultResult: ProcessedImageResult = { src: imageUrl, alt: alt || '', srcSet: '', srcSets: {} };
+    const defaultResult: ProcessedImageResult = { src: imageUrl, alt, srcSet: '', srcSets: {} };
 
     if (isPreview) {
       const fullUrl = wcUrl ? `${wcUrl.replace(/\/$/, '')}/${imageUrl.replace(/^\//, '')}` : imageUrl;
       defaultResult.src = fullUrl;
       defaultResult.srcSet = fullUrl;
-      for (const width of targetWidths) {
+      for (const width of TARGET_WIDTHS) {
         defaultResult.srcSets[width.toString()] = fullUrl;
       }
       return defaultResult;
     }
 
     if (import.meta.env.SSR || typeof window === 'undefined') {
-      const { writeFileSync, mkdirSync, existsSync } = await import('node:fs');
-      const path = await import('node:path');
-      const sharp = (await import('sharp')).default;
+      const { fs, path, sharp } = await loadModules();
 
       let absoluteImageUrl = imageUrl;
       if (absoluteImageUrl.startsWith('/') && wcUrl) {
@@ -62,12 +72,12 @@ export async function processAndStoreImage({
       const publicDir = path.resolve('public', publicDirBase);
 
       try {
-        if (!existsSync(publicDir)) {
-          mkdirSync(publicDir, { recursive: true });
+        if (!fs.existsSync(publicDir)) {
+          fs.mkdirSync(publicDir, { recursive: true });
         }
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 60000); // Timeout 60s như bạn set bên dưới
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
         
         const res = await undiciFetch(absoluteImageUrl, {
           signal: controller.signal,
@@ -81,42 +91,41 @@ export async function processAndStoreImage({
         const buffer = await res.arrayBuffer();
         const nodeBuffer = Buffer.from(buffer);
 
-        // Lưu ảnh gốc
+        // Lưu ảnh gốc (Không block luồng chính)
         const originalLocalPath = path.join(publicDir, originalFilename);
-        if (!existsSync(originalLocalPath)) {
-          writeFileSync(originalLocalPath, nodeBuffer);
+        if (!fs.existsSync(originalLocalPath)) {
+          fs.writeFileSync(originalLocalPath, nodeBuffer);
         }
 
-        // Xử lý resize đa kích thước
-        const srcSetPart: string[] = [];
         const srcSetParts: Record<string, string> = {};
+        
+        // TỐI ƯU CỐT LÕI: Đẩy tất cả tác vụ resize vào Promise.all để Sharp xử lý SONG SONG
+        await Promise.all(
+          TARGET_WIDTHS.map(async (width) => {
+            const resizedFilename = `${nameWithoutExt}-${width}w.webp`;
+            const resizedLocalPath = path.join(publicDir, resizedFilename);
+            srcSetParts[width.toString()] = `/${publicDirBase}/${resizedFilename}`;
 
-        for (const width of targetWidths) {
-          const resizedFilename = `${nameWithoutExt}-${width}w.webp`;
-          const resizedLocalPath = path.join(publicDir, resizedFilename);
-          const resizedPublicUrl = `/${publicDirBase}/${resizedFilename}`;
+            if (!fs.existsSync(resizedLocalPath)) {
+              await sharp(nodeBuffer)
+                .resize({ width, withoutEnlargement: true })
+                .webp({ quality: 80 })
+                .toFile(resizedLocalPath);
+            }
+          })
+        );
 
-          if (!existsSync(resizedLocalPath)) {
-            await sharp(nodeBuffer)
-              .resize({ width: width, withoutEnlargement: true })
-              .webp({ quality: 80 })
-              .toFile(resizedLocalPath);
-          }
+        // Map lại srcSet theo đúng thứ tự mảng widths ban đầu
+        const srcSet = TARGET_WIDTHS.map(w => `${srcSetParts[w]} ${w}w`).join(', ');
 
-          srcSetPart.push(`${resizedPublicUrl} ${width}w`);
-          srcSetParts[width.toString()] = resizedPublicUrl;
-        }
-
-        const defaultSrc = `/${publicDirBase}/${originalFilename}`;
         return {
-          src: defaultSrc,
-          alt: alt || '',
-          srcSet: srcSetPart.join(', '),
+          src: `/${publicDirBase}/${originalFilename}`,
+          alt,
+          srcSet,
           srcSets: srcSetParts,
         };
 
       } catch (err) {
-        // Nếu lỗi xảy ra, XÓA Promise lỗi khỏi cache để request sau có thể thử lại
         processedImagesCache.delete(imageUrl);
         throw new Error(`Lỗi Server-side xử lý ảnh đa kích thước: ${err instanceof Error ? err.message : err}`);
       }
@@ -125,15 +134,12 @@ export async function processAndStoreImage({
     return defaultResult;
   })();
 
-  // 3. Đưa Promise vào Map NGAY LẬP TỨC để các request đồng thời khác ăn theo
   processedImagesCache.set(imageUrl, imageProcessPromise);
 
-  // Giới hạn bộ nhớ cache (Tránh tràn RAM khi chạy SSR lâu dài)
   if (processedImagesCache.size > 1000) {
     const firstKey = processedImagesCache.keys().next().value;
     if (firstKey) processedImagesCache.delete(firstKey);
   }
 
-  // 4. Chờ và trả ra kết quả cuối cùng
   return imageProcessPromise;
 }

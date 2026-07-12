@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -15,12 +15,12 @@ export default function PublicPage(props: AppRouterProps) {
   const navigate = useNavigate();
   const { language } = useLanguage();
   page = returnCurrentPage(props, language);
-  console.log(`page`, page);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [tld, setTLD] = useState<string>(''); 
+
   const content = useMemo(() => {
-    return extractHTML(page, props);
-  }, [page]);
-  console.log(`content`, content);
+    return extractHTML(page, props, {tld, setTLD});
+  }, [tld, language]);
   return (
     <div className="min-h-screen bg-background font-paragraph selection:bg-primary/20 selection:text-primary">
       <Header {...props} />

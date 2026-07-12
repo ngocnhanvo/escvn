@@ -13,7 +13,7 @@ export const extractHTML = (
     more: any = {}
 ) => {
     if (!page?.content) return null;
-
+    
     const contentsMap = new Map(
         (page.contents ?? [])
             .filter(item => item?.shortcode)

@@ -38,5 +38,6 @@ export interface Pages {
   megaHeader?: any,
   position?: any,
   header?: boolean,
-  tablePress?: tablePress[]
+  tablePress?: tablePress[],
+  isLoaded?: boolean
 }
