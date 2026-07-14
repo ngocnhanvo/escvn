@@ -72,7 +72,6 @@ async function processIcon(value: string, key: string, item: any): Promise<void>
     item[key] = '';
   }
 }
-
 /**
  * Helper: Xử lý logic cho từng Field (id) bên trong một Item
  */
@@ -106,6 +105,11 @@ async function processItemField(
 
   // 3. Xử lý Lucide Icon
   if (id.startsWith('lucide-')) {
+    await processIcon(value, id.substring(7), item);
+    return;
+  }
+
+  if (id.startsWith('shortcode-')) {
     await processIcon(value, id.substring(7), item);
     return;
   }
