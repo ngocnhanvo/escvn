@@ -45,7 +45,7 @@ jobs:
     # Bước 5: Build dự án ra thư mục dist (Đã bỏ hoàn toàn npm install thừa ở đây)
     - name: Build Project
       run: |
-        npm run build # Lệnh này sẽ tạo ra thư mục 'dist' hoặc 'build'
+        npm run build-git # Lệnh này sẽ tạo ra thư mục 'dist' hoặc 'build'
 
     # Bước 6: Nén toàn bộ nội dung bên trong thư mục dist thành file escvn.zip
     - name: Zip Build Folder

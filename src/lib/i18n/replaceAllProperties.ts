@@ -18,3 +18,20 @@ export const replaceAllProperties = (text: string, data: any, lang: string) => {
   text = replacePlaceholders(text, dictionary);
   return text;
 };
+
+export const replaceAllPropertiesNoLang = (sourceString: string, dataInfo: any) => {
+  if (typeof sourceString !== 'string') return sourceString;
+
+  // Bản thân Regex đã tự bóc: Nhóm 1 (property) và Nhóm 2 (currentLang)
+  const regex = /\$info\.([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)/g;
+
+  return sourceString.replace(regex, (match, property, currentLang) => {
+    // Nếu tồn tại dataInfo.vi.tencongty hoặc dataInfo.en.tencongty
+    if (dataInfo && dataInfo[property] && dataInfo[property][currentLang] !== undefined) {
+      return dataInfo[property][currentLang];
+    }
+    
+    // Nếu không tìm thấy cấu trúc data tương ứng, giữ nguyên text gốc ($info.tencongty.vi)
+    return match; 
+  });
+}

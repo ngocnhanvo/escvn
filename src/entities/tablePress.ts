@@ -1,4 +1,6 @@
 export interface tablePress {
   shortcode?: string,
-  json?: any
+  json?: any,
+  pageId?: string,
+  lang?: string
 }
