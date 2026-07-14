@@ -55,7 +55,7 @@ export default function Home_04(props: home_04) {
                                     {item?.icon && (
                                         <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-primary">
                                             <span
-                                                className="w-6 h-6 text-primary mb-4 [&>svg]:w-full [&>svg]:h-full"
+                                                className="w-6 h-6 text-primary [&>svg]:w-full [&>svg]:h-full"
                                                 dangerouslySetInnerHTML={{ __html: item.icon }}
                                             />
                                         </div>

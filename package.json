@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "wix dev",
-    "build": "set cache=true&& wix build",
-    "build-no-cache": "set cache=false&& wix build",
+    "build": "set cache=false&& wix build",
+    "build-cache": "set cache=true&& wix build",
     "preview": "wix preview",
     "release": "wix release",
     "env": "wix env pull",

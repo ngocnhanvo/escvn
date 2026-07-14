@@ -9,14 +9,14 @@ import { getTranslation } from '@/lib/i18n/getTranslation';
 import {FocusTrap} from 'focus-trap-react';
 import { extractHTML } from '@/lib/componentsReg/extractHTML';
 import { useMemo } from 'react';
-import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
+import { returnCurrentPage, returnCurrentPageAsync } from '@/context/LanguageContext/returnCurrentPage';
 import { globalStore } from '@/services/globalStore';
 
-// Kiểm tra xem User Agent có chứa các từ khóa của thiết bị di động không
+let page = await returnCurrentPageAsync();
 export default function CheckDomainPage(props: AppRouterProps) {
   props = globalStore.getCommonData();
   const { language } = useLanguage();
-  const page = returnCurrentPage(props, language);
+  page = returnCurrentPage(props, language);
   const inputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const closePopup = () => {

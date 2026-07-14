@@ -2,7 +2,7 @@ import { WPInfo } from '@/entities/WPInfo';
 import { Pages } from '@/entities/Pages';
 import { processAndStoreImage } from './imageProcessor';
 import { replaceAllProperties } from '../i18n/replaceAllProperties';
-import { imgRegex, removeTargetImgRegex, tblPressRegex, imgRegexFull } from './tablePressProcessor';
+import { imgRegex, removeTargetImgRegex, tblPressRegex, imgRegexFull } from './tablepress/tablePressProcessor';
 
 export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = false) {
   if (!WC_URL) {
