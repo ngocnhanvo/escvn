@@ -37,7 +37,6 @@ export async function getDataFromLogs(
     );
 
     // 3. CHUYỂN ĐỔI các product có action 'modify' qua hàm định dạng chuẩn đa ngôn ngữ
-    console.log(`allWPTablePress`, allWPTablePress);
     let tablepress_new: tablePress[] = [];
     if (rawModifyProducts.length > 0) {
       tablepress_new = await getData(rawModifyProducts, WC_URL, data_info, products, isPreview);
