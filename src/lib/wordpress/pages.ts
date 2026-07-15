@@ -83,8 +83,8 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
     const pagesArray = Object.values(unifiedPages);
     const imageTasks: ImageTask[] = [];
 
-    // Dùng Map để lưu trữ các Promise độc nhất theo URL ảnh
-    const uniqueImagePromises = new Map<string, Promise<any>>();
+    // Map lưu trữ định nghĩa hàm tải ảnh độc nhất (chưa kích hoạt gọi API ngay)
+    const uniqueImageTaskResolvers = new Map<string, () => Promise<any>>();
 
     for (const p of pagesArray) {
       // --- BƯỚC 1: Gom nhóm & Lọc trùng ảnh Static ---
@@ -95,9 +95,9 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
 
           imageTasks.push({ type: 'static', page: p, key: id });
 
-          if (!uniqueImagePromises.has(url)) {
-            uniqueImagePromises.set(
-              url,
+          if (!uniqueImageTaskResolvers.has(url)) {
+            // Đóng gói hàm gọi tải ảnh (Lazy evaluation) để kích hoạt theo kiểm soát sau
+            uniqueImageTaskResolvers.set(url, () =>
               processAndStoreImage({
                 imageUrl: url,
                 alt: p.image[id].alt,
@@ -120,9 +120,9 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
           if (originalSrc && !originalSrc.startsWith('data:')) {
             imageTasks.push({ type: 'html', page: p, originalSrc });
 
-            if (!uniqueImagePromises.has(originalSrc)) {
-              uniqueImagePromises.set(
-                originalSrc,
+            if (!uniqueImageTaskResolvers.has(originalSrc)) {
+              // Đóng gói hàm gọi tải ảnh (Lazy evaluation)
+              uniqueImageTaskResolvers.set(originalSrc, () =>
                 processAndStoreImage({
                   imageUrl: originalSrc,
                   wcUrl: WC_URL,
@@ -136,32 +136,59 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
       }
     }
 
-    // 2. KÍCH HOẠT DOWNLOAD CÁC ẢNH ĐỘC NHẤT (ĐÃ LỌC TRÙNG)
-    await Promise.all(uniqueImagePromises.values());
+    // --- BƯỚC 2.5: KÍCH HOẠT DOWNLOAD THEO TỪNG ĐỢT (CHUNKING) ---
+    const CONCURRENCY_LIMIT = 8; // Chỉ cho phép tối đa 8 kết nối tải song song cùng một lúc
+    const downloadResultsMap = new Map<string, any>(); // Map lưu trữ kết quả download thực tế thành công
+    const downloadEntries = Array.from(uniqueImageTaskResolvers.entries());
+
+    for (let i = 0; i < downloadEntries.length; i += CONCURRENCY_LIMIT) {
+      const chunk = downloadEntries.slice(i, i + CONCURRENCY_LIMIT);
+
+      // Tạo các Promise cho đợt hiện tại
+      const chunkPromises = chunk.map(async ([url, fetchFn]) => {
+        try {
+          const result = await fetchFn();
+          return { url, result };
+        } catch (error) {
+          console.error(`❌ Thất bại khi tải ảnh: ${url}`, error);
+          return { url, result: null }; // Tránh lỗi 1 ảnh làm chết cả cụm tải
+        }
+      });
+
+      // Đợi đợt hiện tại chạy hoàn tất
+      const chunkResults = await Promise.all(chunkPromises);
+
+      // Lưu kết quả tải vào Map tổng thể
+      for (const res of chunkResults) {
+        downloadResultsMap.set(res.url, res.result);
+      }
+    }
 
     // Map lưu trữ tạm thời các ảnh HTML đã xử lý theo từng page để replace 1 lần duy nhất
     const htmlImagesMap = new Map<Pages, Array<{ originalSrc: string; storedImage: any }>>();
 
-    // 3. Phân bổ kết quả
+    // 3. Phân bổ kết quả từ Map kết quả an toàn
     for (let i = 0, len = imageTasks.length; i < len; i++) {
       const task = imageTasks[i];
 
       if (task.type === 'static' && task.key) {
         const url = task.page.image[task.key]?.src;
-        const storedImage = await uniqueImagePromises.get(url);
+        const storedImage = downloadResultsMap.get(url);
 
         task.page.image[task.key] = storedImage;
-        if (task.page.image[task.key]?.src === '') {
+        if (task.page.image[task.key]?.src === '' || !storedImage) {
           task.page.image[task.key] = data_info.image[task.key];
         }
       }
       else if (task.type === 'html' && task.originalSrc) {
-        const storedImage = await uniqueImagePromises.get(task.originalSrc);
+        const storedImage = downloadResultsMap.get(task.originalSrc);
 
-        if (!htmlImagesMap.has(task.page)) {
-          htmlImagesMap.set(task.page, []);
+        if (storedImage) {
+          if (!htmlImagesMap.has(task.page)) {
+            htmlImagesMap.set(task.page, []);
+          }
+          htmlImagesMap.get(task.page)!.push({ originalSrc: task.originalSrc, storedImage });
         }
-        htmlImagesMap.get(task.page)!.push({ originalSrc: task.originalSrc, storedImage });
       }
     }
 
