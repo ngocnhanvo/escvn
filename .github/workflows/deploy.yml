@@ -69,11 +69,11 @@ jobs:
           cp .env deploy/
 
           # Copy thư mục .cache (Giữ nguyên logic của bạn để đẩy qua FTP)
-          if [ -d ".cache" ]; then
-            cp -r .cache deploy/
-          else
-            echo "Warning: .cache folder not found!"
-          fi
+          # if [ -d ".cache" ]; then
+          #   cp -r .cache deploy/
+          # else
+          #   echo "Warning: .cache folder not found!"
+          # fi
 
           # Copy toàn bộ nội dung trong dist vào deploy
           cp -r dist/* deploy/
