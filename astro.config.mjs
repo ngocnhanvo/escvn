@@ -117,7 +117,7 @@ export default defineConfig({
       'import.meta.env.VITE_BUILD_TIME': JSON.stringify(new Date().getTime())
     },
     ssr: {
-      external: ['node:buffer', 'node:fs', 'node:path'],
+      external: ['node:buffer', 'node:fs', 'node:path', 'sharp'],
       target: 'node',
       noExternal: [/.*/],
       // noExternal: [
