@@ -29,13 +29,12 @@ export async function getProducts(products: Products[], WC_URL: string, pages: P
       totalPages = Number(response.headers.get('X-WP-TotalPages') || 1);
       page++;
     } while (page <= totalPages);
-
-    let productsFN = [];
+    
     if (coProducts)
-      productsFN = await getDataFromLogs(products, allWPProducts, WC_URL, pages, isPreview);
+      products = await getDataFromLogs(products, allWPProducts, WC_URL, pages, isPreview);
     else
-      productsFN = await getData(allWPProducts, WC_URL, pages, isPreview);
-    return productsFN;
+      products = await getData(allWPProducts, WC_URL, pages, isPreview);
+    return products;
   }
   catch (err) {
     throw new Error(`Lỗi Product.ts: ${err instanceof Error ? err.message : err}`);
