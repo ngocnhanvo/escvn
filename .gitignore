@@ -15,6 +15,7 @@ out
 # generated types
 dist
 .astro/
+.cache/
 .wix
 .wrangler
 .emdash
