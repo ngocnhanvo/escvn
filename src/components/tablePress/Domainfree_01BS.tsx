@@ -7,18 +7,17 @@ interface Domainfree_01BSProps {
     data: any;
     props?: AppRouterProps;
     setLtd?: (a: string) => void;
-    tld?: string; // key nhận từ parent (ví dụ: '.id.vn' hoặc '.biz.vn') 
+    item?: any; // key nhận từ parent (ví dụ: '.id.vn' hoặc '.biz.vn') 
 }
 
 export default function Domainfree_01BS(props: Domainfree_01BSProps) {
     const data = props.data;
-    const tld = props.tld;
+    const sel = props.item;
 
     if (!data || !data.items || data.items.length === 0) return null;
 
     // Tìm item phù hợp với tld được truyền vào, nếu không tìm thấy thì lấy item đầu tiên hợp lệ 
-    const currentItem = data.items.find((item: any) => item.key === tld && item.title) || data.items.find((item: any) => item.title);
-
+    const currentItem = data.items.find((item: any) => item.key === sel?.tld && item.title) || data.items.find((item: any) => item.title);
     // Trường hợp data rỗng hoặc không có item nào chứa nội dung hợp lệ
     if (!currentItem) return null;
 
@@ -84,8 +83,8 @@ export default function Domainfree_01BS(props: Domainfree_01BSProps) {
                         <img
                             fetchPriority="high"
                             decoding="async"
-                            src={currentItem.image?.src || "https://esc.vn/wp-content/uploads/2025/03/id_biz_pro_logo_01-463x348.png"}
-                            alt={currentItem.image?.alt || currentItem.title || "Giới thiệu tên miền"}
+                            src={sel?.image?.src || "https://esc.vn/wp-content/uploads/2025/03/id_biz_pro_logo_01-463x348.png"}
+                            alt={sel?.image?.alt || currentItem.title || "Giới thiệu tên miền"}
                             className="relative bg-white rounded-2xl shadow-md object-contain w-full h-auto transform group-hover:scale-[1.02] transition duration-300 border border-border"
                             width="463"
                             height="348"

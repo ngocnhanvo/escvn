@@ -6,7 +6,7 @@ interface Domainfree_02 {
     data: any;
     props?: AppRouterProps;
     setLtd?: (a: string) => void;
-    tld?: string; // key nhận từ parent (ví dụ: 'id.vn' hoặc 'biz.vn')
+    item?: any; // key nhận từ parent (ví dụ: 'id.vn' hoặc 'biz.vn')
 }
 
 const IconBox = ({ icon, title }: { icon: string; title: string }) => (
@@ -27,7 +27,7 @@ const IconBox = ({ icon, title }: { icon: string; title: string }) => (
 
 export default function Domainfree_02(props: Domainfree_02) {
     const data = props.data;
-    const tld = props.tld;
+    const sel = props.item;
 
     // Kiểm tra tính hợp lệ của dữ liệu đầu vào
     if (!data || !data.items) return null;
@@ -35,7 +35,7 @@ export default function Domainfree_02(props: Domainfree_02) {
     const domainItems = data.items;
 
     // Lọc ra toàn bộ danh sách các lợi ích thuộc về tld hiện tại
-    const activeBenefits = domainItems.filter((item: any) => item.key === tld);
+    const activeBenefits = domainItems.filter((item: any) => item.key === sel?.tld);
 
     // Nếu không tìm thấy phần tử nào khớp với tld, lấy tạm danh sách của 'id.vn' hoặc phần tử đầu tiên làm fallback
     const displayBenefits = activeBenefits.length > 0 
@@ -46,7 +46,7 @@ export default function Domainfree_02(props: Domainfree_02) {
 
     // Lấy tiêu đề chính từ phần tử đầu tiên trong nhóm được lọc (phần tử có text title)
     const sectionTitle = displayBenefits.find((item: any) => item.title)?.title 
-        || `Lợi ích khi đăng ký tên miền .${tld?.toUpperCase()}`;
+        || `Lợi ích khi đăng ký tên miền .${sel?.tld?.toUpperCase()}`;
 
     return (
         <>
