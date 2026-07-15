@@ -131,7 +131,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         console.log(`✅ Pages.ts xong trong ${(endTime - startTime) / 1000} giây.`);
         //Product
         startTime = Date.now();
-        let data_products = [];
+        let data_products:Products[] = [];
         //Nếu bật cache product thì lấy sản phẩm trong thư mục .cache, chỉ fetch những nội dung mới nhất
         if (cacheProduct) {
             if (fs.existsSync(filePathCacheProducts)) {

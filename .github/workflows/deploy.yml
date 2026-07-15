@@ -24,7 +24,7 @@ jobs:
         with:
           version: 9
 
-      # Cài Node.js + cache pnpm
+      # Cài Node.js + cache pnpm (đây là cache của node_modules, khác với cache dữ liệu của bạn)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -40,11 +40,27 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
 
-      # Build project
+      # ==========================================
+      # THÊM BƯỚC NÀY ĐỂ XỬ LÝ CACHE DỮ LIỆU
+      # ==========================================
+      - name: Phục hồi .cache từ GitHub Cache
+        uses: actions/cache@v4
+        with:
+          path: ./.cache
+          # Sử dụng run_id để ĐẢM BẢO key này luôn là duy nhất cho mỗi lần chạy.
+          # GitHub Actions chắc chắn sẽ SAVE lại cache mới sau khi bước Build Project hoàn tất.
+          key: ${{ runner.os }}-products-cache-${{ github.run_id }}
+          
+          # GitHub sẽ tự động tìm bản cache có tiền tố này được lưu GẦN ĐÂY NHẤT để tải về.
+          restore-keys: |
+            ${{ runner.os }}-products-cache-
+      # ==========================================
+
+      # Build project (Lúc này thư mục .cache đã được tải về nếu có lần chạy trước)
       - name: Build Project
         run: pnpm run build-git
 
-      # Chuẩn bị file deploy
+      # Chuẩn bị file deploy (Thư mục .cache mới đã được cập nhật qua lệnh build trên)
       - name: Zip Build Folder
         run: |
           mkdir -p deploy
@@ -52,12 +68,12 @@ jobs:
           # Copy file .env
           cp .env deploy/
 
-          # Copy thư mục .cache (thêm -r để copy thư mục con và file bên trong) (chua can toi)
-          # if [ -d ".cache" ]; then
-          #  cp -r .cache deploy/
-          # else
-          #  echo "Warning: .cache folder not found!"
-          # fi
+          # Copy thư mục .cache (Giữ nguyên logic của bạn để đẩy qua FTP)
+          if [ -d ".cache" ]; then
+            cp -r .cache deploy/
+          else
+            echo "Warning: .cache folder not found!"
+          fi
 
           # Copy toàn bộ nội dung trong dist vào deploy
           cp -r dist/* deploy/
