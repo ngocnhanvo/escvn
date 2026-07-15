@@ -1,6 +1,9 @@
 import { ProcessedImageResult } from '@/entities/ProcessedImageResult';
 import { Agent, fetch as undiciFetch } from 'undici';
-
+import fs from 'node:fs';
+import path from 'node:path';
+import sharp from 'sharp';
+sharp.concurrency(1);
 interface ProcessImageOptions {
   imageUrl: string;
   alt?: string;
@@ -11,22 +14,11 @@ interface ProcessImageOptions {
 
 const agent = new Agent({ connect: { family: 4, timeout: 30000 } });
 const processedImagesCache = new Map<string, Promise<ProcessedImageResult>>();
-const TARGET_WIDTHS = [20, 40, 100, 400, 600, 700, 800, 1200];
+const TARGET_WIDTHS = [40, 150, 300, 768, 1024, 1536, 2560];
 
-// Cache module imports để tránh việc load đi load lại trong runtime
-let fsModule: typeof import('node:fs') | null = null;
-let pathModule: typeof import('node:path') | null = null;
-let sharpModule: any = null;
 
 export function clearProcessedImagesCache(): void {
   processedImagesCache.clear();
-}
-
-async function loadModules() {
-  if (!fsModule) fsModule = await import('node:fs');
-  if (!pathModule) pathModule = await import('node:path');
-  if (!sharpModule) sharpModule = (await import('sharp')).default;
-  return { fs: fsModule, path: pathModule, sharp: sharpModule };
 }
 
 export async function processAndStoreImage({
@@ -57,7 +49,6 @@ export async function processAndStoreImage({
     }
 
     if (import.meta.env.SSR || typeof window === 'undefined') {
-      const { fs, path, sharp } = await loadModules();
 
       let absoluteImageUrl = imageUrl;
       if (absoluteImageUrl.startsWith('/') && wcUrl) {
@@ -136,7 +127,7 @@ export async function processAndStoreImage({
 
   processedImagesCache.set(imageUrl, imageProcessPromise);
 
-  if (processedImagesCache.size > 1000) {
+  if (processedImagesCache.size > 100) {
     const firstKey = processedImagesCache.keys().next().value;
     if (firstKey) processedImagesCache.delete(firstKey);
   }

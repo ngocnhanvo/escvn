@@ -32,7 +32,7 @@ export const Head = (props: HeadProps) => {
       <link rel="canonical" hrefLang={props.lang} href={props.href} />
       <link
           rel="icon"
-          href={props.data_info?.favicon[props.lang]?.srcSets["20"] || '/favicon.ico'}
+          href={props.data_info?.favicon[props.lang]?.srcSets["40"] || '/favicon.ico'}
       />
       <link 
         rel="preload" 

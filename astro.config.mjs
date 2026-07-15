@@ -5,17 +5,17 @@ import tailwind from "@astrojs/tailwind";
 //import wix from "@wix/astro";
 //import monitoring from "@wix/monitoring-astro";
 import react from "@astrojs/react";
-import sourceAttrsPlugin from "@wix/babel-plugin-jsx-source-attrs";
-import dynamicDataPlugin from "@wix/babel-plugin-jsx-dynamic-data";
+// import sourceAttrsPlugin from "@wix/babel-plugin-jsx-source-attrs";
+// import dynamicDataPlugin from "@wix/babel-plugin-jsx-dynamic-data";
 import customErrorOverlayPlugin from "./vite-error-overlay-plugin.js";
-import postcssPseudoToData from "@wix/postcss-pseudo-to-data";
+//import postcssPseudoToData from "@wix/postcss-pseudo-to-data";
 import cloudflare from "@astrojs/cloudflare";
-import { loadEnv } from 'vite';
 import node from '@astrojs/node';
 
 // Load biến môi trường
-const { WC_URL } = loadEnv(process?.env?.NODE_ENV?? "development", process?.cwd(), "");
+import "dotenv/config";
 
+const WC_URL = process.env.WC_URL ?? "";
 // Bóc tách hostname (ví dụ từ http://127.0.0.1:10010 thành 127.0.0.1)
 const wpHost = WC_URL ? new URL(WC_URL).hostname : '';
 
@@ -24,9 +24,11 @@ const isBuild = process?.env?.NODE_ENV == "production";
 // https://astro.build/config
 export default defineConfig({
   build: {
-    inlineStylesheets: 'always'
+    inlineStylesheets: 'always',
+    //format: 'file'
   },
   output: "static",
+  //trailingSlash: "never",
   //adapter: cloudflare(),
   adapter: node({
     mode: 'standalone',
@@ -53,7 +55,7 @@ export default defineConfig({
     // }),
     // ...(isBuild ? [monitoring()] : []),
     react(isBuild ? {} : {
-      babel: { plugins: [sourceAttrsPlugin, dynamicDataPlugin] },
+      //babel: { plugins: [sourceAttrsPlugin, dynamicDataPlugin] },
     }),
     // Hook di chuyển ảnh từ public/images/ vào dist/images/ sau khi build xong
     {
@@ -101,7 +103,7 @@ export default defineConfig({
                 console.log(`🧹 Đã dọn sạch public/${file}`);
               }
             });
-            
+
           } catch (err) {
             console.error('❌ Lỗi khi xử lý file sau build:', err instanceof Error ? err.message : String(err));
           }
@@ -116,26 +118,15 @@ export default defineConfig({
     },
     ssr: {
       external: ['node:buffer', 'node:fs', 'node:path'],
-      noExternal: [/.*/],
-      // noExternal: [
-      //   'piccolore', 
-      //   'devalue', 
-      //   'es-module-lexer', 
-      //   'cookie', 
-      //   'kleur', 
-      //   'mime', 
-      //   'source-map-js',
-      //   'path-to-regexp',
-      //   'html-escaper',
-      //   'flatted',
-      //   'unstorage',
-      //   'destr',
-      //   'radix3'
-      // ],
+      target: 'node',
+      //noExternal: ['cookie', /.*/],
+      noExternal: [
+        '@my-package'
+      ]
     },
     build: {
       rollupOptions: {
-        external: ['node:buffer','node:fs', 'node:path']
+        external: ['node:buffer', 'node:fs', 'node:path']
       }
     },
     plugins: [customErrorOverlayPlugin()],
@@ -144,6 +135,7 @@ export default defineConfig({
       include: [
         'react',
         'react-dom',
+        'react-dom/client',
         'zustand',
         'framer-motion',
         'date-fns',
@@ -152,7 +144,7 @@ export default defineConfig({
         'tailwind-merge',
         '@radix-ui/*',
         //'@wix/*',
-        'zod',
+        'zod'
       ],
       exclude: [
         '@wix/image-kit',
@@ -163,7 +155,7 @@ export default defineConfig({
     css: !isBuild ? {
       postcss: {
         plugins: [
-          postcssPseudoToData(),
+          //postcssPseudoToData(),
         ],
       },
     } : undefined,

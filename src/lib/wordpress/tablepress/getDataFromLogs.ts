@@ -1,7 +1,8 @@
 // src/lib/wordpress/products/getDataFromLogs.ts
 import { Products } from "@/entities/Products";
 import { getData } from "./getData";
-import { tablePress, WPInfo } from "@/entities";
+import { tablePress } from "@/entities/tablePress";
+import { WPInfo } from "@/entities/WPInfo";
 
 export async function getDataFromLogs(
   tablepress_old: tablePress[], 
