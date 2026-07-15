@@ -119,10 +119,10 @@ export default defineConfig({
     ssr: {
       external: ['node:buffer', 'node:fs', 'node:path'],
       target: 'node',
-      //noExternal: ['cookie', /.*/],
-      noExternal: [
-        '@my-package'
-      ]
+      noExternal: [/.*/],
+      // noExternal: [
+      //   '@my-package'
+      // ]
     },
     build: {
       rollupOptions: {
