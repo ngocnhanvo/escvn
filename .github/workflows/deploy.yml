@@ -52,11 +52,11 @@ jobs:
           # Copy file .env
           cp .env deploy/
 
-          Copy thư mục .cache (thêm -r để copy thư mục con và file bên trong) (chua can toi)
+          # Copy thư mục .cache (thêm -r để copy thư mục con và file bên trong)
           if [ -d ".cache" ]; then
-           cp -r .cache deploy/
+            cp -r .cache deploy/
           else
-           echo "Warning: .cache folder not found!"
+            echo "Warning: .cache folder not found!"
           fi
 
           # Copy toàn bộ nội dung trong dist vào deploy
