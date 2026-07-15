@@ -16,11 +16,11 @@ export default function PublicPage(props: AppRouterProps) {
   const { language } = useLanguage();
   page = returnCurrentPage(props, language);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [tld, setTLD] = useState<string>(''); 
+  const [item, setTLD] = useState<any>({}); 
 
   const content = useMemo(() => {
-    return extractHTML(page, props, {tld, setTLD});
-  }, [tld, language]);
+    return extractHTML(page, props, {item, setTLD});
+  }, [item, language]);
   return (
     <div className="min-h-screen bg-background font-paragraph selection:bg-primary/20 selection:text-primary">
       <Header {...props} />

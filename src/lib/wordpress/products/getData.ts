@@ -94,10 +94,14 @@ export async function getData(allWPProducts: any[], WC_URL: string, pages: Pages
     });
 
     const productsArray = Object.values(unifiedPages);
+    
+    // Lưu thông tin task để sau này map ngược lại kết quả
     const imageTasks: Array<{ product: any; key: string }> = [];
-    const promiseCalls: Promise<any>[] = [];
+    
+    // Thay vì chạy ngay, chúng ta chỉ định nghĩa các hàm sẽ chạy tải ảnh
+    const taskResolvers: Array<() => Promise<any>> = [];
 
-    // 1. Duyệt qua toàn bộ sản phẩm để gom tất cả Promise tải ảnh vào một mảng duy nhất
+    // 1. Duyệt qua toàn bộ sản phẩm để gom tất cả thông tin tác vụ tải ảnh
     for (let i = 0, lenProducts = productsArray.length; i < lenProducts; i++) {
       const p = productsArray[i];
 
@@ -110,8 +114,8 @@ export async function getData(allWPProducts: any[], WC_URL: string, pages: Pages
             // Lưu lại ngữ cảnh (sản phẩm nào, key nào) để sau khi tải xong gán ngược lại cho đúng
             imageTasks.push({ product: p, key: id });
 
-            // Đẩy Promise vào danh sách kích hoạt
-            promiseCalls.push(
+            // Đóng gói hàm gọi API tải ảnh để kích hoạt thủ công sau
+            taskResolvers.push(() =>
               processAndStoreImage({
                 imageUrl: imageUrl,
                 wcUrl: WC_URL,
@@ -124,8 +128,21 @@ export async function getData(allWPProducts: any[], WC_URL: string, pages: Pages
       }
     }
 
-    // 2. Kích hoạt tải TOÀN BỘ ảnh của TẤT CẢ sản phẩm song song cùng một lúc
-    const storedImages = await Promise.all(promiseCalls);
+    // 2. Kích hoạt tải ảnh theo từng đợt (Chunking) song song
+    const storedImages: any[] = [];
+    const CONCURRENCY_LIMIT = 8; // Tải tối đa 8 ảnh cùng một lúc (bạn có thể chỉnh từ 5 -> 10 tùy tốc độ mạng)
+
+    for (let i = 0; i < taskResolvers.length; i += CONCURRENCY_LIMIT) {
+      // Cắt ra một cụm (chunk) các hàm tải ảnh
+      const chunk = taskResolvers.slice(i, i + CONCURRENCY_LIMIT);
+      
+      // Chạy song song cụm này và đợi tất cả hoàn thành
+      const chunkPromises = chunk.map(fn => fn());
+      const chunkResults = await Promise.all(chunkPromises);
+      
+      // Gom kết quả tải xong vào mảng tổng
+      storedImages.push(...chunkResults);
+    }
 
     // 3. Gán ngược kết quả đã tải xong vào đúng vị trí ban đầu (Xử lý đồng bộ trên RAM, cực nhanh)
     for (let i = 0, lenTasks = imageTasks.length; i < lenTasks; i++) {

@@ -118,7 +118,7 @@ export async function processAndStoreImage({
 
       } catch (err) {
         processedImagesCache.delete(imageUrl);
-        throw new Error(`Lỗi Server-side xử lý ảnh đa kích thước: ${err instanceof Error ? err.message : err}`);
+        throw new Error(`Lỗi Server-side xử lý ảnh đa kích thước: ${imageUrl}`);
       }
     }
 
@@ -127,7 +127,7 @@ export async function processAndStoreImage({
 
   processedImagesCache.set(imageUrl, imageProcessPromise);
 
-  if (processedImagesCache.size > 100) {
+  if (processedImagesCache.size > 10) {
     const firstKey = processedImagesCache.keys().next().value;
     if (firstKey) processedImagesCache.delete(firstKey);
   }

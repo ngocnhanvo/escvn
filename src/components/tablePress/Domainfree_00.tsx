@@ -1,8 +1,8 @@
 import { AppRouterProps } from '@/entities/AppRouterProps';
-import React, { useState } from 'react';
+import React from 'react';
 import { Pages } from '@/entities/Pages';
 import { useNavigate } from 'react-router-dom';
-import { handlePageLink } from '@/components/PageTransition/handlePageLink';
+import { Products } from '@/entities/Products';
 
 interface TabProps {
     id: string;
@@ -38,8 +38,8 @@ interface Domainfree_00 {
     page: Pages;
     data: any;
     props?: AppRouterProps;
-    setTLD?: (a: string) => void;
-    tld?: string;
+    setTLD?: (a: Products) => void;
+    item?: any;
 }
 
 export default function Checkdomain_00(props: Domainfree_00) {
@@ -47,12 +47,12 @@ export default function Checkdomain_00(props: Domainfree_00) {
     const data = props.data;
     const navigate = useNavigate();
     const setTLD = props.setTLD;
-    let tld = props.tld;
+    let sel = props.item;
     if (!data) return null;
     const domainItems = data.items;
-    if (!tld)
-        tld = domainItems?.[0]?.tld;
-    const currentActiveItem = domainItems.find(item => item.tld === tld)
+    if (!sel?.tld)
+        sel = domainItems?.[0];
+    const currentActiveItem = domainItems.find(item => item.tld === sel.tld)
 
     return (
         <>
@@ -70,8 +70,8 @@ export default function Checkdomain_00(props: Domainfree_00) {
                                         {item.dieukiendangky}
                                     </span>
                                 }
-                                isActive={tld === item.tld}
-                                onClick={() => setTLD?.(item.tld)}
+                                isActive={sel.tld === item.tld}
+                                onClick={() => setTLD?.(item)}
                                 imgSrc={item.image?.src}
                                 imgAlt={item.image?.alt}
                             />

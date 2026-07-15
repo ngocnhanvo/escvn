@@ -99,7 +99,7 @@ export default function AppRouter(props: AppRouterProps) {
   globalStore.setBaseName(props.basename);
   const [isInitialized, setIsInitialized] = useState(false);
   const [router, setRouter] = useState<any>(null);
-
+  
   // Khởi tạo dữ liệu gốc duy nhất 1 lần lúc F5
   useEffect(() => {
     async function initSystem() {

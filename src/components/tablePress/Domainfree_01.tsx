@@ -1,25 +1,27 @@
 import { AppRouterProps } from '@/entities/AppRouterProps';
 import { Pages } from '@/entities/Pages';
+import { Products } from '@/entities/Products';
 import Gift from 'lucide-react/dist/esm/icons/gift';
 
 interface Domainfree_01 {
     page: Pages;
     data: any;
     props?: AppRouterProps;
-    setLtd?: (a: string) => void;
-    tld?: string; // key nhận từ parent (ví dụ: 'id.vn' hoặc 'biz.vn')
+    setTLD?: (a: Products) => void;
+    item?: any; // key nhận từ parent (ví dụ: 'id.vn' hoặc 'biz.vn')
 }
 
 export default function Domainfree_01(props: Domainfree_01) {
     const data = props.data;
-    const tld = props.tld;
+    const sel = props.item;
 
     if (!data || !data.items) return null;
 
     const domainItems = data.items;
     
+    console.log(`sel`, sel);
     // Tìm item khớp với tld của parent. Nếu không tìm thấy, lấy item đầu tiên làm mặc định.
-    const currentActiveItem = domainItems.find((item: any) => item.key === tld) || domainItems[0];
+    const currentActiveItem = domainItems.find((item: any) => item.key === sel?.tld) || domainItems[0];
 
     if (!currentActiveItem || !currentActiveItem.key) return null;
 

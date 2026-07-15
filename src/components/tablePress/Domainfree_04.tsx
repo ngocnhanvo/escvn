@@ -7,12 +7,12 @@ interface Domainfree_03 {
     data: any;
     props?: AppRouterProps;
     setLtd?: (a: string) => void;
-    tld?: string; // key nhận từ parent (ví dụ: 'id.vn' hoặc 'biz.vn')
+    item?: any; // key nhận từ parent (ví dụ: 'id.vn' hoặc 'biz.vn')
 }
 
 export default function Domainfree_03(props: Domainfree_03) {
     const data = props.data;
-    const tld = props.tld;
+    const sel = props.item;
 
     // Kiểm tra tính hợp lệ của dữ liệu đầu vào
     if (!data || !data.items) return null;
@@ -20,7 +20,7 @@ export default function Domainfree_03(props: Domainfree_03) {
     const domainItems = data.items;
 
     // Lọc ra danh sách câu hỏi thuộc về tld hiện tại
-    const activeBenefits = domainItems.filter((item: any) => item.key === tld);
+    const activeBenefits = domainItems.filter((item: any) => item.key === sel?.tld);
 
     // Fallback nếu không trùng key
     const displayBenefits = activeBenefits.length > 0
