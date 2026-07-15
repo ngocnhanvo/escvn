@@ -64,7 +64,6 @@ export function getRegisteredComponent(
   lang: string
 ): React.ComponentType<any> | null {
   const name = getComponentName(shortcode, lang);
-  console.log(`registry`, registry);
   return registry.get(name) ?? null;
 }
 

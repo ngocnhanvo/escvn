@@ -4,7 +4,7 @@ import { processAndStoreImage } from "../imageProcessor";
 import { imgRegex } from "./tablePressProcessor";
 import ReactDOMServer from "react-dom/server";
 import React from "react";
-import dynamicIconImports from "lucide-react/dynamicIconImports";
+import dynamicIconImports from "lucide-react/dynamicIconImports.mjs";
 import { getNestedValue } from "@/lib/effects/getNestedValue";
 import { WPInfo } from "@/entities/WPInfo";
 import { mapProducts } from "../products/mapProduct";
@@ -145,7 +145,6 @@ export async function transformTableData(
 ): Promise<any> {
   // Tạo bản sao deep copy hoặc shallow sao cho không ảnh hưởng data gốc nếu cần
   const tableCopy = JSON.parse(JSON.stringify(json));
-
   const linkAPI: string = tableCopy.meta?.api;
   const isAPI = linkAPI?.startsWith('/wp-json') || linkAPI?.startsWith('https://');
   const isProduct = linkAPI === 'Product';

@@ -72,13 +72,16 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
     console.log(`cache product`, cacheProduct);
     let cacheTablePress = String(avas.cacheTablePress).toLowerCase() === 'true';
     console.log(`cache tablepress`, cacheTablePress);
+    let cacheImage = cacheAll || cacheProduct || cacheTablePress;
+    console.log(`cache image`, cacheImage);
     let folder = "./public/data", folderIMG = "./public/images", isLoaded = false;
+    // Nếu là preview thì mở trang nào tải trang đó, do vậy ko bật cache
     if (preview) {
         cacheAll = false;
         cachedData = undefined;
         isLoaded = true;
     }
-    //Nếu bật cache All thì trả dữ liệu trong bộ nhớ gần nhất về mà ko cần fetch mới
+    //Nếu không phải preview thì các trang astro khác như 404.html, 500.html sẽ được kế thừa dữ liệu từ index.html
     else if (cachedData) {
         return cachedData;
     }
@@ -88,7 +91,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
     const filePathCacheIMG = path.join(CACHE_DIR, "images");
     const filePathCacheProducts = path.join(CACHE_DIR, "products.json");
     const filePathCacheTablePress = path.join(CACHE_DIR, "tablepress.json");
-
+    // Nếu bật cache All thì kiểm tra file cache có dữ liệu không
     if (cacheAll) {
         try {
             if (fs.existsSync(filePathCache)) {
@@ -100,9 +103,14 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         }
     }
 
+    //Nếu có, bỏ qua việc fetch dữ liệu mới, nếu chưa thì mới fetch để lần tiếp theo ko cần fetch nữa
     let skipFetch = false;
     if (cachedData?.pages?.length > 0) {
         skipFetch = true;
+    }
+
+    // Nếu ở chế độ cache thì sử dụng lại hình ảnh của lần fetch trước
+    if (cacheImage) {
         const srcDir = filePathCacheIMG;
         const destDir = path.join(folderIMG);
         copyDirectory(srcDir, destDir);
