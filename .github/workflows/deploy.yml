@@ -47,9 +47,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./.cache
-          # Key này đổi khi pnpm-lock.yaml đổi (hoặc bạn có thể đổi thành bất kỳ chuỗi nào)
-          key: ${{ runner.os }}-products-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
-          # Nếu không trùng khớp hoàn toàn key trên, nó sẽ lấy bản cache gần nhất có tiền tố này
+          # Sử dụng run_id để ĐẢM BẢO key này luôn là duy nhất cho mỗi lần chạy.
+          # GitHub Actions chắc chắn sẽ SAVE lại cache mới sau khi bước Build Project hoàn tất.
+          key: ${{ runner.os }}-products-cache-${{ github.run_id }}
+          
+          # GitHub sẽ tự động tìm bản cache có tiền tố này được lưu GẦN ĐÂY NHẤT để tải về.
           restore-keys: |
             ${{ runner.os }}-products-cache-
       # ==========================================
