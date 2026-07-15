@@ -47,10 +47,19 @@ jobs:
       # Chuẩn bị file deploy
       - name: Zip Build Folder
         run: |
-          mkdir deploy
+          mkdir -p deploy
 
+          # Copy file .env
           cp .env deploy/
-          cp .cache deploy/
+
+          # Copy thư mục .cache (thêm -r để copy thư mục con và file bên trong)
+          if [ -d ".cache" ]; then
+            cp -r .cache deploy/
+          else
+            echo "Warning: .cache folder not found!"
+          fi
+
+          # Copy toàn bộ nội dung trong dist vào deploy
           cp -r dist/* deploy/
 
           cd deploy
