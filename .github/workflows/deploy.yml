@@ -1,9 +1,9 @@
 name: Deploy Website to DirectAdmin
 
-# Kích hoạt khi có hành động PUSH vào nhánh master HOẶC gọi từ WordPress
 on:
   repository_dispatch:
-    types: [wp_trigger_build] # Trùng với event_type khai báo trong PHP
+    types: [wp_trigger_build]
+
   push:
     branches:
       - master
@@ -12,69 +12,67 @@ jobs:
   web-deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
-    
+
     steps:
-    # Bước 1: Lấy code từ GitHub về server ảo của GitHub
-    - name: Get latest code
-      uses: actions/checkout@v4
+      # Lấy source code
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-    # Bước 2: Cài đặt NodeJS (Bỏ dòng cache: 'npm' đi)
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '24'
+      # Cài Node.js + cache pnpm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
 
-    # Bước 2.5: Cache trực tiếp thư mục node_modules đã giải nén
-    - name: Cache Node Modules
-      id: node-modules-cache
-      uses: actions/cache@v4
-      with:
-        path: node_modules
-        key: ${{ runner.os }}-node-v1-${{ hashFiles('**/package-lock.json') }}
+      # Cài pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
-    # Bước 3: Chỉ chạy npm ci NẾU package-lock.json có thay đổi (cache bị miss)
-    - name: Install dependencies
-      if: steps.node-modules-cache.outputs.cache-hit != 'true'
-      run: npm ci
+      # Cài dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    # Bước 4: Tự động tạo file .env từ GitHub Secret trước khi build
-    - name: Make env file
-      run: |
-        echo "${{ secrets.ENV_FILE }}" > .env
+      # Tạo file .env từ GitHub Secrets
+      - name: Make .env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
 
-    # Bước 5: Build dự án ra thư mục dist (Đã bỏ hoàn toàn npm install thừa ở đây)
-    - name: Build Project
-      run: |
-        npm run build-git # Lệnh này sẽ tạo ra thư mục 'dist' hoặc 'build'
+      # Build project
+      - name: Build Project
+        run: pnpm run build-git
 
-    # Bước 6: Nén toàn bộ nội dung bên trong thư mục dist thành file escvn.zip
-    - name: Zip Build Folder
-      run: |
-        mkdir deploy
+      # Chuẩn bị file deploy
+      - name: Zip Build Folder
+        run: |
+          mkdir deploy
 
-        cp .env deploy/
-        cp -r dist/* deploy/
+          cp .env deploy/
+          cp -r dist/* deploy/
 
-        cd deploy
-        zip -r ../escvn.zip .
-    # Bước 7: Tự động sync (đồng bộ) thư mục dist lên Hosting qua tài khoản FTP
-    - name: Sync files via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}      # Địa chỉ IP hoặc FTP host của DirectAdmin
-        username: ${{ secrets.FTP_USERNAME }}  # Tên tài khoản FTP (hoặc user DA)
-        password: ${{ secrets.FTP_PASSWORD }}  # Mật khẩu FTP
-        local-dir: ./                      # Nhớ kiểm tra xem dự án của bạn build ra 'dist' hay 'build' hay 'out' nhé
-        server-dir: /public_html/               # Thư mục đích trên hosting DirectAdmin
-        dangerous-clean-slate: false
-        include: |
-          escvn.zip
-        exclude: |                              # Ép bỏ qua mọi thứ khác, chỉ đẩy đúng file zip
-          **
-          !escvn.zip
+          cd deploy
+          zip -r ../escvn.zip .
 
-    # BƯỚC 8: Gọi file unzip.php từ xa để DirectAdmin tự giải nén
-    - name: Trigger Remote Unzip
-      run: |
-        source .env
-        curl -s "$WC_URL/unzip.php"
+      # Upload file zip lên hosting
+      - name: Sync files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /public_html/
+          dangerous-clean-slate: false
+          include: |
+            escvn.zip
+          exclude: |
+            **
+            !escvn.zip
+
+      # Gọi script giải nén trên hosting
+      - name: Trigger Remote Unzip
+        run: |
+          source .env
+          curl -s "$WC_URL/unzip.php"
