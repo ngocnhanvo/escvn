@@ -140,7 +140,9 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
                     data_products = JSON.parse(fileContentProduct);
             }
         }
+        console.log('com1', data_products.find(a=>a.slug['vi'] == "com")?.itemImage?.['vi'].src);
         data_products = await getProducts(data_products, WC_URL, pages, preview);
+        console.log('com2', data_products.find(a=>a.slug['vi'] == "com")?.itemImage?.['vi'].src);
         writeJsonFile(filePathCacheProducts, data_products);
         endTime = Date.now();
         console.log(`✅ Products.ts xong trong ${(endTime - startTime) / 1000} giây.`);
