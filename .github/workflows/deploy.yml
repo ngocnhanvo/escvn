@@ -50,6 +50,7 @@ jobs:
           mkdir deploy
 
           cp .env deploy/
+          cp .cache deploy/
           cp -r dist/* deploy/
 
           cd deploy
