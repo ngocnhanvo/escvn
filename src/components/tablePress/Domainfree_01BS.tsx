@@ -40,15 +40,15 @@ export default function Domainfree_01BS(props: Domainfree_01BSProps) {
 
                 {/* Cột trái: Nội dung chữ */}
                 <div className="space-y-6 order-2 md:order-1">
-                    <h3 className="font-heading text-2xl md:text-3xl text-primary font-bold text-center md:text-left border-b-2 border-accent pb-3 inline-block">
+                    <h3 className="text-2xl md:text-3xl text-primary font-bold text-center md:text-left border-b-2 border-accent pb-3 inline-block">
                         {currentItem.title}
                     </h3>
 
-                    <div className="font-paragraph space-y-4 text-foreground leading-relaxed">
+                    <div className="space-y-4 text-foreground leading-relaxed">
                         {/* Block 1: Khái niệm */}
                         {currentItem.title2 && (
                             <div className="bg-muted p-4 rounded-xl border border-border/50 hover:shadow-sm transition-shadow">
-                                <span className="block font-heading text-lg font-bold text-primary mb-2">
+                                <span className="block text-lg font-bold text-primary mb-2">
                                     {currentItem.title2}
                                 </span>
                                 <div className="text-base text-foreground/90">
@@ -60,7 +60,7 @@ export default function Domainfree_01BS(props: Domainfree_01BSProps) {
                         {/* Block 2: Đối tượng đăng ký */}
                         {currentItem.title3 && (
                             <div className="bg-muted p-4 rounded-xl border border-border/50 hover:shadow-sm transition-shadow">
-                                <span className="block font-heading text-lg font-bold text-primary mb-2 flex items-center gap-2">
+                                <span className="block text-lg font-bold text-primary mb-2 flex items-center gap-2">
                                     {currentItem.description3?.toLowerCase().includes('miễn phí') && (
                                         <Gift className="w-5 h-5 text-accent inline-block" />
                                     )}
