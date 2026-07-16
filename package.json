@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build-git": "astro build",
-    "build": "set cacheAll=false&& set cacheProduct=false&& set cacheTablePress=false&& astro build",
-    "build-cache": "set cacheAll=false&& set cacheProduct=true&& set cacheTablePress=true&& astro build",
+    "build": "set cacheAll=false&& set cachePage=false&& set cacheProduct=false&& set cacheTablePress=false&& astro build",
+    "build-cache": "set cacheAll=false&& set cachePage=true&& set cacheProduct=true&& set cacheTablePress=true&& astro build",
     "build-cacheall": "set cacheAll=true&& astro build",
     "preview": "astro preview",
     "release": "astro release",

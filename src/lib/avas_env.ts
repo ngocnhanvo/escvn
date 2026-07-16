@@ -36,6 +36,7 @@ export const getAvas = (locals: App.Locals) => {
             case 'WOO_KEY': return import.meta.env.WOO_KEY;
             case 'WOO_SECRET': return import.meta.env.WOO_SECRET;
             case 'cacheAll': return import.meta.env.cacheAll;
+            case 'cachePage': return import.meta.env.cachePage;
             case 'cacheProduct': return import.meta.env.cacheProduct;
             case 'cacheTablePress': return import.meta.env.cacheTablePress;
             default: return '';
@@ -50,6 +51,7 @@ export const getAvas = (locals: App.Locals) => {
         WOO_KEY: getEnv('WOO_KEY') ?? '',
         WOO_SECRET: getEnv('WOO_SECRET') ?? '',
         cacheAll: getEnv('cacheAll') ?? '',
+        cachePage: getEnv('cachePage') ?? '',
         cacheProduct: getEnv('cacheProduct') ?? '',
         cacheTablePress: getEnv('cacheTablePress') ?? '',
     };

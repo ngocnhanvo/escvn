@@ -39,15 +39,24 @@ const fixLucideIconName = (userInput: string): string | null => {
 /**
  * Helper: Xử lý phần import Icon chuyển thành chuỗi SVG String
  */
-async function processIcon(value: string, key: string, item: any): Promise<void> {
+async function processIcon(value: string, key: string, item: any, icons: Record<string, string>): Promise<void> {
+  if(!value)
+    return;
+
   if (item[key]?.[value]) return;
   if (iconCache.has(value)) {
     item[key] = iconCache.get(value)!;
     return;
   }
+  
+  if(icons && icons[value])
+  {
+    item[key] = icons[value];
+    iconCache.set(value, icons[value]);
+    return;
+  }
 
   const kebabName = fixLucideIconName(value);
-
   // 1. Kiểm tra xem kebabName có thực sự tồn tại trong dynamicIconImports không
   if (!kebabName || !(kebabName in dynamicIconImports)) {
     console.warn(`Icon nhập từ CMS không tồn tại: "${value}"`);
@@ -66,6 +75,7 @@ async function processIcon(value: string, key: string, item: any): Promise<void>
     );
     
     item[key] = svgString;
+    icons[value] = svgString;
     iconCache.set(value, svgString);
   } catch (error) {
     console.error(`Không thể load icon: ${kebabName}`, error);
@@ -79,13 +89,16 @@ async function processItemField(
   id: string,
   item: any,
   context: { WC_URL?: string; isPreview: boolean; isAPI: boolean; linkAPI?: string; data_info: WPInfo; lang?: string; },
-  state: { datasAPI: any }
+  state: { datasAPI: any },
+  reload: boolean = false,
+  icons: Record<string, string>
 ): Promise<void> {
   const value = String(item[id] ?? '');
 
   // 1. Xử lý API Key
   if (id === 'api-key' && context.isAPI) {
     try {
+      console.log(`vao api key`, context.linkAPI);
       const responseAPI = await fetch(`${context.WC_URL}${context.linkAPI?.replaceAll(id, value)}`);
       if (responseAPI.ok) {
         state.datasAPI = await responseAPI.json();
@@ -105,12 +118,11 @@ async function processItemField(
 
   // 3. Xử lý Lucide Icon
   if (id.startsWith('lucide-')) {
-    await processIcon(value, id.substring(7), item);
+    await processIcon(value, id.substring(7), item, icons);
     return;
   }
 
   if (id.startsWith('shortcode-')) {
-    await processIcon(value, id.substring(7), item);
     return;
   }
 
@@ -122,9 +134,10 @@ async function processItemField(
       if (originalSrc && !originalSrc.startsWith('data:')) {
         item[id] = await processAndStoreImage({
           imageUrl: originalSrc,
-          wcUrl: context.WC_URL,
+          WC_URL: context.WC_URL,
           publicDirBase: 'images/pages',
           isPreview: context.isPreview,
+          reload
         });
       }
     }
@@ -141,7 +154,9 @@ export async function transformTableData(
   WC_URL: string,
   data_info: WPInfo,
   products: any[],
-  isPreview: boolean
+  isPreview: boolean,
+  reload: boolean = false,
+  icons: Record<string, string>
 ): Promise<any> {
   // Tạo bản sao deep copy hoặc shallow sao cho không ảnh hưởng data gốc nếu cần
   const tableCopy = JSON.parse(JSON.stringify(json));
@@ -156,7 +171,7 @@ export async function transformTableData(
     await Promise.all(tableCopy.items.map(async (item: any) => {
       const state = { datasAPI: null };
       for (const id of Object.keys(item)) {
-        await processItemField(id, item, context, state);
+        await processItemField(id, item, context, state, reload, icons);
       }
     }));
 
@@ -176,7 +191,8 @@ export async function getData(
   WC_URL: string,
   data_info: WPInfo,
   products: any[],
-  isPreview: boolean
+  isPreview: boolean,
+  icons: Record<string, string>
 ): Promise<tablePress[]> {
 
   const resultTablePress: tablePress[] = [];
@@ -184,14 +200,14 @@ export async function getData(
   // Sử dụng for...of thay cho .forEach để đảm bảo xử lý bất đồng bộ tuần tự/đồng bộ chính xác toàn bộ danh sách bảng
   for (const json of allWPTablePress) {
     const shortcode = json.id;
+    const reload = json.reload;
     if (!shortcode) continue;
 
-    const cleanData = await transformTableData(json, WC_URL, data_info, products, isPreview);
+    const cleanData = await transformTableData(json, WC_URL, data_info, products, isPreview, reload, icons);
 
     let lang = "";
     if (shortcode.startsWith('pub_')) {
       lang = shortcode.endsWith('_en') ? 'en' : 'vi';
-      console.log(`⚡ Early Transform bảng toàn cục: ${shortcode} (${lang})`);
     }
 
     resultTablePress.push({

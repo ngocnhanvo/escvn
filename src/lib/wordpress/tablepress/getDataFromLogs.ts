@@ -5,60 +5,64 @@ import { tablePress } from "@/entities/tablePress";
 import { WPInfo } from "@/entities/WPInfo";
 
 export async function getDataFromLogs(
-  tablepress_old: tablePress[], 
-  allWPTablePress: any[], 
-  WC_URL: string, 
-  data_info: WPInfo, 
+  allWPTablePress_old: any[],
+  allWPTablePress: any[],
+  WC_URL: string,
+  data_info: WPInfo,
   products: Products[],
-  isPreview: boolean = false
+  isPreview: boolean = false,
+  icons: Record<string, string>
 ) {
   if (!WC_URL) {
     console.error('❌ LỖI: Biến WC_URL chưa được cấu hình trong Environment Variables.');
-    return [];
+    return {};
   }
 
   try {
     // 1. Phân loại Log từ API gộp dựa trên action
     const deleteIds = new Set<string>();
-    const rawModifyProducts: any[] = [];
+    const rawModifyTablePress: any[] = [];
     allWPTablePress.forEach((logItem: any) => {
       const stringId = String(logItem.table?.id);
-      
+
       if (logItem.action === "del") {
         deleteIds.add(stringId);
-      } else if (logItem.action === "modify" && logItem.table) {
-        // Đẩy phần data sản phẩm thô vào mảng để xử lý ngôn ngữ/hình ảnh
-        rawModifyProducts.push(logItem.table);
+      } else if (logItem.action === "modify") {
+        if (logItem.table) {
+          logItem.table.reload = true;
+          rawModifyTablePress.push(logItem.table);
+        }
+        else
+          deleteIds.add(stringId);
       }
     });
 
-    // 2. Thực hiện XÓA các product có action 'del' khỏi danh sách cũ
-    let updatedTablePress = tablepress_old.filter(
-      (oldProd) => !deleteIds.has(String(oldProd.shortcode))
+    // Thực hiện XÓA các tablepress có action 'del' khỏi danh sách cũ
+    let tablePressMap = new Map(
+      allWPTablePress_old
+        .filter((oldProd) => !deleteIds.has(String(oldProd.id)))
+        .map((prod) => [String(prod.id), prod])
     );
 
-    // 3. CHUYỂN ĐỔI các product có action 'modify' qua hàm định dạng chuẩn đa ngôn ngữ
-    let tablepress_new: tablePress[] = [];
-    if (rawModifyProducts.length > 0) {
-      tablepress_new = await getData(rawModifyProducts, WC_URL, data_info, products, isPreview);
-    }
-
-    // 4. SO SÁNH và CẬP NHẬT (Merge) danh sách product cũ
-    // Sử dụng Map để tăng tốc độ tra cứu (O(1)) thay vì dùng song song nested loop
-    const productMap = new Map<string, tablePress>();
-    
-    // Nạp toàn bộ danh sách đã được lọc bỏ các phần tử xóa vào Map
-    updatedTablePress.forEach((prod) => productMap.set(String(prod.shortcode), prod));
-
-    // Duyệt qua danh sách sản phẩm mới để cập nhật đè hoặc thêm mới vào Map
-    tablepress_new.forEach((newProd) => {
-      productMap.set(String(newProd.shortcode), newProd);
+    // Duyệt qua danh sách tablepress mới để cập nhật đè hoặc thêm mới vào Map
+    rawModifyTablePress.forEach((newProd) => {
+      tablePressMap.set(String(newProd.id), newProd);
     });
 
+    // 3. CHUYỂN ĐỔI các product có action 'modify' qua hàm định dạng chuẩn đa ngôn ngữ
+    let updatedTablePress = Array.from(tablePressMap.values());
+    let tablePresses: tablePress[] = [];
+    if (updatedTablePress.length > 0) {
+      tablePresses = await getData(updatedTablePress, WC_URL, data_info, products, isPreview, icons);
+    }
+
     // Chuyển Map ngược lại thành mảng phẳng để trả về kết quả cuối cùng
-    return Array.from(productMap.values());
+    return {
+      allWPTablePress: updatedTablePress,
+      tablePresses
+    };
   }
   catch (err) {
-    throw new Error(`Lỗi tại getDataFromLogs.ts: ${err instanceof Error ? err.message : err}`);
+    throw new Error(`Lỗi tại getDataFromLogs.ts TablePress: ${err instanceof Error ? err.message : err}`);
   }
 }

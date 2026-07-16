@@ -11,6 +11,7 @@ import X from 'lucide-react/dist/esm/icons/x';
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
 import { globalStore } from '@/services/globalStore';
 import { returnCurrentPage, returnCurrentPageAsync } from '@/context/LanguageContext/returnCurrentPage';
+import Footer from '../Footer';
 
 let page = await returnCurrentPageAsync();
 export default function AboutPage(props: AppRouterProps) {
@@ -99,7 +100,8 @@ export default function AboutPage(props: AppRouterProps) {
 
       <FooterSection {...props} />
       </main>
-
+      <Footer {...props} />
+      
       <AnimatePresence>
         {isOpen && images.length > 0 && (
           <motion.div

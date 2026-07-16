@@ -39,5 +39,6 @@ export interface Pages {
   position?: any,
   header?: boolean,
   tablePress?: tablePress[],
-  isLoaded?: boolean
+  isLoaded?: boolean,
+  reload?: boolean
 }

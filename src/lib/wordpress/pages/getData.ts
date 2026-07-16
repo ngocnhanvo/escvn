@@ -1,36 +1,19 @@
+// src/lib/wordpress/products/getData.ts
+import { Pages } from "@/entities/Pages";
+import { processAndStoreImage } from "../imageProcessor";
 import { parse } from 'node-html-parser';
-import { WPInfo } from '@/entities/WPInfo';
-import { Pages } from '@/entities/Pages';
-import { processAndStoreImage } from './imageProcessor';
-import { replaceAllProperties } from '../i18n/replaceAllProperties';
-import { imgRegex, removeTargetImgRegex, tblPressRegex, imgRegexFull } from './tablepress/tablePressProcessor';
+import { imgRegex, removeTargetImgRegex, tblPressRegex, imgRegexFull } from '../tablepress/tablePressProcessor';
+import { replaceAllProperties } from '@/lib/i18n/replaceAllProperties';
+import { WPInfo } from "@/entities/WPInfo";
 
-export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = false) {
+export async function getData(allWPPages: any[], WC_URL: string, data_info: WPInfo, isPreview: boolean = false) { // Renamed function to match file name
   if (!WC_URL) {
     console.error('❌ LỖI: Biến WC_URL chưa được cấu hình trong Environment Variables.');
     return [];
   }
 
   try {
-    let allWPProducts: any[] = [];
-    let page = 1;
-    let totalPages = 1;
-    const perPage = 100; // Tối đa số lượng sản phẩm mỗi lần fetch theo quy định của WP API
-
-    do {
-      const response = await fetch(
-        `${WC_URL}/wp-json/wp/v2/pages?_embed=true&status=publish&per_page=${perPage}&page=${page}`
-      );
-
-      if (!response.ok) break;
-
-      const data = await response.json();
-      allWPProducts = [...allWPProducts, ...data];
-      totalPages = Number(response.headers.get('X-WP-TotalPages') || 1);
-      page++;
-    } while (page <= totalPages);
-
-    const PagesData = allWPProducts;
+    const PagesData = allWPPages;
     let unifiedPages: Pages[] = [];
     PagesData.forEach((item: any) => {
       const id = item.id;
@@ -87,12 +70,13 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
     const uniqueImageTaskResolvers = new Map<string, () => Promise<any>>();
 
     for (const p of pagesArray) {
+      const reload = p.reload;
       // --- BƯỚC 1: Gom nhóm & Lọc trùng ảnh Static ---
       if (p.image) {
         for (const id of Object.keys(p.image)) {
           const url = p.image[id]?.src;
           if (!url) continue;
-
+          
           imageTasks.push({ type: 'static', page: p, key: id });
 
           if (!uniqueImageTaskResolvers.has(url)) {
@@ -101,9 +85,10 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
               processAndStoreImage({
                 imageUrl: url,
                 alt: p.image[id].alt,
-                wcUrl: WC_URL,
+                WC_URL,
                 publicDirBase: 'images/pages',
                 isPreview: isPreview,
+                reload
               })
             );
           }
@@ -125,15 +110,18 @@ export async function getPages(WC_URL, data_info: WPInfo, isPreview: boolean = f
               uniqueImageTaskResolvers.set(originalSrc, () =>
                 processAndStoreImage({
                   imageUrl: originalSrc,
-                  wcUrl: WC_URL,
+                  WC_URL,
                   publicDirBase: 'images/pages',
                   isPreview: isPreview,
+                  reload
                 })
               );
             }
           }
         }
       }
+
+      p.reload = undefined;
     }
 
     // --- BƯỚC 2.5: KÍCH HOẠT DOWNLOAD THEO TỪNG ĐỢT (CHUNKING) ---

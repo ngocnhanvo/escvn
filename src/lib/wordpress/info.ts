@@ -128,9 +128,10 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
             const promise = processAndStoreImage({
               imageUrl: targetImage.src,
               alt: targetImage.alt,
-              wcUrl: WC_URL,
+              WC_URL,
               publicDirBase: 'images/pages',
               isPreview: isPreview,
+              reload: true
             }).then((store) => {
               imageGroup[id] = store; // Cập nhật lại giá trị sau khi xử lý xong
             });
