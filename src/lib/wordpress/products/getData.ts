@@ -104,7 +104,7 @@ export async function getData(allWPProducts: any[], WC_URL: string, pages: Pages
     // 1. Duyệt qua toàn bộ sản phẩm để gom tất cả thông tin tác vụ tải ảnh
     for (let i = 0, lenProducts = productsArray.length; i < lenProducts; i++) {
       const p = productsArray[i];
-
+      const reload = p.reload;
       if (p.itemImage) {
         const keys = Object.keys(p.itemImage);
         for (let j = 0, lenKeys = keys.length; j < lenKeys; j++) {
@@ -118,14 +118,16 @@ export async function getData(allWPProducts: any[], WC_URL: string, pages: Pages
             taskResolvers.push(() =>
               processAndStoreImage({
                 imageUrl: imageUrl,
-                wcUrl: WC_URL,
+                WC_URL,
                 publicDirBase: 'images/pages',
                 isPreview: isPreview,
+                reload
               })
             );
           }
         }
       }
+      p.reload = undefined;
     }
 
     // 2. Kích hoạt tải ảnh theo từng đợt (Chunking) song song

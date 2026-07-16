@@ -34,5 +34,6 @@ export interface Products {
     subtotal_tax?: number,
     total?: number,
     tax?: number
-  }
+  },
+  reload?: boolean;
 }

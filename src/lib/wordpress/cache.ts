@@ -8,7 +8,6 @@ import { getPages } from "./pages";
 import { getTablePress } from "./tablepress";
 import menu_json from "@/data/menu.json";
 import { replaceAllProperties } from "../i18n/replaceAllProperties";
-import { clearTablePressCache } from "./tablepress/tablePressProcessor";
 import { clearTablePressCache2 } from "./tablepress/getData";
 import { getAvas } from "../avas_env";
 import fs from "node:fs";
@@ -47,8 +46,6 @@ export function writeJsonFile(fileDest: string | string[], data: any): void {
             JSON.stringify(data),
             'utf-8'
         );
-
-        console.log(`[Success] Đã ghi file thành công tại: ${resolvedPath}`);
     } catch (error) {
         console.error(`[Error] Thất bại khi ghi file JSON:`, error);
         throw error; // Ném lỗi ra ngoài nếu cần xử lý tiếp ở tầng gọi hàm
@@ -63,17 +60,14 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         avas = getAvas(null);
         WC_URL = avas.WC_URL;
     }
-    clearTablePressCache();
     clearTablePressCache2();
     clearProcessedImagesCache();
     let cacheAll = String(avas.cacheAll).toLowerCase() === 'true';
-    console.log(`cache all`, cacheAll);
+    let cachePage = String(avas.cachePage).toLowerCase() === 'true';
     let cacheProduct = String(avas.cacheProduct).toLowerCase() === 'true';
-    console.log(`cache product`, cacheProduct);
     let cacheTablePress = String(avas.cacheTablePress).toLowerCase() === 'true';
-    console.log(`cache tablepress`, cacheTablePress);
-    let cacheImage = cacheAll || cacheProduct || cacheTablePress;
-    console.log(`cache image`, cacheImage);
+    console.log(`cache all`, cacheAll, `| cache page`, cachePage, `| cache product`, cacheProduct, `| cache tablepress`, cacheTablePress);
+    let cacheImage = cacheAll;
     let folder = "./public/data", folderIMG = "./public/images", isLoaded = false;
     // Nếu là preview thì mở trang nào tải trang đó, do vậy ko bật cache
     if (preview) {
@@ -81,7 +75,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         cachedData = undefined;
         isLoaded = true;
     }
-    //Nếu không phải preview thì các trang astro khác như 404.html, 500.html sẽ được kế thừa dữ liệu từ index.html
+    // Nếu không phải preview thì các trang astro khác như 404.html, 500.html sẽ được kế thừa dữ liệu từ index.html
     else if (cachedData) {
         return cachedData;
     }
@@ -91,6 +85,8 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
     const filePathCacheIMG = path.join(CACHE_DIR, "images");
     const filePathCacheProducts = path.join(CACHE_DIR, "products.json");
     const filePathCacheTablePress = path.join(CACHE_DIR, "tablepress.json");
+    const filePathCachePages = path.join(CACHE_DIR, "pages.json");
+    const filePathCacheIcons = path.join(CACHE_DIR, "icons.json");
     // Nếu bật cache All thì kiểm tra file cache có dữ liệu không
     if (cacheAll) {
         try {
@@ -103,7 +99,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         }
     }
 
-    //Nếu có, bỏ qua việc fetch dữ liệu mới, nếu chưa thì mới fetch để lần tiếp theo ko cần fetch nữa
+    // Nếu có, bỏ qua việc fetch dữ liệu mới, nếu chưa thì mới fetch để lần tiếp theo ko cần fetch nữa
     let skipFetch = false;
     if (cachedData?.pages?.length > 0) {
         skipFetch = true;
@@ -117,51 +113,69 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
     }
 
     if (!skipFetch) {
-        // Nếu chưa có (lần gọi đầu tiên), tiến hành fetch từ WordPress API
         console.log("🚀 [Astro Build] Fetching data from WordPress API (Only Once)...");
-        //Info
+        // Info
         let startTime = Date.now();
         const data_info = (await getInfo(WC_URL, preview))[0];
         let endTime = Date.now();
         console.log(`✅ Info.ts xong trong ${(endTime - startTime) / 1000} giây.`);
-        //Pages
+        // Pages
         startTime = Date.now();
-        let pages = await getPages(WC_URL, data_info, preview);
+        // -- Nếu bật cache product thì lấy sản phẩm trong thư mục .cache, chỉ fetch những nội dung mới nhất
+        let allWPPages:any[] = [];
+        if (cachePage) {
+            if (fs.existsSync(filePathCachePages)) {
+                const fileContentPage = fs.readFileSync(filePathCachePages, 'utf-8');
+                if (fileContentPage)
+                    allWPPages = JSON.parse(fileContentPage);
+            }
+        }
+        const page = await getPages(allWPPages, WC_URL, data_info, preview);
+        writeJsonFile(filePathCachePages, page.allWPPages);
+        let pages = page.pages;
         endTime = Date.now();
         console.log(`✅ Pages.ts xong trong ${(endTime - startTime) / 1000} giây.`);
-        //Product
+
+        // Product
         startTime = Date.now();
-        let data_products:Products[] = [];
-        //Nếu bật cache product thì lấy sản phẩm trong thư mục .cache, chỉ fetch những nội dung mới nhất
+        // -- Nếu bật cache product thì lấy sản phẩm trong thư mục .cache, chỉ fetch những nội dung mới nhất
+        let allWPProducts:any[] = [];
         if (cacheProduct) {
             if (fs.existsSync(filePathCacheProducts)) {
                 const fileContentProduct = fs.readFileSync(filePathCacheProducts, 'utf-8');
                 if (fileContentProduct)
-                    data_products = JSON.parse(fileContentProduct);
+                    allWPProducts = JSON.parse(fileContentProduct);
             }
         }
-        console.log('com1', data_products.find(a=>a.slug['vi'] == "com")?.itemImage?.['vi'].src);
-        data_products = await getProducts(data_products, WC_URL, pages, preview);
-        console.log('com2', data_products.find(a=>a.slug['vi'] == "com")?.itemImage?.['vi'].src);
-        writeJsonFile(filePathCacheProducts, data_products);
+        const product = await getProducts(allWPProducts, WC_URL, pages, preview);
+        writeJsonFile(filePathCacheProducts, product.allWPProducts);
+        const data_products = product.products;
         endTime = Date.now();
         console.log(`✅ Products.ts xong trong ${(endTime - startTime) / 1000} giây.`);
-        //Table Press
+        // Table Press
         startTime = Date.now();
-        let data_tablePress: tablePress[] = [];
-        //Nếu bật cache tablepress thì lấy tablepress trong thư mục .cache, chỉ fetch những nội dung mới nhất
+        // -- Nếu bật cache tablepress thì lấy tablepress trong thư mục .cache, chỉ fetch những nội dung mới nhất
+        let allWPTablePress: tablePress[] = [];
         if (cacheTablePress) {
             if (fs.existsSync(filePathCacheTablePress)) {
                 const fileContentTablePress = fs.readFileSync(filePathCacheTablePress, 'utf-8');
                 if (fileContentTablePress)
-                    data_tablePress = JSON.parse(fileContentTablePress);
+                    allWPTablePress = JSON.parse(fileContentTablePress);
             }
         }
-        data_tablePress = await getTablePress(data_tablePress, WC_URL, pages, data_info, data_products, preview);
-        writeJsonFile(filePathCacheTablePress, data_tablePress);
+        let icons: Record<string, string> = {}; 
+        if (fs.existsSync(filePathCacheIcons)) {
+            const fileContentIcons = fs.readFileSync(filePathCacheIcons, 'utf-8');
+            if (fileContentIcons)
+                icons = JSON.parse(fileContentIcons);
+        }
+        const tablepress = await getTablePress(allWPTablePress, WC_URL, pages, data_info, data_products, preview, icons);
+        writeJsonFile(filePathCacheTablePress, tablepress.allWPTablePress);
+        writeJsonFile(filePathCacheIcons, icons);
+        pages = tablepress.processedPages;
         endTime = Date.now();
         console.log(`✅ Tablepress.ts xong trong ${(endTime - startTime) / 1000} giây.`);
-        //Menu
+        // Menu
         pages = mergeJSONReverse(pages, menu_json);
         let menus = mergeJSON(pages, menu_json);
         for (const page of pages) {

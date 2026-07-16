@@ -7,10 +7,10 @@ import { getDataFromLogs } from "./getDataFromLogs";
 import { getData } from "./getData";
 import { embedTablePress } from "./embedTablePress";
 
-export async function getTablePress(tablePress: any[], WC_URL: string, pages: Pages[], data_info: WPInfo, products: Products[], isPreview: boolean = false) {
+export async function getTablePress(allWPTablePress_old: any[], WC_URL: string, pages: Pages[], data_info: WPInfo, products: Products[], isPreview: boolean = false, icons: Record<string, string>) {
   if (!WC_URL) {
     console.error('❌ LỖI: Biến WC_URL chưa được cấu hình trong Environment Variables.');
-    return [];
+    return {};
   }
 
   try {
@@ -19,7 +19,7 @@ export async function getTablePress(tablePress: any[], WC_URL: string, pages: Pa
     let totalPages = 1;
     const perPage = 100; // Tối đa số lượng sản phẩm mỗi lần fetch theo quy định của WP API
 
-    const coTablePress = tablePress.length > 0;
+    const coTablePress = allWPTablePress_old.length > 0;
     let link = `${WC_URL}/wp-json/astro/v1/get-tablepress-logs`;
     do {
       if (!coTablePress)
@@ -29,33 +29,34 @@ export async function getTablePress(tablePress: any[], WC_URL: string, pages: Pa
       if (!response.ok) break;
 
       const data = await response.json();
-      allWPTablePress = [...allWPTablePress, ...data];
-      // Chỉ khi fetch full tất cả các bảng mới cần phân trang, link log thường trả về 1 mảng trọn vẹn
       if (!coTablePress) {
+        allWPTablePress = [...allWPTablePress, ...data];
         totalPages = Number(response.headers.get('X-WP-TotalPages') || 1);
         page++;
-      } else {
-        break; // Lấy xong log thì ngắt luồng luôn, không lặp lại link log
+      }
+      else {
+        allWPTablePress = data;
+        break;
       }
     } while (page <= totalPages);
 
     let tablepressFN: tablePress[] = [];
     //Nếu có tablepress cache rồi thì không làm theo quy trình cũ nữa mà sẽ kiểm tra log để cập nhật
     if (coTablePress) {
-      tablepressFN = await getDataFromLogs(tablePress, allWPTablePress, WC_URL, data_info, products, isPreview);
+      const tablepress = await getDataFromLogs(allWPTablePress_old, allWPTablePress, WC_URL, data_info, products, isPreview, icons);
+      allWPTablePress = tablepress.allWPTablePress;
+      tablepressFN = tablepress.tablePresses;
     }
     else {
-      tablepressFN = await getData(allWPTablePress, WC_URL, data_info, products, isPreview);
-    }
-
-    // 1. Lấy toàn bộ mảng dữ liệu TablePress đã được làm sạch từ cache/logs
-    if (!tablepressFN || tablepressFN.length === 0) {
-      console.warn("⚠️ Không tìm thấy hoặc mảng data_tablePress đang rỗng.");
-      return pages;
+      const len = allWPTablePress.length;
+      for (let i = 0; i < len; i++) {
+          allWPTablePress[i].reload = true;
+      }
+      tablepressFN = await getData(allWPTablePress, WC_URL, data_info, products, isPreview, icons);
     }
 
     // 2. Chạy vòng lặp song song xử lý embed dữ liệu cho từng page
-    const processedPages = await Promise.all(
+    const processedPages:Pages[] = await Promise.all(
       pages.map(async (page) => {
         try {
           // Hàm embedTablePress sẽ chỉnh sửa trực tiếp hoặc trả về page đã nhúng đủ data
@@ -66,11 +67,15 @@ export async function getTablePress(tablePress: any[], WC_URL: string, pages: Pa
         }
       })
     );
-    return tablepressFN;
+
+    return {
+      allWPTablePress,
+      processedPages
+    };
   }
   catch (error) {
-    console.error(`❌ LỖI fetch Info:`, error);
+    console.error(`❌ LỖI fetch TablePress:`, error);
     // Trả về đối tượng rỗng để tránh lỗi undefined trong các component React
-    return [];
+    return {};
   }
 }
