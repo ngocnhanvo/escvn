@@ -205,6 +205,8 @@ export async function getData(
 
     const cleanData = await transformTableData(json, WC_URL, data_info, products, isPreview, reload, icons);
 
+    json.reload = undefined;
+
     let lang = "";
     if (shortcode.startsWith('pub_')) {
       lang = shortcode.endsWith('_en') ? 'en' : 'vi';
