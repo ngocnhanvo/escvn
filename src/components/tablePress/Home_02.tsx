@@ -4,6 +4,8 @@ import { formatCurrencyValue } from '@/lib/stringUtils/formatCurrencyValue';
 import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
 import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
+import { handlePageLink } from '../PageTransition';
+import { useNavigate } from 'react-router-dom';
 interface home_02 {
     page: Pages;
     data: any;
@@ -16,7 +18,8 @@ export default function Home_02(props: home_02) {
     if (!data.items)
         return null;
     let currency = getCurrencyByKey('vi');
-
+    const navigate = useNavigate();
+    
     return (
         <>
             {data.items.map((item, index) => {
@@ -76,7 +79,7 @@ export default function Home_02(props: home_02) {
                                                 </span>
                                             </div>
                                         )}
-                                        <button className="bg-primary text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-primary/90 transition-colors shadow-md">
+                                        <button onClick={(e) => handlePageLink(e, null, item.button_link, navigate)} className="bg-primary text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-primary/90 transition-colors shadow-md">
                                             {item.button}
                                         </button>
                                     </div>
@@ -148,7 +151,7 @@ export default function Home_02(props: home_02) {
                                             /{item.period}
                                         </span>
                                     </div>
-                                    <button className="bg-primary text-white font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 flex items-center gap-2 w-fit mt-4">
+                                    <button onClick={(e) => handlePageLink(e, null, item.button_link, navigate)} className="bg-primary text-white font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 flex items-center gap-2 w-fit mt-4">
                                         {item.button}
                                         <ChevronRight size={18} />
                                     </button>

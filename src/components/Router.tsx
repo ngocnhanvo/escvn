@@ -4,8 +4,9 @@ import { AppRouterProps } from '@/entities/AppRouterProps';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { HelmetProvider } from 'react-helmet-async';
 import { PageLoader } from './PageTransition/PageLoader';
-import PageBootstrap from '@/lib/componentsReg/PageBootstrap';
+//import PageBootstrap from '@/lib/componentsReg/PageBootstrap';
 import ErrorPage500 from '@/integrations/errorHandlers/ErrorPage500';
+import ErrorPage404 from '@/integrations/errorHandlers/ErrorPage404';
 // Import kho lưu trữ toàn cục và thư viện fetch dữ liệu
 import { globalStore } from '@/services/globalStore';
 import { pageService } from '@/services/pageService';
@@ -47,7 +48,6 @@ function LanguageGuard({ children, ...props }: { children: React.ReactNode } & A
   }
 
   if (!lang) {
-    const ErrorPage404 = lazy(() => import('@/integrations/errorHandlers/ErrorPage404'));
     return <ErrorPage404 {...props} />;
   }
 
@@ -70,25 +70,28 @@ const getRouterConfig = (props: AppRouterProps) => {
         index: false,
         path: page.slug,
         element: (
-          <PageBootstrap page={page}>
-            <LanguageGuard {...props}>
-              <PageComponent {...props} />
-            </LanguageGuard>
-          </PageBootstrap>
+          // <PageBootstrap page={page}>
+          <LanguageGuard {...props}>
+            <PageComponent {...props} />
+          </LanguageGuard>
+          //</PageBootstrap>
         )
       });
     });
   }
 
-  if (props.status == 404) {
-    const ErrorPage404 = lazy(() => import('@/integrations/errorHandlers/ErrorPage404'));
-    children.push({ index: false, path: "*", element: <ErrorPage404 {...props} /> });
-  }
+  //if (props.status == 404) {
+  children.push({
+    index: false, path: "*", element: (
+      <ErrorPage404 {...props} />
+    )
+  });
+  //}
 
   //Đừng đổi path này
   return [{
+    id: "root",
     path: '/',
-    key: 'esc',
     element: <LayoutWithLanguage {...props} />,
     errorElement: <ErrorPage500 {...props} />,
     children: children
@@ -99,7 +102,7 @@ export default function AppRouter(props: AppRouterProps) {
   globalStore.setBaseName(props.basename);
   const [isInitialized, setIsInitialized] = useState(false);
   const [router, setRouter] = useState<any>(null);
-  
+
   // Khởi tạo dữ liệu gốc duy nhất 1 lần lúc F5
   useEffect(() => {
     async function initSystem() {
