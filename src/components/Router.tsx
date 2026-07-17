@@ -10,6 +10,7 @@ import ErrorPage404 from '@/integrations/errorHandlers/ErrorPage404';
 // Import kho lưu trữ toàn cục và thư viện fetch dữ liệu
 import { globalStore } from '@/services/globalStore';
 import { pageService } from '@/services/pageService';
+import { registerPageComponents } from '@/lib/componentsReg/componentRegistry';
 
 const isClient = typeof window !== 'undefined';
 
@@ -54,6 +55,14 @@ function LanguageGuard({ children, ...props }: { children: React.ReactNode } & A
   return <>{children}</>;
 }
 
+const lazyCache = new Map();
+
+function getLazy(importFunc) {
+    if (!lazyCache.has(importFunc)) {
+        lazyCache.set(importFunc, lazy(importFunc));
+    }
+    return lazyCache.get(importFunc);
+}
 const getRouterConfig = (props: AppRouterProps) => {
   let children: any[] = [];
   const pageModules = import.meta.glob('@/components/pages/*.tsx');
@@ -64,7 +73,7 @@ const getRouterConfig = (props: AppRouterProps) => {
       const importFunc = pageModules[modulePath];
       if (!importFunc) return;
 
-      const PageComponent = lazy(importFunc as () => Promise<any>);
+      const PageComponent = getLazy(importFunc as () => Promise<any>);
 
       children.push({
         index: false,
@@ -132,8 +141,10 @@ export default function AppRouter(props: AppRouterProps) {
 
         // 3. Đập thẳng vào biến toàn cục tĩnh trong RAM
         if (common) globalStore.setCommonData(common);
-        if (pageDetail) globalStore.setCurrentPageData(pageDetail);
-
+        if (pageDetail) {
+          globalStore.setCurrentPageData(pageDetail);
+          await registerPageComponents(pageDetail);
+        }
         data_info = common?.data_info || props.data_info;
         menus = common?.menus || props.menus;
         pages = common?.pages || props.pages || [];
