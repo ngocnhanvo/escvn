@@ -41,7 +41,7 @@ export default function Home_00(props: home_00) {
         >
             {/* Animated Background Blobs */}
             <div className="absolute hidden md:block top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/25 rounded-full blur-[80px] animate-blob" />
-            <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-blue-400/40 rounded-full blur-[70px] animate-blob animation-delay-2000" />
+            <div className="absolute hidden md:block bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-blue-400/40 rounded-full blur-[70px] animate-blob animation-delay-2000" />
             <div className="absolute top-[20%] left-[20%] w-[300px] h-[300px] bg-indigo-400/35 rounded-full blur-[60px] animate-blob animation-delay-4000" />
 
             <div
@@ -81,13 +81,14 @@ export default function Home_00(props: home_00) {
                             }}
                         />
                         <button
+                            aria-label={data.items[0].btn}
                             disabled={!searchValue.trim()}
                             onClick={(e) => {
                                 handleSearch(e);
                             }}
                             className="bg-primary text-white px-4 md:px-6 py-3 font-bold rounded-2xl hover:bg-blue-900 transition-all flex items-center gap-2 shadow-md z-10 active:scale-95"
                         >
-                            {data.items[0].btn}
+                            <span className='hidden md:block'>{data.items[0].btn}</span>
                             <Search size={20} />
                         </button>
                     </div>

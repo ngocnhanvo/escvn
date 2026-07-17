@@ -11,10 +11,10 @@ import { globalStore } from '@/services/globalStore';
 // --- Main Page Component ---
 let page = await returnCurrentPageAsync();
 export default function HomePage(props: AppRouterProps) {
+  console.log("Home render", performance.now());
   props = globalStore.getCommonData();
   const { language } = useLanguage();
   page = returnCurrentPage(props, language);
-
   const content = useMemo(() => {
     return extractHTML(page, props);
   }, [page, language]);

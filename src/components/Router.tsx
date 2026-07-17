@@ -115,6 +115,7 @@ export default function AppRouter(props: AppRouterProps) {
   // Khởi tạo dữ liệu gốc duy nhất 1 lần lúc F5
   useEffect(() => {
     async function initSystem() {
+      console.log("AppRouter", performance.now());
       if (!isClient) return;
 
       // 1. Phân tích slug hiện tại từ URL thanh địa chỉ
@@ -122,7 +123,6 @@ export default function AppRouter(props: AppRouterProps) {
       pathname = pathname.substring(0, 1) + pathname.substring(props.basename.length);
       const cleanPath = pathname.split('?')[0].split('#')[0];
       const currentSlug = cleanPath === '/' ? "default" : cleanPath.replace(/^\/|\/$/g, "");
-
       let data_info, menus, pages;
       if (props.basename == '/preview') {
         data_info = props.data_info;
