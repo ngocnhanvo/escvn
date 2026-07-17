@@ -1,3 +1,4 @@
+import { registerPageComponents } from "@/lib/componentsReg/componentRegistry";
 import { globalStore } from "./globalStore";
 
 export const pageService = {
@@ -40,7 +41,8 @@ export const pageService = {
       const cachedPage = globalStore.getCachedPage(slug);
       if (cachedPage) {
         console.log(`[⚡ Store Cache Hit] Lấy data từ store cho: ${slug}`);
-        globalStore.currentPageData = cachedPage; 
+        globalStore.currentPageData = cachedPage;
+        await registerPageComponents(cachedPage);
         return cachedPage;
       }
 
@@ -50,10 +52,9 @@ export const pageService = {
       if (!res.ok) throw new Error(`Không thể tải trang: ${slug}`);
       
       const data = await res.json();
-
       // --- BƯỚC 3: ĐẨY VÀO STORE (Tự động merge vào commonData.pages)
       globalStore.setCurrentPageData(data); 
-
+      await registerPageComponents(data);
       return data;
     } catch (error) {
       console.error("Lỗi getPageData:", error);

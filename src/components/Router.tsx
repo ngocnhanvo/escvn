@@ -10,7 +10,6 @@ import ErrorPage404 from '@/integrations/errorHandlers/ErrorPage404';
 // Import kho lưu trữ toàn cục và thư viện fetch dữ liệu
 import { globalStore } from '@/services/globalStore';
 import { pageService } from '@/services/pageService';
-import { registerPageComponents } from '@/lib/componentsReg/componentRegistry';
 
 const isClient = typeof window !== 'undefined';
 
@@ -143,7 +142,6 @@ export default function AppRouter(props: AppRouterProps) {
         if (common) globalStore.setCommonData(common);
         if (pageDetail) {
           globalStore.setCurrentPageData(pageDetail);
-          await registerPageComponents(pageDetail);
         }
         data_info = common?.data_info || props.data_info;
         menus = common?.menus || props.menus;
