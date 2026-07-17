@@ -8,9 +8,9 @@ export const handlePageLink = async (
   path: string,
   navigate: any
 ) => {
-  if(e)
+  if (e)
     e.preventDefault();
-  
+
   if (path.startsWith('/#')) return;
   if (path.startsWith('/http://') || path.startsWith('/https://')) {
     window.open(path.substring(1), '_blank');
