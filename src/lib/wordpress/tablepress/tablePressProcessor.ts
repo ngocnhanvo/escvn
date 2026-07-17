@@ -1,20 +1,4 @@
 // src/lib/wordpress/tablepress/tablePressProcessor.ts
-import { WPInfo } from '@/entities/WPInfo';
-import { Products } from '@/entities/Products';
-import { getData } from './getData';
-
-
-
-interface ProcessOptions {
-  tblshort: string;
-  WC_URL: string;
-  publicDirBase?: string;
-  isPreview?: boolean;
-  data_info: WPInfo;
-  products: Products[];
-  lang: string;
-}
-
 export const removeTargetImgRegex = /<img[^>]*class="[^"]*tablepress-attached-image[^"]*"[^>]*>/g;
 export const imgRegex = /<img[^>]+src="([^">]+)"/g;
 export const imgRegexFull = /<img([\s\S]*?)src="([^"]+)"([\s\S]*?)>/gi;

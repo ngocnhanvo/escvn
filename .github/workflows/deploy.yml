@@ -49,11 +49,11 @@ jobs:
           path: ./.cache
           # Sử dụng run_id để ĐẢM BẢO key này luôn là duy nhất cho mỗi lần chạy.
           # GitHub Actions chắc chắn sẽ SAVE lại cache mới sau khi bước Build Project hoàn tất.
-          key: ${{ runner.os }}-products-cache
+          key: ${{ runner.os }}-dot-cache
           
           # GitHub sẽ tự động tìm bản cache có tiền tố này được lưu GẦN ĐÂY NHẤT để tải về.
           restore-keys: |
-            ${{ runner.os }}-products-cache
+            ${{ runner.os }}-dot-cache
       # ==========================================
 
       # Build project (Lúc này thư mục .cache đã được tải về nếu có lần chạy trước)
