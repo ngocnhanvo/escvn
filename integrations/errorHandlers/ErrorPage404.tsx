@@ -1,11 +1,10 @@
 import Header from '@/components/Header';
 import { AppRouterProps } from '@/entities/AppRouterProps';
 import { useLanguage } from '@/context/LanguageContext';
-import { getContent } from '@/lib/i18n/getContent';
 
 export default function ErrorPage404(props: AppRouterProps) {
   const { language } = useLanguage();
-  const homeLink = getContent(props.pages, 'home', language);
+  const homepage = props.pages.find(s=>s.key == 'home' && s.lang == language);
 
   const t = language === 'en' ? {
     title: "PAGE NOT FOUND",
@@ -43,7 +42,7 @@ export default function ErrorPage404(props: AppRouterProps) {
           
           {/* Dùng thẻ <a> để reload app, đảm bảo data trang chủ được nạp đúng chuẩn */}
           <a 
-            href={homeLink} 
+            href={`/${homepage.slug}`} 
             className="inline-block px-10 py-5 bg-primary text-primary-foreground font-bold text-lg transition-all hover:shadow-[0_0_30px_rgba(0,255,204,0.4)]" 
           >
             {t.btn}
