@@ -11,7 +11,7 @@ import ErrorPage404 from '@/integrations/errorHandlers/ErrorPage404';
 import { globalStore } from '@/services/globalStore';
 import { pageService } from '@/services/pageService';
 import { registerPageComponents } from '@/lib/componentsReg/componentRegistry';
-
+const pageModules = import.meta.glob('@/components/pages/*.tsx');
 const isClient = typeof window !== 'undefined';
 
 function LayoutWithLanguage(props: AppRouterProps) {
@@ -63,10 +63,9 @@ function getLazy(importFunc) {
     }
     return lazyCache.get(importFunc);
 }
+
 const getRouterConfig = (props: AppRouterProps) => {
   let children: any[] = [];
-  const pageModules = import.meta.glob('@/components/pages/*.tsx');
-
   if (props.pages && Array.isArray(props.pages)) {
     props.pages.forEach((page) => {
       const modulePath = `/src/components/pages/${page.action}.tsx`;
@@ -109,15 +108,12 @@ const getRouterConfig = (props: AppRouterProps) => {
 
 export default function AppRouter(props: AppRouterProps) {
   globalStore.setBaseName(props.basename);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [router, setRouter] = useState<any>(null);
-
   // Khởi tạo dữ liệu gốc duy nhất 1 lần lúc F5
   useEffect(() => {
     async function initSystem() {
-      console.log("AppRouter", performance.now());
       if (!isClient) return;
-
+      //typeof window !== 'undefined'
       // 1. Phân tích slug hiện tại từ URL thanh địa chỉ
       let pathname = window.location.pathname;
       pathname = pathname.substring(0, 1) + pathname.substring(props.basename.length);
@@ -134,10 +130,10 @@ export default function AppRouter(props: AppRouterProps) {
         //globalStore.setCurrentPageData(pageDetail);
       }
       else {
-        const [common, pageDetail] = await Promise.all([
-          pageService.getCommonData(),
-          pageService.getPageData(currentSlug)
-        ]);
+        const arrs = [pageService.getCommonData()];
+        if(currentSlug != 'default')
+          arrs.push(pageService.getPageData(currentSlug));
+        const [common, pageDetail] = await Promise.all(arrs);
 
         // 3. Đập thẳng vào biến toàn cục tĩnh trong RAM
         if (common) globalStore.setCommonData(common);
@@ -161,28 +157,25 @@ export default function AppRouter(props: AppRouterProps) {
           basename: props.basename || import.meta.env.BASE_NAME || '/',
         }));
       }
-
-      setIsInitialized(true);
     }
 
     initSystem();
   }, []);
 
+  const notInitialized = !router;
   // Thay vì chặn bằng 'return <PageLoader />', ta để React render song song cả 2 và điều khiển bằng CSS
   return (
     <HelmetProvider>
       {/* 1. Màn hình Loader: Tự động fade-out giảm opacity xuống 0 và ẩn đi khi hệ thống đã init xong */}
       <div
-        className={`fixed inset-0 z-[9999] transition-opacity duration-500 ease-in-out pointer-events-none ${!isInitialized ? 'opacity-100' : 'opacity-0 visibility-hidden'
+        className={`fixed inset-0 z-[9999] transition-opacity duration-500 ease-in-out pointer-events-none ${notInitialized ? 'opacity-100' : 'opacity-0 visibility-hidden'
           }`}
       >
         <PageLoader />
       </div>
 
       {/* 2. Khung chứa Router: Fade-in hiện lên mượt mà sau khi dữ liệu đã nạp xong vào RAM toàn cục */}
-      <div className={`transition-opacity duration-500 ${isInitialized ? 'opacity-100' : 'opacity-0'}`}>
-        {router && <RouterProvider router={router} />}
-      </div>
+      {!notInitialized && <RouterProvider router={router} />}
     </HelmetProvider>
   );
 }
