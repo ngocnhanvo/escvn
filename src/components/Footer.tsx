@@ -8,6 +8,7 @@ import { handlePageLink } from './PageTransition/handlePageLink';
 import React from 'react';
 import Facebook from 'lucide-react/dist/esm/icons/facebook';
 import Youtube from 'lucide-react/dist/esm/icons/youtube';
+import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
 
 export default React.memo(Footer);
 function Footer(props: AppRouterProps) {
@@ -15,6 +16,9 @@ function Footer(props: AppRouterProps) {
   const { language } = useLanguage();
   const navigate = useNavigate();
 
+  const page = returnCurrentPage(props, language);
+  let data = page?.tablePress?.find(a => a.shortcode == `pub_footer_00_${page.lang}`);
+  console.log(`data`, data);
   const keysToFind = ['privacy', 'protectpolicy', 'payment', 'terms', 'legaldocument'];
   const legalPages = props.pages?.reduce((acc, page: Pages) => {
     if (page.lang === language && keysToFind.includes(page.key)) {

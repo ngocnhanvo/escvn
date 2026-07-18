@@ -92,8 +92,8 @@ export default function Home_02(props: home_02) {
                                                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                                 />
                                                 <img
-                                                    width={651}
-                                                    height={511}
+                                                    width={768}
+                                                    height={603}
                                                     alt={item.image?.alt}
                                                     src={item.image?.src}
                                                 />
@@ -122,8 +122,8 @@ export default function Home_02(props: home_02) {
                                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         />
                                         <img
-                                            width={651}
-                                            height={511}
+                                            width={768}
+                                            height={603}
                                             alt={item.image?.alt}
                                             src={item.image?.src}
                                         />

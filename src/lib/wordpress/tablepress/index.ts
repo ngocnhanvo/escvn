@@ -43,7 +43,7 @@ export async function getTablePress(allWPTablePress_old: any[], WC_URL: string, 
     let tablepressFN: tablePress[] = [];
     //Nếu có tablepress cache rồi thì không làm theo quy trình cũ nữa mà sẽ kiểm tra log để cập nhật
     if (coTablePress) {
-      const tablepress = await getDataFromLogs(allWPTablePress_old, allWPTablePress, WC_URL, data_info, products, isPreview, icons);
+      const tablepress = await getDataFromLogs(allWPTablePress_old, allWPTablePress, WC_URL, data_info, products, pages, isPreview, icons);
       allWPTablePress = tablepress.allWPTablePress;
       tablepressFN = tablepress.tablePresses;
     }
@@ -52,7 +52,7 @@ export async function getTablePress(allWPTablePress_old: any[], WC_URL: string, 
       for (let i = 0; i < len; i++) {
           allWPTablePress[i].reload = true;
       }
-      tablepressFN = await getData(allWPTablePress, WC_URL, data_info, products, isPreview, icons);
+      tablepressFN = await getData(allWPTablePress, WC_URL, data_info, products, pages, isPreview, icons);
     }
 
     // 2. Chạy vòng lặp song song xử lý embed dữ liệu cho từng page
