@@ -7,7 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { formatCurrency } from '@/lib/stringUtils';
-import { mapProducts } from '@/lib/wordpress/products/mapProduct';
+import { mapProducts } from '@/lib/wordpress/products/mapProducts';
 import { globalStore } from '@/services/globalStore';
 import { initI18n } from '@/context/LanguageContext/getNameLang';
 import Select from 'react-select';

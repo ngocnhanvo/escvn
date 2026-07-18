@@ -3,6 +3,7 @@ import { Products } from "@/entities/Products";
 import { getData } from "./getData";
 import { tablePress } from "@/entities/tablePress";
 import { WPInfo } from "@/entities/WPInfo";
+import { Pages } from "@/entities/Pages";
 
 export async function getDataFromLogs(
   allWPTablePress_old: any[],
@@ -10,6 +11,7 @@ export async function getDataFromLogs(
   WC_URL: string,
   data_info: WPInfo,
   products: Products[],
+  pages: Pages[],
   isPreview: boolean = false,
   icons: Record<string, string>
 ) {
@@ -53,7 +55,7 @@ export async function getDataFromLogs(
     let updatedTablePress = Array.from(tablePressMap.values());
     let tablePresses: tablePress[] = [];
     if (updatedTablePress.length > 0) {
-      tablePresses = await getData(updatedTablePress, WC_URL, data_info, products, isPreview, icons);
+      tablePresses = await getData(updatedTablePress, WC_URL, data_info, products, pages, isPreview, icons);
     }
 
     // Chuyển Map ngược lại thành mảng phẳng để trả về kết quả cuối cùng

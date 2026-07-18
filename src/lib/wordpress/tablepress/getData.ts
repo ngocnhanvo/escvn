@@ -7,8 +7,10 @@ import React from "react";
 import dynamicIconImports from "lucide-react/dynamicIconImports.mjs";
 import { getNestedValue } from "@/lib/effects/getNestedValue";
 import { WPInfo } from "@/entities/WPInfo";
-import { mapProducts } from "../products/mapProduct";
+import { mapProducts } from "../products/mapProducts";
 import { tablePress } from "@/entities/tablePress";
+import { Pages } from "@/entities/Pages";
+import { mapPages } from "../pages/mapPages";
 
 export function clearTablePressCache2(): void {
   iconCache.clear();
@@ -154,6 +156,7 @@ export async function transformTableData(
   WC_URL: string,
   data_info: WPInfo,
   products: any[],
+  pages: Pages[],
   isPreview: boolean,
   reload: boolean = false,
   icons: Record<string, string>
@@ -163,7 +166,7 @@ export async function transformTableData(
   const linkAPI: string = tableCopy.meta?.api;
   const isAPI = linkAPI?.startsWith('/wp-json') || linkAPI?.startsWith('https://');
   const isProduct = linkAPI === 'Product';
-
+  const isPage = linkAPI === 'Page';
   if (Array.isArray(tableCopy.items)) {
     const context = { WC_URL, isPreview, isAPI, linkAPI, data_info };
 
@@ -178,6 +181,9 @@ export async function transformTableData(
     if (isProduct) {
       mapProducts(products, tableCopy.items);
     }
+    else if(isPage) {
+      mapPages(pages, tableCopy.items);
+    }
   }
 
   return tableCopy;
@@ -191,6 +197,7 @@ export async function getData(
   WC_URL: string,
   data_info: WPInfo,
   products: any[],
+  pages : Pages[],
   isPreview: boolean,
   icons: Record<string, string>
 ): Promise<tablePress[]> {
@@ -203,7 +210,7 @@ export async function getData(
     const reload = json.reload;
     if (!shortcode) continue;
 
-    const cleanData = await transformTableData(json, WC_URL, data_info, products, isPreview, reload, icons);
+    const cleanData = await transformTableData(json, WC_URL, data_info, products, pages, isPreview, reload, icons);
 
     json.reload = undefined;
 

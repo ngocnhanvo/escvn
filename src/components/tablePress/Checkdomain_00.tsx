@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getTranslation } from '@/lib/i18n/getTranslation';
 import { useCart } from '@/integrations/cms/cms-ecom/cart/useCartStore';
 import Search from 'lucide-react/dist/esm/icons/search';
-import { mapProducts } from '@/lib/wordpress/products/mapProduct';
+import { mapProducts } from '@/lib/wordpress/products/mapProducts';
 import { initI18n } from '@/context/LanguageContext/getNameLang';
 interface Checkdomain_00 {
     page: Pages;

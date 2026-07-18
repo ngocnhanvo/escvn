@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider, Outlet, useParams, useLocation, ScrollRestoration } from 'react-router-dom';
 import { AppRouterProps } from '@/entities/AppRouterProps';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -25,7 +25,9 @@ function LayoutWithLanguage(props: AppRouterProps) {
     <>
       <ScrollRestoration />
       <LanguageProvider {...props}>
+        <Suspense fallback={null}>
           <Outlet />
+        </Suspense>
       </LanguageProvider>
     </>
   );
