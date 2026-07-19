@@ -6,6 +6,7 @@ import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
 import { handlePageLink } from '../PageTransition/handlePageLink';
 import { useNavigate } from 'react-router-dom';
 import Search from 'lucide-react/dist/esm/icons/search';
+import { getRegisteredComponent } from '@/lib/componentsReg/componentRegistry';
 interface home_00 {
     page: Pages;
     data: any;
@@ -18,7 +19,7 @@ export default function Home_00(props: home_00) {
         return null;
     if (!data.items)
         return null;
-    let currency = getCurrencyByKey('vi');
+    
     const heroRef = useRef<HTMLElement>(null);
     const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState("");
@@ -26,6 +27,11 @@ export default function Home_00(props: home_00) {
     const handleSearch = (e) => {
         handlePageLink(e, checkdomain, `/${checkdomain?.slug}?id=${searchValue}`, navigate);
     };
+
+    const first = data.items?.[0];
+    const shortcode1 = first?.['shortcode-1'];
+    const dataSC1 = props.page?.contents?.find(s=>s.shortcode == shortcode1)?.data;
+    const Component = dataSC1 ? getRegisteredComponent(shortcode1, language) : null;
     return (
         <section
             ref={heroRef}
@@ -94,18 +100,11 @@ export default function Home_00(props: home_00) {
                     </div>
                     {/* Pricing Marquee */}
                     <div className="flex flex-wrap gap-3 mt-6">
-                        {data.items.map((item, index) => (
-                            <div
-                                key={index}
-                                className={`bg-white px-4 py-4 border border-border-subtle text-center transition-all rounded-2xl`}
-                            >
-                                <span className="text-primary font-bold text-lg">{item.domain}</span>
-                                <span className="text-signal-red font-bold text-lg ml-2">{formatCurrencyValue(item.price, currency.code, 3)}</span>
-                                {item.subprice?.length > 0 && (
-                                    <span className="text-[10px] pl-1 md:text-xs text-slate-500 italic">{item.subprice}</span>
-                                )}
-                            </div>
-                        ))}
+                        <Component
+                            key={`sc-${shortcode1}`}
+                            data={dataSC1}
+                            page={props.page}
+                        />
                     </div>
                 </div>
                 <div className="hidden md:flex justify-end z-10 relative mr-[12%]">

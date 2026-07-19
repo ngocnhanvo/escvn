@@ -1,5 +1,5 @@
 // src/lib/wordpress/tablepress/embedTablePress.ts
-import { Pages } from "@/entities/Pages";
+import { PageBlock, Pages } from "@/entities/Pages";
 import { tablePress } from "@/entities/tablePress";
 import { WPInfo } from "@/entities/WPInfo";
 
@@ -26,7 +26,7 @@ export async function embedTablePress(
     const pubTables = data_tablePress.filter(t => t.shortcode && t.shortcode.startsWith('pub_'));
     for (const table of pubTables) {
         const matchTable = page.tablePress?.find(t => t.shortcode === table.shortcode);
-        if(matchTable)
+        if (matchTable)
             matchTable.json = table.json;
         else
             page.tablePress.push(table);
@@ -45,8 +45,9 @@ export async function embedTablePress(
 
         // 1. Nếu là bảng pub_, lấy phao từ page.tablePress ra xài luôn cho nhanh
         if (shortcode.startsWith('pub_')) {
-            if (page.tablePress[shortcode]) {
-                content.data = page.tablePress[shortcode];
+            const matchPub = page.tablePress.find(t => t.shortcode === shortcode);
+            if (matchPub) {
+                content.data = matchPub.json; // Hoặc matchPub tùy cấu trúc lưu data của bạn
             }
             continue;
         }
@@ -54,7 +55,22 @@ export async function embedTablePress(
         // 2. Với các bảng thường (contextual): Tìm bảng đã được xử lý tinh trong mảng cache
         const matchTable = data_tablePress.find(t => t.shortcode === shortcode);
         if (matchTable) {
-            content.data = matchTable.json;
+            const json = matchTable.json;
+            // Quét trực tiếp items, không cần chạy filter trước tạo mảng trung gian
+            for (const item of json.items || []) {
+                if (!item) continue;
+
+                // Object.entries giúp lấy thẳng cặp [key, value] của item
+                for (const [key, value] of Object.entries(item)) {
+                    if (key.startsWith('shortcode-') && value) {
+                        const tblpress = data_tablePress.find(t => t.shortcode === value);
+                        if (tblpress) {
+                            page.contents.push({ type: 'shortcode', shortcode: value as string, data: tblpress });
+                        }
+                    }
+                }
+            }
+            content.data = json;
         } else {
             console.warn(`⚠️ Không tìm thấy dữ liệu sạch trong cache cho shortcode: ${shortcode}`);
         }

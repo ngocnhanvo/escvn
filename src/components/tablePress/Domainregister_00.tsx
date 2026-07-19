@@ -4,8 +4,7 @@ import { handlePageLink } from '../PageTransition/handlePageLink';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from 'lucide-react/dist/esm/icons/search';
-import { formatCurrencyValue } from '@/lib/stringUtils/formatCurrencyValue';
-import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
+import { getRegisteredComponent } from '@/lib/componentsReg/componentRegistry';
 
 interface Domainregister_00 {
     page: Pages;
@@ -33,22 +32,20 @@ export default function Domainregister_00(props: Domainregister_00) {
     };
 
     const first = data.items?.[0];
-    let currency = getCurrencyByKey('vi');
+    const shortcode1 = first?.['shortcode-1'];
+    const dataSC1 = props.page?.contents?.find(s=>s.shortcode == shortcode1)?.data;
+    const Component = dataSC1 ? getRegisteredComponent(shortcode1, language) : null;
     
     return (
         <>
-            <section className="py-12 bg-gray-50/50">
+            <section className="py-12 bg-gray-50/50 mb-6">
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl md:text-3xl font-bold text-center text-red-500 mb-10">
                         {data.title}
                     </h2>
                     {/* Domain Search */}
                     <div // Add focus-within for visual feedback
-                        className="p-2 rounded-2xl flex mx-auto shadow-lg max-w-[600px] border border-border-subtle"
-                        style={{
-                            backgroundColor: "rgba(255, 255, 255, 0.7)",
-                            backdropFilter: "blur(12px)"
-                        }}
+                        className="p-2 rounded-2xl flex mx-auto max-w-[700px] border border-primary"
                     >
                         <input
                             className="flex-grow px-4 py-3 text-on-surface bg-transparent border-none focus:ring-0 text-base outline-none"
@@ -74,20 +71,12 @@ export default function Domainregister_00(props: Domainregister_00) {
                         </button>
                     </div>
 
-                    {/* Pricing Marquee */}
-                    <div className="flex flex-wrap gap-3 mt-6">
-                        {first?.items?.map((item, index) => (
-                            <div
-                                key={index}
-                                className={`bg-white px-4 py-4 border border-border-subtle text-center transition-all rounded-2xl`}
-                            >
-                                <span className="text-primary font-bold text-lg">{item.domain}</span>
-                                <span className="text-signal-red font-bold text-lg ml-2">{formatCurrencyValue(item.price, currency.code, 3)}</span>
-                                {item.subprice?.length > 0 && (
-                                    <span className="text-[10px] pl-1 md:text-xs text-slate-500 italic">{item.subprice}</span>
-                                )}
-                            </div>
-                        ))}
+                    <div className="flex justify-center flex-wrap gap-4 mt-12">
+                        <Component 
+                            key={`sc-${shortcode1}`}
+                            data={dataSC1}
+                            page={props.page}
+                        />
                     </div>
                 </div>
             </section>
