@@ -15,6 +15,7 @@ export default function HomePage(props: AppRouterProps) {
   props = globalStore.getCommonData();
   const { language } = useLanguage();
   page = returnCurrentPage(props, language);
+  console.log(`page.contents`, page.contents);
   const content = useMemo(() => {
     return extractHTML(page, props);
   }, [page, language]);

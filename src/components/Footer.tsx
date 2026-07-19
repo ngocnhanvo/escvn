@@ -18,7 +18,6 @@ function Footer(props: AppRouterProps) {
 
   const page = returnCurrentPage(props, language);
   let data = page?.tablePress?.find(a => a.shortcode == `pub_footer_00_${page.lang}`);
-  console.log(`data`, data);
   const keysToFind = ['privacy', 'protectpolicy', 'payment', 'terms', 'legaldocument'];
   const legalPages = props.pages?.reduce((acc, page: Pages) => {
     if (page.lang === language && keysToFind.includes(page.key)) {
