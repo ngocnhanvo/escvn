@@ -1,10 +1,5 @@
 import { ProcessedImageResult } from '@/entities/ProcessedImageResult';
 import { Agent, fetch as undiciFetch } from 'undici';
-import fs from 'node:fs';
-import path from 'node:path';
-import sharp from 'sharp';
-
-sharp.concurrency(1);
 
 interface ProcessImageOptions {
   imageUrl: string;
@@ -19,11 +14,10 @@ const agent = new Agent({ connect: { family: 4, timeout: 30000 } });
 const processedImagesCache = new Map<string, Promise<ProcessedImageResult>>();
 const TARGET_WIDTHS = [40, 150, 300, 768, 1024, 1536, 2560];
 
-// Thư mục .cache nằm ở gốc dự án (ngang cấp với src)
-const CACHE_DIR = path.resolve('.cache/images/pages');
-
 export function clearProcessedImagesCache(): void {
-  processedImagesCache.clear();
+  if (processedImagesCache) {
+    processedImagesCache.clear();
+  }
 }
 
 export async function processAndStoreImage({
@@ -44,7 +38,8 @@ export async function processAndStoreImage({
   const imageProcessPromise = (async (): Promise<ProcessedImageResult> => {
     const defaultResult: ProcessedImageResult = { src: imageUrl, alt, srcSet: '', srcSets: {} };
 
-    if(imageUrl.startsWith('http')) {
+    // 1. Nếu là ảnh tuyệt đối hoặc đang ở chế độ PREVIEW => Trả về URL ngay lập tức, né hoàn toàn Sharp/FS
+    if (imageUrl.startsWith('http')) {
       defaultResult.src = imageUrl;
       defaultResult.srcSet = imageUrl;
       for (const width of TARGET_WIDTHS) {
@@ -63,7 +58,23 @@ export async function processAndStoreImage({
       return defaultResult;
     }
 
+    // 2. Chỉ luồng SSG (Build thực tế) mới được phép động vào File System và Sharp
     if (import.meta.env.SSR || typeof window === 'undefined') {
+      // DYNAMIC IMPORT các thư viện nặng ký vào đây để né lỗi sập Module ở Top-level
+      const fs = await import('node:fs');
+      const path = await import('node:path');
+      
+      let sharp;
+      try {
+        const sharpModule = await import('sharp');
+        sharp = sharpModule.default || sharpModule;
+        sharp.concurrency(1); // Cấu hình an toàn trong luồng runtime
+      } catch (sharpLoadError) {
+        console.error("🚨 Không thể load thư viện Sharp trên Server:", sharpLoadError.message);
+        return defaultResult; // Trả về fallback nếu server thiếu thư viện native
+      }
+
+      const CACHE_DIR = path.resolve('.cache/images/pages');
       let absoluteImageUrl = imageUrl;
       if (absoluteImageUrl.startsWith('/') && WC_URL) {
         absoluteImageUrl = `${WC_URL.replace(/\/$/, '')}${absoluteImageUrl}`;
@@ -80,7 +91,7 @@ export async function processAndStoreImage({
         const originalCachePath = path.join(CACHE_DIR, originalFilename);
         const originalPublicPath = path.join(publicDir, originalFilename);
 
-        // Tạo các thư mục cần thiết
+        // Tạo các thư mục (Sử dụng cấu trúc an toàn)
         if (!fs.existsSync(publicDir)) {
           fs.mkdirSync(publicDir, { recursive: true });
         }
@@ -91,22 +102,18 @@ export async function processAndStoreImage({
         const srcSetParts: Record<string, string> = {};
         let needsRegenerate = reload;
 
-        // BƯỚC 1: KIỂM TRA TOÀN BỘ FILE CACHE CÓ SẴN CHƯA (NẾU KHÔNG RELOAD)
         if (!needsRegenerate) {
-          // Kiểm tra xem cả file gốc lẫn tất cả các file resized (.webp) có nằm trong .cache không
           const originalExistsInCache = fs.existsSync(originalCachePath);
           const allResizedExistInCache = TARGET_WIDTHS.every(width => {
             const cacheResizedPath = path.join(CACHE_DIR, `${nameWithoutExt}-${width}w.webp`);
             return fs.existsSync(cacheResizedPath);
           });
 
-          // Nếu thiếu bất kỳ file nào trong .cache, ta đánh dấu cần chạy lại quy trình tải & resize
           if (!originalExistsInCache || !allResizedExistInCache) {
             needsRegenerate = true;
           }
         }
 
-        // BƯỚC 2: NẾU THIẾU CACHE HOẶC RELOAD = TRUE => TẢI MỚI & RUN SHARP LƯU VÀO CACHE
         if (needsRegenerate) {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -123,10 +130,8 @@ export async function processAndStoreImage({
           const buffer = await res.arrayBuffer();
           const nodeBuffer = Buffer.from(buffer);
 
-          // Ghi ảnh gốc vào thư mục .cache
           fs.writeFileSync(originalCachePath, nodeBuffer);
 
-          // Tạo các bản resized song song và lưu thẳng vào .cache
           await Promise.all(
             TARGET_WIDTHS.map(async (width) => {
               const cacheResizedPath = path.join(CACHE_DIR, `${nameWithoutExt}-${width}w.webp`);
@@ -138,13 +143,10 @@ export async function processAndStoreImage({
           );
         }
 
-        // BƯỚC 3: COPY TẤT CẢ FILE TỪ .CACHE SANG PUBLIC (Cực kỳ nhanh vì chỉ là I/O file thông thường)
-        // 3.1. Copy ảnh gốc sang public (để fallback src)
         if (!fs.existsSync(originalPublicPath)) {
           fs.copyFileSync(originalCachePath, originalPublicPath);
         }
 
-        // 3.2. Copy các file webp đã resize sang public và map dữ liệu đầu ra
         TARGET_WIDTHS.forEach(width => {
           const resizedFilename = `${nameWithoutExt}-${width}w.webp`;
           const cacheResizedPath = path.join(CACHE_DIR, resizedFilename);
@@ -157,7 +159,6 @@ export async function processAndStoreImage({
           }
         });
 
-        // Tạo chuỗi srcSet hoàn chỉnh theo đúng thứ tự mảng widths ban đầu
         const srcSet = TARGET_WIDTHS.map(w => `${srcSetParts[w]} ${w}w`).join(', ');
 
         return {
@@ -169,8 +170,8 @@ export async function processAndStoreImage({
 
       } catch (err) {
         processedImagesCache.delete(imageUrl);
-        console.error(`[Error] Lỗi xử lý ảnh: ${imageUrl}`, err);
-        throw new Error(`Lỗi Server-side xử lý ảnh đa kích thước: ${imageUrl}`);
+        console.error(`[Error] Lỗi xử lý ảnh cấu trúc nội bộ: ${imageUrl}`, err);
+        return defaultResult; // Trả về ảnh gốc thay vì quăng lỗi làm sập cả luồng SSR
       }
     }
 

@@ -2,23 +2,23 @@
 import { replaceAllPropertiesNoLang } from "@/lib/i18n/replaceAllProperties";
 import { processAndStoreImage } from "../imageProcessor";
 import { imgRegex } from "./tablePressProcessor";
-import ReactDOMServer from "react-dom/server";
 import React from "react";
-import dynamicIconImports from "lucide-react/dynamicIconImports.mjs";
 import { getNestedValue } from "@/lib/effects/getNestedValue";
 import { WPInfo } from "@/entities/WPInfo";
 import { mapProducts } from "../products/mapProducts";
 import { tablePress } from "@/entities/tablePress";
 import { Pages } from "@/entities/Pages";
 import { mapPages } from "../pages/mapPages";
-
-export function clearTablePressCache2(): void {
-  iconCache.clear();
-  kebabIconMap.clear();
-}
-
 const iconCache = new Map<string, string>();
 const kebabIconMap = new Map<string, string>();
+
+export function clearTablePressCache2(): void {
+  if (iconCache)
+    iconCache.clear();
+  if (kebabIconMap)
+    kebabIconMap.clear();
+}
+
 const fixLucideIconName = (userInput: string): string | null => {
   if (!userInput) return null;
 
@@ -42,45 +42,53 @@ const fixLucideIconName = (userInput: string): string | null => {
  * Helper: Xử lý phần import Icon chuyển thành chuỗi SVG String
  */
 async function processIcon(value: string, key: string, item: any, icons: Record<string, string>): Promise<void> {
-  if(!value)
-    return;
+  if (!value) return;
 
   if (item[key]?.[value]) return;
   if (iconCache.has(value)) {
     item[key] = iconCache.get(value)!;
     return;
   }
-  
-  if(icons && icons[value])
-  {
+
+  if (icons && icons[value]) {
     item[key] = icons[value];
     iconCache.set(value, icons[value]);
     return;
   }
 
   const kebabName = fixLucideIconName(value);
-  // 1. Kiểm tra xem kebabName có thực sự tồn tại trong dynamicIconImports không
-  if (!kebabName || !(kebabName in dynamicIconImports)) {
-    console.warn(`Icon nhập từ CMS không tồn tại: "${value}"`);
-    item[key] = '';
-    return;
-  }
+  if (!kebabName) return;
 
   try {
-    // 2. Lấy hàm load icon động tương ứng (Lucide đã cấu hình sẵn chuẩn mapping)
-    const loadIcon = dynamicIconImports[kebabName as keyof typeof dynamicIconImports];
-    const module = await loadIcon(); 
-    
-    // 3. Render icon thành chuỗi SVG
+    // 1. Chỉ import dynamicIconImports khi thực sự chạy vào hàm này ở runtime
+    // @ts-ignore
+    const lucideModule = await import("lucide-react/dynamicIconImports.mjs");
+    const dynamicIconImportsObj = lucideModule.default || lucideModule;
+
+    // Kiểm tra xem kebabName có tồn tại trong danh sách không
+    if (!(kebabName in dynamicIconImportsObj)) {
+      console.warn(`Icon nhập từ CMS không tồn tại: "${value}"`);
+      item[key] = '';
+      return;
+    }
+
+    // 2. Lấy hàm load icon động và thực thi
+    const loadIcon = dynamicIconImportsObj[kebabName as keyof typeof dynamicIconImportsObj];
+    const module = await loadIcon();
+
+    // 3. Dynamic import luôn ReactDOMServer để né crash bundle tầng top-level
+    const ReactDOMServer = (await import("react-dom/server")).default;
+
+    // 4. Render icon thành chuỗi SVG
     const svgString = ReactDOMServer.renderToString(
       React.createElement(module.default, { size: 24 })
     );
-    
+
     item[key] = svgString;
     icons[value] = svgString;
     iconCache.set(value, svgString);
   } catch (error) {
-    console.error(`Không thể load icon: ${kebabName}`, error);
+    console.error(`Không thể load hoặc render icon: ${kebabName}`, error);
     item[key] = '';
   }
 }
@@ -181,7 +189,7 @@ export async function transformTableData(
     if (isProduct) {
       mapProducts(products, tableCopy.items);
     }
-    else if(isPage) {
+    else if (isPage) {
       mapPages(pages, tableCopy.items);
     }
   }
@@ -197,7 +205,7 @@ export async function getData(
   WC_URL: string,
   data_info: WPInfo,
   products: any[],
-  pages : Pages[],
+  pages: Pages[],
   isPreview: boolean,
   icons: Record<string, string>
 ): Promise<tablePress[]> {
