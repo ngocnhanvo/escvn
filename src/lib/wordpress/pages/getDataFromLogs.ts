@@ -1,4 +1,4 @@
-// src/lib/wordpress/products/getDataFromLogs.ts
+// src/lib/wordpress/pages/getDataFromLogs.ts
 import { Pages } from "@/entities/Pages";
 import { getData } from "./getData";
 import { WPInfo } from "@/entities/WPInfo";

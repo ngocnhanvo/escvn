@@ -1,36 +1,19 @@
-import { WPInfo } from '@/entities/WPInfo';
-import { processAndStoreImage } from './imageProcessor';
+// src/lib/wordpress/info/getData.ts
+import { processAndStoreImage } from "../imageProcessor";
+import { WPInfo } from "@/entities/WPInfo";
 
-export async function getInfo(WC_URL, isPreview: boolean = false) {
+export async function getData(allWPInfo: any[], WC_URL: string, isPreview: boolean = false) {
   if (!WC_URL) {
     console.error('❌ LỖI: Biến WC_URL chưa được cấu hình trong Environment Variables.');
     return [];
   }
 
   try {
-    let allWPProducts: any[] = [];
-    let page = 1;
-    let totalPages = 1;
-    const perPage = 100; // Tối đa số lượng sản phẩm mỗi lần fetch theo quy định của WP API
-
-    do {
-      const response = await fetch(
-        `${WC_URL}/wp-json/wp/v2/thong-tin-chung?_embed=true&status=publish&per_page=${perPage}&page=${page}`
-      );
-
-      if (!response.ok) break;
-
-      const data = await response.json();
-      allWPProducts = [...allWPProducts, ...data];
-      totalPages = Number(response.headers.get('X-WP-TotalPages') || 1);
-      page++;
-    } while (page <= totalPages);
-
-    const Pages = allWPProducts;
+    const Pages = allWPInfo;
 
     let unifiedPages: WPInfo[] = [];
     Pages.forEach((item: any) => {
-      // Xác định ID gốc: Nếu có origin_page_id thì dùng nó, nếu không thì dùng chính ID của item (bản tiếng Việt)
+      // Xác định ID gốc: Nếu có origin_info_id thì dùng nó, nếu không thì dùng chính ID của item (bản tiếng Việt)
       const originKey = (item.acf?.origin_info_id || item.id).toString();
       const lang = item.acf?.product_lang || 'vi';
       const tencongty = item.acf?.tencongty || '';
@@ -115,6 +98,7 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
     return await Promise.all(
       Object.values(unifiedPages).map(async (p: WPInfo): Promise<WPInfo> => {
         const promises: Promise<void>[] = [];
+        const reload = p.reload;
 
         for (const key of imageKeys) {
           const imageGroup = p[key];
@@ -131,21 +115,22 @@ export async function getInfo(WC_URL, isPreview: boolean = false) {
               WC_URL,
               publicDirBase: 'images/pages',
               isPreview: isPreview,
-              reload: true
+              reload
             }).then((store) => {
-              imageGroup[id] = store; // Cập nhật lại giá trị sau khi xử lý xong
+              imageGroup[id] = store;
             });
 
             promises.push(promise);
           }
         }
-
+        p.reload = undefined;
         // Đợi tất cả ảnh của trang này xử lý xong song song
         await Promise.all(promises);
         return p;
       })
     );
-  } catch (err) {
-    throw new Error(`Lỗi Info.ts: ${err instanceof Error ? err.message : err}`);
+  }
+  catch (err) {
+    throw new Error(`Lỗi info/getData.ts: ${err instanceof Error ? err.message : err}`);
   }
 }

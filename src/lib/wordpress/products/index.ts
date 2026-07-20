@@ -36,6 +36,10 @@ export async function getProducts(allWPProducts_old: any[], WC_URL: string, page
     
     let products: Products[] = [];
     if (coProducts) {
+      const len = allWPProducts_old.length;
+      for (let i = 0; i < len; i++) {
+          allWPProducts_old[i].reload = false;
+      }
       const product = await getDataFromLogs(allWPProducts_old, allWPProducts, WC_URL, pages, isPreview);
       allWPProducts = product.allWPProducts;
       products = product.products;

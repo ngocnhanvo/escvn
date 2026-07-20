@@ -66,7 +66,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
     let cachePage = String(avas.cachePage).toLowerCase() === 'true';
     let cacheProduct = String(avas.cacheProduct).toLowerCase() === 'true';
     let cacheTablePress = String(avas.cacheTablePress).toLowerCase() === 'true';
-    console.log(`cache all`, cacheAll, `| cache page`, cachePage, `| cache product`, cacheProduct, `| cache tablepress`, cacheTablePress);
+    console.log(`cache all`, cacheAll, `| cache page & info`, cachePage, `| cache product`, cacheProduct, `| cache tablepress`, cacheTablePress);
     let cacheImage = cacheAll;
     let folder = "./public/data", folderIMG = "./public/images", isLoaded = false;
     // Nếu là preview thì mở trang nào tải trang đó, do vậy ko bật cache
@@ -86,6 +86,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
     const filePathCacheProducts = path.join(CACHE_DIR, "products.json");
     const filePathCacheTablePress = path.join(CACHE_DIR, "tablepress.json");
     const filePathCachePages = path.join(CACHE_DIR, "pages.json");
+    const filePathCacheInfo = path.join(CACHE_DIR, "info.json");
     const filePathCacheIcons = path.join(CACHE_DIR, "icons.json");
     // Nếu bật cache All thì kiểm tra file cache có dữ liệu không
     if (cacheAll) {
@@ -116,12 +117,23 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         console.log("🚀 [Astro Build] Fetching data from WordPress API (Only Once)...");
         // Info
         let startTime = Date.now();
-        const data_info = (await getInfo(WC_URL, preview))[0];
+        // -- Nếu bật cache page thì lấy info trong thư mục .cache, chỉ fetch những nội dung mới nhất
+        let allWPInfo:any[] = [];
+        if (cachePage) {
+            if (fs.existsSync(filePathCacheInfo)) {
+                const fileContentInfo = fs.readFileSync(filePathCacheInfo, 'utf-8');
+                if (fileContentInfo)
+                    allWPInfo = JSON.parse(fileContentInfo);
+            }
+        }
+        const info = await getInfo(allWPInfo, WC_URL, preview);
+        writeJsonFile(filePathCacheInfo, info.allWPInfo);
+        const data_info = (info.infoFN)[0];
         let endTime = Date.now();
         console.log(`✅ Info.ts xong trong ${(endTime - startTime) / 1000} giây.`);
         // Pages
         startTime = Date.now();
-        // -- Nếu bật cache product thì lấy sản phẩm trong thư mục .cache, chỉ fetch những nội dung mới nhất
+        // -- Nếu bật cache page thì lấy trang trong thư mục .cache, chỉ fetch những nội dung mới nhất
         let allWPPages:any[] = [];
         if (cachePage) {
             if (fs.existsSync(filePathCachePages)) {

@@ -43,6 +43,10 @@ export async function getTablePress(allWPTablePress_old: any[], WC_URL: string, 
     let tablepressFN: tablePress[] = [];
     //Nếu có tablepress cache rồi thì không làm theo quy trình cũ nữa mà sẽ kiểm tra log để cập nhật
     if (coTablePress) {
+      const len = allWPTablePress_old.length;
+      for (let i = 0; i < len; i++) {
+          allWPTablePress_old[i].reload = false;
+      }
       const tablepress = await getDataFromLogs(allWPTablePress_old, allWPTablePress, WC_URL, data_info, products, pages, isPreview, icons);
       allWPTablePress = tablepress.allWPTablePress;
       tablepressFN = tablepress.tablePresses;
