@@ -24,7 +24,7 @@ export default function Home_03(props: home_03) {
                 className="max-w-container-max mx-auto px-margin-desktop"
             >
                 <div className="text-center mb-16">
-                    <h2 className="font-headline-lg text-3xl text-primary uppercase font-bold">
+                    <h2 className="font-headline-lg text-4xl text-primary uppercase font-bold">
                         {data.title}
                     </h2>
                     <div className="h-1 w-16 bg-signal-red mx-auto mt-4 rounded-full" />
@@ -41,7 +41,7 @@ export default function Home_03(props: home_03) {
                                     />
                                 )}
                                 <h3 className="font-bold text-lg">{item?.label}</h3>
-                                <p className="text-sm text-on-surface-variant mt-2">
+                                <p className="text-md text-on-surface-variant mt-2">
                                     {item?.description}
                                 </p>
                             </div>

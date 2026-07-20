@@ -36,8 +36,8 @@ function Footer(props: AppRouterProps) {
       <div className="max-w-container-max mx-auto px-margin-desktop relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 border-b border-border-subtle pb-12">
           <div>
-            <h4 className="font-bold text-primary mb-6 uppercase">{getTranslation('footer.domains.title', language)}</h4>
-            <ul className="space-y-3 text-sm text-on-surface-variant">
+            <h4 className="font-bold text-primary mb-4 uppercase text-lg">{getTranslation('footer.domains.title', language)}</h4>
+            <ul className="space-y-3 text-md text-on-surface-variant">
               <li className="">
                 <a className="hover:text-signal-red transition-colors" href={getContent(props.pages, 'domainfree', language)}>
                   {getTranslation('footer.domains.free', language)}
@@ -92,8 +92,8 @@ function Footer(props: AppRouterProps) {
             </div>
           </div>
           <div>
-            <h4 className="font-bold text-primary mb-6 uppercase">{getTranslation('footer.email.title', language)}</h4>
-            <ul className="space-y-3 text-sm text-on-surface-variant">
+            <h4 className="font-bold text-primary mb-4 uppercase text-lg">{getTranslation('footer.email.title', language)}</h4>
+            <ul className="space-y-3 text-sd text-on-surface-variant">
               <li className="">{getTranslation('footer.email.business_v2', language)}</li>
               <li className="">{getTranslation('footer.email.business_v3', language)}</li>
               <li className="">{getTranslation('footer.email.dedicated_server', language)}</li>
@@ -101,7 +101,7 @@ function Footer(props: AppRouterProps) {
                 <br />
               </li>
               <li className="">
-                <h4 className="font-bold text-primary mb-6 uppercase">{getTranslation('footer.ssl.title', language)}</h4>
+                <h4 className="font-bold text-primary mb-4 uppercase text-lg">{getTranslation('footer.ssl.title', language)}</h4>
               </li>
               <li className="">
                 <a className="hover:text-signal-red transition-colors" href="#">
@@ -120,7 +120,7 @@ function Footer(props: AppRouterProps) {
               <li className="">
                 <ul className="space-y-3 text-sm text-on-surface-variant">
                   <li className="">
-                    <h4 className="font-bold text-primary mb-6 uppercase">
+                    <h4 className="font-bold text-primary mb-4 uppercase text-lg">
                       {getTranslation('footer.web_design.title', language)}
                     </h4>
                   </li>
@@ -129,8 +129,8 @@ function Footer(props: AppRouterProps) {
             </ul>
           </div>
           <div>
-            <h4 className="font-bold text-primary mb-6 uppercase">{getTranslation('footer.hosting.title', language)}</h4>
-            <ul className="space-y-3 text-sm text-on-surface-variant">
+            <h4 className="font-bold text-primary mb-4 uppercase text-lg">{getTranslation('footer.hosting.title', language)}</h4>
+            <ul className="space-y-3 text-md text-on-surface-variant">
               <li className="">
                 <a className="hover:text-signal-red transition-colors" href="#">
                   {getTranslation('footer.hosting.cloud', language)}
@@ -153,7 +153,7 @@ function Footer(props: AppRouterProps) {
                 <br />
               </li>
               <li className="">
-                <h4 className="font-bold text-primary mb-6 uppercase">{getTranslation('footer.server.title', language)}</h4>
+                <h4 className="font-bold text-primary mb-4 uppercase text-lg">{getTranslation('footer.server.title', language)}</h4>
               </li>
               <li className="">
                 <a className="hover:text-signal-red transition-colors" href="#">
@@ -179,8 +179,8 @@ function Footer(props: AppRouterProps) {
             </ul>
           </div>
           <div>
-            <h4 className="font-bold text-primary mb-6 uppercase">{getTranslation('footer.support.title', language)}</h4>
-            <ul className="space-y-3 text-sm text-on-surface-variant">
+            <h4 className="font-bold text-primary mb-4 uppercase text-lg">{getTranslation('footer.support.title', language)}</h4>
+            <ul className="space-y-3 text-md text-on-surface-variant">
               <li className="">
                 <a className="hover:text-signal-red transition-colors" href="#">
                   {getTranslation('footer.support.recruitment', language)}
@@ -200,7 +200,7 @@ function Footer(props: AppRouterProps) {
                 <br />
               </li>
               <li className="">
-                <h4 className="font-bold text-primary mb-6 uppercase">
+                <h4 className="font-bold text-primary mb-4 uppercase text-lg">
                   {getTranslation('footer.other_services.title', language)}
                 </h4>
               </li>

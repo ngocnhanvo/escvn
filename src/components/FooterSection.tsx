@@ -39,7 +39,7 @@ export default function FooterSection(props: AppRouterProps) {
               src={image.src}
             />
           </picture>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+          <p className="text-md text-on-surface-variant leading-relaxed">
             {label}
           </p>
         </div>
@@ -49,7 +49,7 @@ export default function FooterSection(props: AppRouterProps) {
               <MapPin className="text-signal-red w-5 h-5" />
               {item.office}
             </h3>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
+            <p className="text-md text-on-surface-variant leading-relaxed">
               {item.address}
               <br />
               {item.tel}
@@ -57,7 +57,7 @@ export default function FooterSection(props: AppRouterProps) {
               {item.email}
             </p>
             <a
-              className="text-primary text-sm font-semibold hover:underline flex items-center gap-1"
+              className="text-primary text-md font-semibold hover:underline flex items-center gap-1"
               href={item.map}
               target='mapESC'
             >

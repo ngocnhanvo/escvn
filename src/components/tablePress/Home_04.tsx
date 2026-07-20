@@ -61,7 +61,7 @@ export default function Home_04(props: home_04) {
                                         </div>
                                     )}
                                     <h3 className="font-bold text-xl">{item?.label}</h3>
-                                    <ul className="space-y-2 text-sm text-on-surface-variant">
+                                    <ul className="space-y-2 text-md text-on-surface-variant">
                                         {list.map(li => (
                                             <li className="flex items-center gap-2">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-primary" />
