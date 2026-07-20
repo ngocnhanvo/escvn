@@ -68,18 +68,15 @@ jobs:
           # Copy file .env
           cp .env deploy/
 
-          # Copy thư mục .cache (Giữ nguyên logic của bạn để đẩy qua FTP)
-          # if [ -d ".cache" ]; then
-          #   cp -r .cache deploy/
-          # else
-          #   echo "Warning: .cache folder not found!"
-          # fi
-
           # Copy toàn bộ nội dung trong dist vào deploy
           cp -r dist/* deploy/
 
           cd deploy
           zip -r ../escvn.zip .
+
+          # DỌN DẸP: Xóa các thư mục build thừa để làm sạch workspace trước khi GitHub lưu cache
+          rm -rf dist
+          rm -rf deploy
 
       # Upload file zip lên hosting
       - name: Sync files via FTP
