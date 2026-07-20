@@ -24,7 +24,7 @@ export default function Home_01(props: home_01) {
                 variants={fadeInUp}
                 className="text-center mb-12"
             >
-                <h2 className="font-headline-lg text-[32px] text-primary uppercase font-bold">
+                <h2 className="font-headline-lg text-4xl text-primary uppercase font-bold">
                     {data.title}
                 </h2>
                 <div className="h-1 w-16 bg-signal-red mx-auto mt-4 rounded-full" />
@@ -52,11 +52,11 @@ export default function Home_01(props: home_01) {
                             )}
 
                             <h3 className="font-bold text-lg mb-2">{service.name}</h3>
-                            <p className="text-sm text-on-surface-variant mb-4 flex-grow">
+                            <p className="text-on-surface-variant mb-4 flex-grow">
                                 {service.description}
                             </p>
                             <div className="mt-auto">
-                                <div className="text-sm text-on-surface-variant">
+                                <div className="text-on-surface-variant">
                                     {data.fields[3]?.label}
                                 </div>
                                 <div className="text-signal-red font-black text-2xl mb-4">
