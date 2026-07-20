@@ -140,7 +140,7 @@ export default function Home_02(props: home_02) {
                                     )}
 
                                     <h3 className="font-headline-lg text-3xl font-bold text-primary">
-                                        {item.name}
+                                        {item.label}
                                     </h3>
                                     <p className="text-on-surface-variant text-lg leading-relaxed">
                                         {item.description}
