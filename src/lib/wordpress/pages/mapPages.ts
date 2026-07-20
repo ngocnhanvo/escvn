@@ -1,6 +1,6 @@
 import { Pages } from "@/entities/Pages";
 import { getNestedValue } from "@/lib/effects/getNestedValue";
-//Gán thuộc tính của sản phẩm trên server sang client
+//Gán thuộc tính của trang trên server sang client
 export const mapPages = function (pages_server: Pages[], pages_client) {
     if (!pages_client || pages_client.length == 0)
         return [];
@@ -30,7 +30,6 @@ export const mapPages = function (pages_server: Pages[], pages_client) {
                 else if (key.startsWith('api-') && itemP) {
                     const keyClient = key.slice(4);
                     item[keyClient] = getNestedValue(itemP, val.toString());
-                    console.log(`item[keyClient]`, item[keyClient], 'val', val);
                 }
             });
         }

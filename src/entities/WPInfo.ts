@@ -22,4 +22,5 @@ export interface WPInfo {
   image?: Record<string, ProcessedImageResult>;
   mascot?: Record<string, ProcessedImageResult>;
   motaSeo?: Record<string, string>;
+  reload?: boolean;
 }

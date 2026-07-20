@@ -1,5 +1,5 @@
 {
-  "name": "wixstro",
+  "name": "escastro",
   "type": "module",
   "version": "1.0.0",
   "scripts": {
@@ -117,7 +117,7 @@
     "react-dom": "^18.3.0",
     "sass-embedded": "^1.89.2",
     "typescript": "^5.8.3",
-    "vite": "^8.1.4",
+    "vite": "^8.1.5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "3.1.4"
   },

@@ -112,6 +112,7 @@ export default defineConfig({
     }
   ],
   vite: {
+    logLevel: 'error',
     // Cấu hình xóa cache trình duyệt client sau khi build 
     define: {
       'import.meta.env.VITE_BUILD_TIME': JSON.stringify(new Date().getTime())
@@ -143,7 +144,6 @@ export default defineConfig({
         'class-variance-authority',
         'tailwind-merge',
         '@radix-ui/*',
-        //'@wix/*',
         'zod'
       ],
       exclude: [

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { BaseCrudService } from '@/integrations';
 import { Image } from '@/components/ui/image';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Calendar, Clock } from 'lucide-react';
