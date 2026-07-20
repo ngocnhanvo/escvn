@@ -12,6 +12,7 @@ const avas = getAvas(null);
 const WC_URL_CLIENT = avas.WC_URL_CLIENT;
 const WC_URL = avas.WC_URL;
 const { data_info, pages, menus, data_products } = await getSharedWordPressData(avas, true);
+console.log(`preview`, true);
 const props: AppRouterProps = {
   basename: "/preview",
   pages,

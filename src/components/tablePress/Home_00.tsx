@@ -1,8 +1,6 @@
 import { useState, useRef } from 'react';
 import { AppRouterProps } from '@/entities/AppRouterProps';
 import { Pages } from '@/entities/Pages';
-import { formatCurrencyValue } from '@/lib/stringUtils/formatCurrencyValue';
-import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
 import { handlePageLink } from '../PageTransition/handlePageLink';
 import { useNavigate } from 'react-router-dom';
 import Search from 'lucide-react/dist/esm/icons/search';
