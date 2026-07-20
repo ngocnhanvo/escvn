@@ -37,6 +37,10 @@ export async function getPages(allWPPages_old, WC_URL, data_info: WPInfo, isPrev
 
     let pages: Pages[] = [];
     if (coPages) {
+      const len = allWPPages_old.length;
+      for (let i = 0; i < len; i++) {
+          allWPPages_old[i].reload = false;
+      }
       const page = await getDataFromLogs(allWPPages_old, allWPPages, WC_URL, data_info, isPreview);
       allWPPages = page.allWPPages;
       pages = page.pages;
