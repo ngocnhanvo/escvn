@@ -106,24 +106,6 @@ export default function Home_00(props: home_00) {
                     </div>
                 </div>
                 <div className="hidden md:flex justify-end z-10 relative mr-[12%]">
-                    <div className="absolute inset-0 -z-10">
-                        <div
-                            className="
-                                absolute
-                                left-1/2
-                                top-1/2
-                                -translate-x-1/2
-                                -translate-y-1/2
-                                w-[90%]
-                                h-[90%]
-                                rounded-full
-                                bg-cyan-400/20
-                                blur-3xl
-                                animate-pulse
-                                "
-                        />
-                    </div>
-
                     <div className="z-10 max-w-[586px] h-auto object-contain animate-float relative">
                         <picture>
                             {/* 1. Dành cho Mobile: Trình duyệt sẽ tải 1 pixel trong suốt siêu nhẹ thay vì ảnh gốc */}
@@ -138,7 +120,6 @@ export default function Home_00(props: home_00) {
                                 media="(min-width: 768px)"
                             />
                             <img
-                                className="drop-shadow-[0_0_25px_rgba(56,189,248,.6)]"
                                 width={586}
                                 height={391}
                                 fetchPriority="high"
