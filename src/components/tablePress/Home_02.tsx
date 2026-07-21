@@ -2,8 +2,7 @@ import { Pages } from '@/entities/Pages';
 import { motion, fadeInUp } from '@/lib/effects/motion';
 import { formatCurrencyValue } from '@/lib/stringUtils/formatCurrencyValue';
 import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
-import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
-import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
+import { chevronRightSvg, checkCircleSvg } from '@/lib/icons';
 import { handlePageLink } from '../PageTransition';
 import { useNavigate } from 'react-router-dom';
 interface home_02 {
@@ -19,7 +18,6 @@ export default function Home_02(props: home_02) {
         return null;
     let currency = getCurrencyByKey('vi');
     const navigate = useNavigate();
-
     return (
         <>
             {data.items.map((item, index) => {
@@ -111,7 +109,12 @@ export default function Home_02(props: home_02) {
                                                     key={i}
                                                     className="flex items-center gap-3"
                                                 >
-                                                    <CheckCircle className="text-primary w-5 h-5" />
+                                                    <span
+                                                        className="w-5 h-5 text-primary [&>svg]:!w-full [&>svg]:!h-full"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: checkCircleSvg,
+                                                        }}
+                                                    />
                                                     <span className="font-semibold text-on-surface">
                                                         {li}
                                                     </span>
@@ -141,7 +144,12 @@ export default function Home_02(props: home_02) {
                                         className="bg-primary text-white text-xl font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 flex items-center gap-2 w-fit"
                                     >
                                         {item.button}
-                                        <ChevronRight size={18} />
+                                        <span
+                                            className="w-5 h-5 [&>svg]:!w-full [&>svg]:!h-full"
+                                            dangerouslySetInnerHTML={{
+                                                __html: chevronRightSvg,
+                                            }}
+                                        />
                                     </button>
 
                                 </div>

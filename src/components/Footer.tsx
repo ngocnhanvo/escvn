@@ -6,8 +6,7 @@ import { getTranslation } from '@/lib/i18n/getTranslation';
 import { useLanguage } from '@/context/LanguageContext';
 import { handlePageLink } from './PageTransition/handlePageLink';
 import React from 'react';
-import Facebook from 'lucide-react/dist/esm/icons/facebook';
-import Youtube from 'lucide-react/dist/esm/icons/youtube';
+import { facebookSvg, youtubeSvg } from '@/lib/icons';
 import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
 
 export default React.memo(Footer);
@@ -76,18 +75,26 @@ function Footer(props: AppRouterProps) {
                 className="h-12 object-contain"
               />
               <div className="mt-4 flex items-center gap-4 text-on-surface-variant">
-                <a href={props.data_info.facebook[language]} target="_blank" aria-label="Facebook" className="hover:text-signal-red hover:scale-110 transition-all duration-200">
-                  <Facebook size={22} />
-                </a>
+                <a href={props.data_info.facebook[language]} target="_blank" aria-label="Facebook" className="hover:text-signal-red hover:scale-110 transition-all duration-200 w-6 h-6 [&>svg]:!w-full [&>svg]:!h-full"
+                  dangerouslySetInnerHTML={{
+                      __html: facebookSvg,
+                  }}
+                />
                 <a href={props.data_info.twitter[language]} target="_blank" aria-label="X (Twitter)" className="hover:text-signal-red hover:scale-110 transition-all duration-200">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z" /></svg>
                 </a>
                 <a href={props.data_info.tiktok[language]} target="_blank" aria-label="TikTok" className="hover:text-signal-red hover:scale-110 transition-all duration-200">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.06-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 2.89 3.5 2.53 1.13-.3 2.15-1.18 2.44-2.3.09-.3.1-.6.1-.91V.02z" /></svg>
                 </a>
-                <a href={props.data_info.youtube[language]} target="_blank" aria-label="YouTube" className="hover:text-signal-red hover:scale-110 transition-all duration-200">
-                  <Youtube size={24} />
-                </a>
+                <a 
+                  href={props.data_info.youtube[language]} 
+                  target="_blank" 
+                  aria-label="YouTube" 
+                  className="hover:text-signal-red hover:scale-110 transition-all duration-200 w-6 h-6 [&>svg]:!w-full [&>svg]:!h-full"
+                  dangerouslySetInnerHTML={{
+                      __html: youtubeSvg,
+                  }}
+                />
               </div>
             </div>
           </div>

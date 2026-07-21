@@ -2,9 +2,9 @@ import { Pages } from "@/entities/Pages";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavigateFunction } from "react-router-dom";
 import { handlePageLink } from "../PageTransition/handlePageLink";
-import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down';
 import X from 'lucide-react/dist/esm/icons/x';
 import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
+import { chevronDownSvg } from "@/lib/icons";
 
 interface DesktopProps {
     navItems: Pages[];
@@ -72,7 +72,14 @@ export const Desktop = (props: DesktopProps) => {
                         to={`/${item.slug}`}
                     >
                         {item.label}
-                        {hasMega && <ChevronDown size={14} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />}
+                        {hasMega &&
+                        <span
+                            className={`w-[14px] h-[14px] [&>svg]:!w-full [&>svg]:!h-full transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                            dangerouslySetInnerHTML={{
+                            __html: chevronDownSvg,
+                            }}
+                        />
+                        }
                     </Link>
 
                     {hasMega && (

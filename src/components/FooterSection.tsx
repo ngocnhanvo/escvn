@@ -2,8 +2,7 @@ import { AppRouterProps } from '@/entities/AppRouterProps';
 import { useLanguage } from '@/context/LanguageContext';
 import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
 import { motion } from 'framer-motion';
-import Map from 'lucide-react/dist/esm/icons/award';
-import MapPin from 'lucide-react/dist/esm/icons/map-pin';
+import { awardSvg, mapPinSvg } from '@/lib/icons';
 export default function FooterSection(props: AppRouterProps) {
   const { language } = useLanguage();
   const page = returnCurrentPage(props, language);
@@ -46,7 +45,12 @@ export default function FooterSection(props: AppRouterProps) {
         {dataMain.items.map(item => (
           <div className="space-y-4">
             <h3 className="font-bold text-primary text-lg flex items-center gap-2">
-              <MapPin className="text-signal-red w-5 h-5" />
+              <span
+                  className="text-signal-red w-5 h-5 [&>svg]:!w-full [&>svg]:!h-full"
+                  dangerouslySetInnerHTML={{
+                      __html: mapPinSvg,
+                  }}
+              />
               {item.office}
             </h3>
             <p className="text-md text-on-surface-variant leading-relaxed">
@@ -61,7 +65,12 @@ export default function FooterSection(props: AppRouterProps) {
               href={item.map}
               target='mapESC'
             >
-              <Map size={16} /> {item.btn}
+              <span
+                  className="w-5 h-5 [&>svg]:!w-full [&>svg]:!h-full"
+                  dangerouslySetInnerHTML={{
+                      __html: awardSvg,
+                  }}
+              /> {item.btn}
             </a>
           </div>
         ))}
