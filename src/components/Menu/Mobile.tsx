@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, NavigateFunction } from "react-router-dom";
 import { handlePageLink } from "../PageTransition/handlePageLink";
 import { AppRouterProps } from "@/entities/AppRouterProps";
-import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down';
+import { chevronDownSvg } from "@/lib/icons";
 
 interface MobileProps {
     navItems: Pages[];
@@ -49,7 +49,12 @@ export const Mobile = (props: MobileProps) => {
                                         onClick={() => setActiveMobileMegaMenu(isMobileMegaOpen ? null : item.slug)}
                                     >
                                         {item.label}
-                                        <ChevronDown size={14} className={`transition-transform ${isMobileMegaOpen ? 'rotate-180' : ''}`} />
+                                        <span
+                                            className={`w-[14px] h-[14px] [&>svg]:!w-full [&>svg]:!h-full ${isMobileMegaOpen ? 'rotate-180' : ''}`}
+                                            dangerouslySetInnerHTML={{
+                                            __html: chevronDownSvg,
+                                            }}
+                                        />
                                     </button>
                                     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isMobileMegaOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}>
                                         <div className="flex flex-col pl-8 pb-4 bg-slate-50/50">

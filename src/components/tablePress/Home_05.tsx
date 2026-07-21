@@ -1,8 +1,7 @@
 import { Pages } from '@/entities/Pages';
 import { motion, fadeInUp } from '@/lib/effects/motion';
 import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
-import ChevronLeft from 'lucide-react/dist/esm/icons/chevron-left';
-import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
+import { chevronLeftSvg, chevronRightSvg } from '@/lib/icons';
 interface home_05 {
     page: Pages;
     data: any;
@@ -33,7 +32,12 @@ export default function Home_05(props: home_05) {
                         className="opacity-0 w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-border-subtle text-on-surface-variant hover:text-primary"
                         aria-label={language === 'vi' ? 'Đối tác trước' : 'Previous partners'}
                     >
-                        <ChevronLeft size={20} />
+                        <span
+                            className="w-6 h-6 [&>svg]:!w-full [&>svg]:!h-full"
+                            dangerouslySetInnerHTML={{
+                                __html: chevronLeftSvg,
+                            }}
+                        />
                     </button>
                     <div className="flex flex-wrap justify-center gap-12">
                         {data.items?.map(item => (
@@ -56,7 +60,12 @@ export default function Home_05(props: home_05) {
                         className="opacity-0 w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-border-subtle text-on-surface-variant hover:text-primary"
                         aria-label={language === 'vi' ? 'Đối tác tiếp theo' : 'Next partners'}
                     >
-                        <ChevronRight size={20} />
+                        <span
+                            className="w-6 h-6 [&>svg]:!w-full [&>svg]:!h-full"
+                            dangerouslySetInnerHTML={{
+                                __html: chevronRightSvg,
+                            }}
+                        />
                     </button>
 
                 </div>

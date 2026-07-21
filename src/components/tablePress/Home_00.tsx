@@ -3,7 +3,6 @@ import { AppRouterProps } from '@/entities/AppRouterProps';
 import { Pages } from '@/entities/Pages';
 import { handlePageLink } from '../PageTransition/handlePageLink';
 import { useNavigate } from 'react-router-dom';
-import Search from 'lucide-react/dist/esm/icons/search';
 import { getRegisteredComponent } from '@/lib/componentsReg/componentRegistry';
 interface home_00 {
     page: Pages;
@@ -93,7 +92,10 @@ export default function Home_00(props: home_00) {
                             className="bg-primary text-white px-4 md:px-6 py-3 font-bold rounded-2xl hover:bg-blue-900 transition-all flex items-center gap-2 shadow-md z-10 active:scale-95"
                         >
                             <span className='hidden md:block'>{data.items[0].btn}</span>
-                            <Search size={20} />
+                            <span
+                                className="w-5 h-5 [&>svg]:!w-full [&>svg]:!h-full" // Bạn vẫn có thể ăn các class màu sắc của Tailwind ở đây
+                                dangerouslySetInnerHTML={{ __html: first.icon }}
+                            />
                         </button>
                     </div>
                     {/* Pricing Marquee */}

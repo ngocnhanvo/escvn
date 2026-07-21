@@ -9,14 +9,8 @@ import { useLanguage } from '@/context/LanguageContext/index';
 import { Button } from './ui/button';
 import { Desktop } from './Menu/Desktop';
 import { Mobile } from './Menu/Mobile';
-import Award from 'lucide-react/dist/esm/icons/award';
-import Flag from 'lucide-react/dist/esm/icons/flag';
-import Globe from 'lucide-react/dist/esm/icons/globe';
-import ShoppingCart from 'lucide-react/dist/esm/icons/shopping-cart';
-import X from 'lucide-react/dist/esm/icons/x';
-import Menu from 'lucide-react/dist/esm/icons/menu';
-import MapPin from 'lucide-react/dist/esm/icons/map-pin';
 import { getAvas } from '@/lib/avas_env';
+import { awardSvg, flagSvg, globeSvg, mapPinSvg, menuSvg, shoppingCartSvg, xSvg } from '@/lib/icons';
 export default function Header(props: AppRouterProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -74,7 +68,12 @@ export default function Header(props: AppRouterProps) {
         <div className="max-w-container-max mx-auto px-margin-desktop flex justify-between items-center relative z-10">
           <div className="flex items-center gap-2">
             <div className="relative flex items-center justify-center">
-              <Award size={18} strokeWidth={2.5} className="text-yellow-400 relative z-10 drop-shadow-[0_0_8px_rgba(252,211,77,0.8)]" />
+              <span
+                className="w-[18px] h-[18px] [&>svg]:!w-full [&>svg]:!h-full [&>svg]:[stroke-width:2.5] text-yellow-400 relative z-10 drop-shadow-[0_0_8px_rgba(252,211,77,0.8)]"
+                dangerouslySetInnerHTML={{
+                  __html: awardSvg,
+                }}
+              />
               <span className="absolute inset-0 bg-yellow-400/60 blur-sm rounded-full animate-ping"></span>
             </div>
             <span className="text-[11px] font-bold uppercase">
@@ -96,14 +95,24 @@ export default function Header(props: AppRouterProps) {
                 onClick={() => setLanguage('vi')}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all border ${language === 'vi' ? 'bg-white/10 border-white/10 opacity-100' : 'bg-white/5 border-white/5 opacity-80 hover:opacity-100 hover:bg-white/10'}`}
               >
-                <Flag size={14} className="text-white" />
+                <span
+                  className="w-[14px] h-[14px] [&>svg]:!w-full [&>svg]:!h-full text-white"
+                  dangerouslySetInnerHTML={{
+                    __html: flagSvg
+                  }}
+                />
                 <span className="">VN</span>
               </button>
               <button
                 onClick={() => setLanguage('en')}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all border ${language === 'en' ? 'bg-white/10 border-white/10 opacity-100' : 'bg-white/5 border-white/5 opacity-80 hover:opacity-100 hover:bg-white/10'}`}
               >
-                <Globe size={14} className="text-white" />
+                <span
+                  className="w-[14px] h-[14px] [&>svg]:!w-full [&>svg]:!h-full text-white"
+                  dangerouslySetInnerHTML={{
+                    __html: globeSvg
+                  }}
+                />
                 <span className="">EN</span>
               </button>
             </div>
@@ -148,7 +157,12 @@ export default function Header(props: AppRouterProps) {
                 handlePageLink(e, page_cart, `/${page_cart.slug}`, navigate);
               }}
             >
-              <ShoppingCart className="h-5 w-5 text-primary" />
+              <span
+                className="h-5 w-5 text-primary [&>svg]:!w-full [&>svg]:!h-full"
+                dangerouslySetInnerHTML={{
+                  __html: shoppingCartSvg
+                }}
+              />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#b00c3b] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                   {itemCount}
@@ -162,7 +176,20 @@ export default function Header(props: AppRouterProps) {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle Menu"
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {mobileMenuOpen ?
+                <span
+                  className="h-5 w-5 text-primary [&>svg]:!w-full [&>svg]:!h-full"
+                  dangerouslySetInnerHTML={{
+                    __html: xSvg
+                  }}
+                /> :
+                <span
+                  className="h-5 w-5 text-primary [&>svg]:!w-full [&>svg]:!h-full"
+                  dangerouslySetInnerHTML={{
+                    __html: menuSvg
+                  }}
+                />
+              }
             </button>
           </div>
         </div>
@@ -184,11 +211,21 @@ export default function Header(props: AppRouterProps) {
       <div className="bg-[#0D47A1] text-white py-3">
         <div className="menu-support max-w-container-max mx-auto px-margin-desktop flex flex-wrap justify-between items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <MapPin size={18} />
+            <span
+              className="w-5 h-5 [&>svg]:!w-full [&>svg]:!h-full"
+              dangerouslySetInnerHTML={{
+                __html: mapPinSvg,
+              }}
+            />
             <span className="font-bold">{getTranslation('header.top.hanoi', language)}:</span> {data_info.sodienthoaiHaNoi[language]}
           </div>
           <div className="flex items-center gap-2">
-            <MapPin size={18} />
+            <span
+              className="w-5 h-5 [&>svg]:!w-full [&>svg]:!h-full"
+              dangerouslySetInnerHTML={{
+                __html: mapPinSvg,
+              }}
+            />
             <span className="font-bold">{getTranslation('header.top.hochiminh', language)}:</span> {data_info.sodienthoaiHCM[language]}
           </div>
           <div className="flex items-center gap-2">
