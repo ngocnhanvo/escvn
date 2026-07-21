@@ -56,12 +56,12 @@ export default function Home_00(props: home_00) {
                     backgroundSize: "24px 24px",
                 }}
             />
-            <div className="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-[55%_45%] gap-12 items-center">
+            <div className="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-[60%_40%] gap-12 items-center">
                 <div className="space-y-8 z-10">
                     <h1 className="font-headline-xl text-[48px] leading-[56px] text-primary uppercase font-extrabold tracking-tight">
                         {data.items[0].title1} <br /><span className="text-transparent bg-clip-text [-webkit-background-clip:text] bg-gradient-to-r from-primary to-blue-600">{data.items[0].title2}</span>
                     </h1>
-                    <p className="text-lg italic text-on-surface-variant font-medium">
+                    <p className="text-base md:text-xl font-normal text-slate-600 dark:text-slate-300">
                         {data.description}
                     </p>
                     {/* Domain Search */}
