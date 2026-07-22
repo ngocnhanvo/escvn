@@ -26,8 +26,9 @@ export async function getPages(allWPPages_old, WC_URL, data_info: WPInfo, isPrev
       if (!response.ok) break;
 
       const data = await response.json();
-      if (!coPages)
+      if (!coPages) {
         allWPPages = [...allWPPages, ...data];
+      }
       else
         allWPPages = data;
 

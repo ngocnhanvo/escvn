@@ -30,8 +30,8 @@ export async function getDataFromLogs(
           logItem.page.reload = true;
           rawModifyPages.push(logItem.page);
         }
-        else
-          deleteIds.add(stringId);
+        // else
+        //   deleteIds.add(stringId);
       }
     });
 
