@@ -4,8 +4,7 @@ import { Pages } from '@/entities/Pages';
 import parse, { DOMNode, Text, HTMLReactParserOptions } from 'html-react-parser';
 import { getRegisteredComponent } from './componentRegistry';
 
-// Regex toàn cục (g) để tìm tất cả [table id=... /]
-const SHORTCODE_GLOBAL_REGEX = /\[table id=(\S+)\s*\/\]/g;
+const SHORTCODE_TEST_REGEX = /\[table id=\S+\s*\/\]/;
 const SHORTCODE_EXTRACT_KEY = /\[table id=(\S+)\s*\/\]/;
 
 export const extractHTML = (
@@ -14,7 +13,6 @@ export const extractHTML = (
     more: any = {}
 ) => {
     if (!page?.content) return null;
-
     const contentsMap = new Map(
         (page.contents ?? [])
             .filter(item => item?.shortcode)
@@ -26,9 +24,8 @@ export const extractHTML = (
             if (domNode instanceof Text && domNode.data) {
                 const textContent = domNode.data;
 
-                // Nếu có chứa ít nhất 1 shortcode
-                if (SHORTCODE_GLOBAL_REGEX.test(textContent)) {
-                    // Tách đoạn văn bản thành các mảng gồm cả text thường và shortcode
+                // Dùng regex không có cờ 'g' ở đây
+                if (SHORTCODE_TEST_REGEX.test(textContent)) {
                     const parts = textContent.split(/(\[table id=\S+\s*\/\])/g);
 
                     return (
@@ -36,7 +33,6 @@ export const extractHTML = (
                             {parts.map((part, idx) => {
                                 const match = SHORTCODE_EXTRACT_KEY.exec(part);
                                 
-                                // Nếu không phải shortcode -> Trả về văn bản thuần
                                 if (!match) return part;
 
                                 const shortcode = match[1];
@@ -51,7 +47,6 @@ export const extractHTML = (
                                     return null;
                                 }
 
-                                // Trả về Component đúng vị trí bên trong mảng node con
                                 return (
                                     <Component
                                         key={`sc-${shortcode}-${idx}`}

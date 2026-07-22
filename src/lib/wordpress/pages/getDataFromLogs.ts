@@ -51,6 +51,7 @@ export async function getDataFromLogs(
     let updatedPages = Array.from(pageMap.values());
     let pages: Pages[] = [];
     if (updatedPages.length > 0) {
+      
       pages = await getData(updatedPages, WC_URL, data_info, isPreview);
     }
 

@@ -179,50 +179,47 @@
                 "position": 0
             },
             {
-                "key": "domainregister",
+                "key": "ecloudhosting",
                 "lang": "vi",
                 "position": 0
             },
             {
-                "key": "pricelist",
+                "key": "ecloudhostingv2",
                 "lang": "vi",
                 "position": 0
             },
             {
-                "key": "domainsell",
-                "slug": "https://member.esc.vn/domain/domainmanage_sale.php",
-                "lang": "vi",
-                "label": "Domains for sale",
-                "description": "List of domains for sale by members. To list your domain for sale, click here and follow the instructions.",
-                "position": 0
-            },
-            {
-                "key": "domainrebirth",
+                "key": "wordpresshosting",
                 "lang": "vi",
                 "position": 0
             },
             {
-                "key": "domainsecurity",
+                "key": "hostingip",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "websecurity",
                 "lang": "vi",
                 "position": 1
             },
             {
-                "key": "dnssecurity",
-                "lang": "en",
-                "position": 1
-            },
-            {
-                "key": "domaintransfer",
+                "key": "backupservice",
                 "lang": "vi",
                 "position": 1
             },
             {
-                "key": "domaintransfer2",
+                "key": "updatewebsite",
                 "lang": "vi",
                 "position": 1
             },
             {
-                "key": "reportabuse",
+                "key": "wordpressmanagement",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "enextcloud",
                 "lang": "vi",
                 "position": 1
             }
@@ -252,50 +249,47 @@
                 "position": 0
             },
             {
-                "key": "domainregister",
+                "key": "ecloudhosting",
                 "lang": "en",
                 "position": 0
             },
             {
-                "key": "pricelist",
+                "key": "ecloudhostingv2",
                 "lang": "en",
                 "position": 0
             },
             {
-                "key": "domainsell",
-                "slug": "https://member.esc.vn/domain/domainmanage_sale.php",
-                "lang": "en",
-                "label": "Domains for sale",
-                "description": "List of domains for sale by members. To list your domain for sale, click here and follow the instructions.",
-                "position": 0
-            },
-            {
-                "key": "domainrebirth",
+                "key": "wordpresshosting",
                 "lang": "en",
                 "position": 0
             },
             {
-                "key": "domainsecurity",
+                "key": "hostingip",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "websecurity",
                 "lang": "en",
                 "position": 1
             },
             {
-                "key": "dnssecurity",
+                "key": "backupservice",
                 "lang": "en",
                 "position": 1
             },
             {
-                "key": "domaintransfer",
+                "key": "updatewebsite",
                 "lang": "en",
                 "position": 1
             },
             {
-                "key": "domaintransfer2",
+                "key": "wordpressmanagement",
                 "lang": "en",
                 "position": 1
             },
             {
-                "key": "reportabuse",
+                "key": "enextcloud",
                 "lang": "en",
                 "position": 1
             }
@@ -304,12 +298,142 @@
     {
         "key": "email",
         "lang": "vi",
-        "action": "EmailPage"
+        "slug": "#email",
+        "label": "Email",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2015/10/Electronic.mail_.png"
+            }
+        ],
+        "mega": [
+            {
+                "key": "email",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "businessemail",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "businessemailv2",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "businessemailv3",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "privateemail",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "googleworkspace",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "microsoft365",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "emailservermanagement",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "hybridemail",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "emailsign",
+                "lang": "vi",
+                "position": 1
+            }
+        ]
     },
     {
-        "key": "email",
+        "key": "email-en",
         "lang": "en",
-        "action": "EmailPage"
+        "slug": "#email-en",
+        "label": "Email",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2015/10/Electronic.mail_.png"
+            }
+        ],
+        "mega": [
+            {
+                "key": "email",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "businessemail",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "businessemailv2",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "businessemailv3",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "privateemail",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "googleworkspace",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "microsoft365",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "emailservermanagement",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "hybridemail",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "emailsign",
+                "lang": "en",
+                "position": 1
+            }
+        ]
     },
     {
         "key": "server",

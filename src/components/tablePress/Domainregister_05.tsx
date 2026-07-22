@@ -12,8 +12,7 @@ interface Domainregister_05 {
 
 export default function Domainregister_05(props: Domainregister_05) {
     const data = props.data;
-    const tld = props.tld;
-
+    
     // Kiểm tra tính hợp lệ của dữ liệu đầu vào
     if (!data || !data.items) return null;
 
