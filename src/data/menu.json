@@ -439,69 +439,553 @@
         "key": "server",
         "lang": "vi",
         "slug": "#server",
-        "label": "Server"
+        "label": "Server",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2015/10/server.png"
+            }
+        ],
+        "mega": [
+            {
+                "key": "ecloudvps",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "colocation",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "dedicated",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "servermanagement",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "loadbalancing",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "n8nvps",
+                "lang": "vi",
+                "position": 1
+            }
+        ]
     },
     {
-        "key": "server",
+        "key": "server-en",
         "lang": "en",
-        "slug": "#server",
-        "label": "Server"
+        "slug": "#server-en",
+        "label": "Server",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2015/10/server.png"
+            }
+        ],
+        "mega": [
+            {
+                "key": "ecloudvps",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "colocation",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "dedicated",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "servermanagement",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "loadbalancing",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "n8nvps",
+                "lang": "en",
+                "position": 1
+            }
+        ]
     },
     {
         "key": "ssl",
         "lang": "vi",
-        "action": "SSLPage"
+        "slug": "#ssl",
+        "label": "SSL",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2023/05/ssl-mnn.jpg"
+            }
+        ],
+        "mega": [
+            {
+                "key": "ssl",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "globalsign",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "sectigo",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "geotrust",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "digicert",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "dvssl",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "ovssl",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "evssl",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "digitalsign",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "digitalsignprice",
+                "lang": "vi",
+                "position": 1
+            }
+        ]
     },
     {
-        "key": "ssl",
+        "key": "ssl-en",
         "lang": "en",
-        "action": "SSLPage"
-    },
-    {
-        "key": "website",
-        "lang": "vi",
-        "action": "WebsitePage"
-    },
-    {
-        "key": "website",
-        "lang": "en",
-        "action": "WebsitePage"
+        "slug": "#ssl-en",
+        "label": "SSL",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2023/05/ssl-mnn.jpg"
+            }
+        ],
+        "mega": [
+            {
+                "key": "ssl",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "globalsign",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "sectigo",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "geotrust",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "digicert",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "dvssl",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "ovssl",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "evssl",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "digitalsign",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "digitalsignprice",
+                "lang": "en",
+                "position": 1
+            }
+        ]
     },
     {
         "key": "services",
         "lang": "vi",
         "slug": "#services",
-        "label": "Dịch vụ khác"
+        "label": "Dịch vụ khác",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "/images/pages/Flash_Left-1-768w.webp"
+            }
+        ],
+        "mega": [
+            {
+                "key": "webdesign",
+                "label": "Thiết kế Web",
+                "description": "Dịch vụ thiết kế website chuyên nghiệp, tốt nhất. Hàng ngàn mẫu web đa dạng có thể đáp ứng rất nhiều yêu cầu từ quý khách",
+                "lang": "vi",
+                "slug": "https://web.esc.vn",
+                "position": 0
+            },
+            {
+                "key": "googleadvise",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "traditionalservice",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "cybersecurity",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "spleskpanel",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "directadmin",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "kaspersky",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "symantec",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "spla",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "microsoft",
+                "lang": "vi",
+                "position": 1
+            }
+        ]
     },
     {
-        "key": "services",
+        "key": "services-en",
         "lang": "en",
-        "slug": "#services",
-        "label": "Services"
+        "slug": "#services-en",
+        "label": "Services",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "/images/pages/Flash_Left-1-768w.webp"
+            }
+        ],
+        "mega": [
+            {
+                "key": "webdesign",
+                "label": "Web Design",
+                "description": "Professional and high-quality website design services. Thousands of diverse templates ready to meet all your business requirements.",
+                "lang": "en",
+                "slug": "https://web.esc.vn",
+                "position": 0
+            },
+            {
+                "key": "googleadvise",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "traditionalservice",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "cybersecurity",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "spleskpanel",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "directadmin",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "kaspersky",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "symantec",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "spla",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "microsoft",
+                "lang": "en",
+                "position": 1
+            }
+        ]
     },
     {
         "key": "partners",
         "lang": "vi",
         "slug": "#partners",
-        "label": "Đối tác"
+        "label": "Đối tác",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2015/12/banner-hosting-2.png"
+            }
+        ],
+        "mega": [
+            {
+                "key": "partners",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "signupreseller",
+                "lang": "vi",
+                "slug": "https://member.esc.vn/member/signup_reseller.php",
+                "label": "Đăng ký đại lý/cộng tác viên",
+                "description": "Bắt đầu hành trình gia tăng thu nhập thụ động bền vững bằng việc hợp tác phát triển mạng lưới phân phối cùng chúng tôi.",
+                "position": 0
+            },
+            {
+                "key": "referral",
+                "lang": "vi",
+                "position": 1
+            },
+            {
+                "key": "myaccount",
+                "lang": "vi",
+                "slug": "https://member.esc.vn/member/myaccount.php",
+                "label": "Đại lý/cộng tác viên đăng nhập",
+                "description": "Truy cập hệ thống quản lý dành riêng cho đối tác để theo dõi chi tiết về đơn hàng, doanh số và hoa hồng.",
+                "position": 1
+            }
+        ]
     },
     {
-        "key": "partners",
+        "key": "partners-en",
         "lang": "en",
-        "slug": "#partners",
-        "label": "Partners"
+        "slug": "#partners-en",
+        "label": "Partners",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2015/12/banner-hosting-2.png"
+            }
+        ],
+        "mega": [
+            {
+                "key": "partners",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "signupreseller",
+                "lang": "en",
+                "slug": "https://member.esc.vn/member/signup_reseller.php",
+                "label": "Register as an agent/partner",
+                "description": "Start your journey to sustainable passive income by partnering with us to expand our distribution network.",
+                "position": 0
+            },
+            {
+                "key": "referral",
+                "lang": "en",
+                "position": 1
+            },
+            {
+                "key": "myaccount",
+                "lang": "en",
+                "slug": "https://member.esc.vn/member/myaccount.php",
+                "label": "Agent/Collaborator Login",
+                "description": "Access your partner management dashboard to track orders, sales performance, and commissions in detail.",
+                "position": 1
+            }
+        ]
     },
     {
         "key": "support",
         "lang": "vi",
         "slug": "#support",
-        "label": "Hỗ trợ"
+        "label": "Hỗ trợ",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2026/02/banner-2026-support.jpg"
+            }
+        ],
+        "mega": [
+            {
+                "key": "support",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "contact",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "notification",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "news",
+                "lang": "vi",
+                "position": 0
+            }
+        ]
     },
     {
-        "key": "support",
+        "key": "support-en",
         "lang": "en",
-        "slug": "#support",
-        "label": "Support"
+        "slug": "#support-en",
+        "label": "Support",
+        "megaHeader": [
+            {
+                "text": ""
+            },
+            {
+                "text": "",
+                "img": "https://esc.vn/wp-content/uploads/2026/02/banner-2026-support.jpg"
+            }
+        ],
+        "mega": [
+            {
+                "key": "support",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "contact",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "notification",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "news",
+                "lang": "en",
+                "position": 0
+            }
+        ]
     },
     {
         "key": "promotion",
@@ -517,7 +1001,7 @@
             },
             {
                 "text": "",
-                "img": "https://esc.vn/wp-content/uploads/2023/04/tenmien_vn.jpg"
+                "img": "https://esc.vn/wp-content/uploads/2026/04/banner-km-0304-1-scaled.jpg"
             }
         ],
         "mega": [
@@ -551,7 +1035,7 @@
             },
             {
                 "text": "",
-                "img": "https://esc.vn/wp-content/uploads/2023/04/tenmien_vn.jpg"
+                "img": "https://esc.vn/wp-content/uploads/2026/04/banner-km-0304-1-scaled.jpg"
             }
         ],
         "mega": [
