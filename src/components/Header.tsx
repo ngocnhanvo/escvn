@@ -158,7 +158,7 @@ export default function Header(props: AppRouterProps) {
               }}
             >
               <span
-                className="h-5 w-5 text-primary [&>svg]:!w-full [&>svg]:!h-full"
+                className="h-6 w-6 text-primary [&>svg]:!w-full [&>svg]:!h-full"
                 dangerouslySetInnerHTML={{
                   __html: shoppingCartSvg
                 }}

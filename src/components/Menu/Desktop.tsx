@@ -2,9 +2,7 @@ import { Pages } from "@/entities/Pages";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavigateFunction } from "react-router-dom";
 import { handlePageLink } from "../PageTransition/handlePageLink";
-import X from 'lucide-react/dist/esm/icons/x';
-import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
-import { chevronDownSvg } from "@/lib/icons";
+import { chevronDownSvg, chevronRightSvg, xSvg } from "@/lib/icons";
 
 interface DesktopProps {
     navItems: Pages[];
@@ -73,12 +71,12 @@ export const Desktop = (props: DesktopProps) => {
                     >
                         {item.label}
                         {hasMega &&
-                        <span
-                            className={`w-[14px] h-[14px] [&>svg]:!w-full [&>svg]:!h-full transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                            dangerouslySetInnerHTML={{
-                            __html: chevronDownSvg,
-                            }}
-                        />
+                            <span
+                                className={`w-[14px] h-[14px] [&>svg]:!w-full [&>svg]:!h-full transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                                dangerouslySetInnerHTML={{
+                                    __html: chevronDownSvg,
+                                }}
+                            />
                         }
                     </Link>
 
@@ -95,7 +93,12 @@ export const Desktop = (props: DesktopProps) => {
                                     className="absolute top-4 right-4 p-2 bg-primary text-white shadow-lg hover:bg-signal-red hover:scale-110 rounded-full z-50 flex items-center justify-center group/close"
                                     title="Đóng menu"
                                 >
-                                    <X size={20} strokeWidth={3} className="transition-transform group-hover/close:rotate-90" />
+                                    <span
+                                        className={`w-[20px] h-[20px] [&>svg]:!w-full [&>svg]:!h-full [&>svg]:[stroke-width:3] transition-transform group-hover/close:rotate-90`}
+                                        dangerouslySetInnerHTML={{
+                                            __html: xSvg,
+                                        }}
+                                    />
                                 </button>
                                 {item.megaHeader.map((header: any, colIndex: number) => (
                                     <div key={colIndex} className="flex flex-col gap-4">
@@ -132,8 +135,12 @@ export const Desktop = (props: DesktopProps) => {
                                                         <div className={`font-bold transition-colors flex items-center justify-between ${isSubActive ? "text-signal-red" : "text-primary group-hover/sub:text-signal-red"
                                                             }`}>
                                                             <span className="text-lg">{sub.label}</span>
-                                                            <ChevronRight size={16} className={`transition-all ${isSubActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 group-hover/sub:opacity-100 group-hover/sub:translate-x-0"
-                                                                }`} />
+                                                            <span
+                                                                className={`w-[16px] h-[16px] [&>svg]:!w-full [&>svg]:!h-full transition-all ${isSubActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 group-hover/sub:opacity-100 group-hover/sub:translate-x-0"}`}
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html: chevronRightSvg,
+                                                                }}
+                                                            />
                                                         </div>
                                                         {sub.description && (
                                                             <p className="text-sm text-on-surface-variant line-clamp-2 font-normal leading-relaxed opacity-80">
