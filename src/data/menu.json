@@ -707,12 +707,17 @@
                 "position": 0
             },
             {
-                "key": "traditionalservice",
+                "key": "corporatecommunications",
                 "lang": "vi",
                 "position": 0
             },
             {
                 "key": "cybersecurity",
+                "lang": "vi",
+                "position": 0
+            },
+            {
+                "key": "spla",
                 "lang": "vi",
                 "position": 0
             },
@@ -733,11 +738,6 @@
             },
             {
                 "key": "symantec",
-                "lang": "vi",
-                "position": 1
-            },
-            {
-                "key": "spla",
                 "lang": "vi",
                 "position": 1
             },
@@ -780,12 +780,17 @@
                 "position": 0
             },
             {
-                "key": "traditionalservice",
+                "key": "corporatecommunications",
                 "lang": "en",
                 "position": 0
             },
             {
                 "key": "cybersecurity",
+                "lang": "en",
+                "position": 0
+            },
+            {
+                "key": "spla",
                 "lang": "en",
                 "position": 0
             },
@@ -806,11 +811,6 @@
             },
             {
                 "key": "symantec",
-                "lang": "en",
-                "position": 1
-            },
-            {
-                "key": "spla",
                 "lang": "en",
                 "position": 1
             },
