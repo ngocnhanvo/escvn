@@ -1,30 +1,67 @@
+import { useEffect, useRef, useState } from 'react';
 import { Pages } from '@/entities/Pages';
-import { motion, fadeInUp } from '@/lib/effects/motion';
 import { formatCurrencyValue } from '@/lib/stringUtils/formatCurrencyValue';
 import { getCurrencyByKey } from '@/lib/stringUtils/getCurrencyByKey';
 import { chevronRightSvg, checkCircleSvg } from '@/lib/icons';
 import { handlePageLink } from '../PageTransition';
 import { useNavigate } from 'react-router-dom';
+
 interface home_02 {
     page: Pages;
     data: any;
 }
+
+// Sub-component riêng xử lý Observer chuẩn mượt như Home_04
+function AnimatedSection({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [isInView, setIsInView] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsInView(true);
+                    if (ref.current) observer.unobserve(ref.current); // Animation chỉ kích hoạt 1 lần
+                }
+            },
+            { rootMargin: '-100px' }
+        );
+
+        if (ref.current) observer.observe(ref.current);
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div
+            ref={ref}
+            style={{
+                transitionTimingFunction: 'cubic-bezier(0.215, 0.61, 0.355, 1)', // Cubic-bezier mượt chuẩn Framer Motion
+            }}
+            className={`transition-all duration-700 transform ${
+                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[30px]'
+            } ${className}`}
+        >
+            {children}
+        </div>
+    );
+}
+
 export default function Home_02(props: home_02) {
     let language = props.page.lang;
     let data = props.data;
-    if (!data)
-        return null;
-    if (!data.items)
-        return null;
+    if (!data || !data.items) return null;
+
     let currency = getCurrencyByKey('vi');
     const navigate = useNavigate();
+
     return (
         <>
-            {data.items.map((item, index) => {
+            {data.items.map((item: any, index: number) => {
                 if (!item) return null;
 
-                const tags = item?.tags?.trim().split('\n').filter(i => i.trim() !== '') ?? [];
-                const list = item?.list?.trim().split('\n').filter(i => i.trim() !== '') ?? [];
+                const tags = item?.tags?.trim().split('\n').filter((i: string) => i.trim() !== '') ?? [];
+                const list = item?.list?.trim().split('\n').filter((i: string) => i.trim() !== '') ?? [];
 
                 const imageOrder = index % 2 === 0
                     ? "order-1 lg:order-2"
@@ -36,19 +73,10 @@ export default function Home_02(props: home_02) {
 
                 return (
                     <section
-                        key={index}
-                        className={`${index % 2 === 0
-                            ? "bg-surface-container-low"
-                            : ""
-                            } py-section-gap`}
+                        key={item?.id || index}
+                        className={`${index % 2 === 0 ? "bg-surface-container-low" : ""} py-section-gap`}
                     >
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, margin: "-100px" }}
-                            variants={fadeInUp}
-                            className="max-w-container-max mx-auto px-margin-desktop"
-                        >
+                        <AnimatedSection className="max-w-container-max mx-auto px-margin-desktop">
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
                                 {/* Image */}
@@ -63,7 +91,7 @@ export default function Home_02(props: home_02) {
                                             width={768}
                                             height={603}
                                             src={item.image?.src}
-                                            alt={item.image?.alt}
+                                            alt={item.image?.alt || 'Section Image'}
                                         />
                                     </picture>
                                 </div>
@@ -84,7 +112,7 @@ export default function Home_02(props: home_02) {
                                     )}
 
                                     {item.icon && (
-                                        <div className="hidden md:flex w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-primary">
+                                        <div className="hidden md:flex w-16 h-16 bg-blue-50 rounded-2xl items-center justify-center text-primary">
                                             <span
                                                 className="w-8 h-8 [&>svg]:!w-full [&>svg]:!h-full"
                                                 dangerouslySetInnerHTML={{
@@ -104,13 +132,13 @@ export default function Home_02(props: home_02) {
 
                                     {list.length > 0 && (
                                         <ul className="space-y-4">
-                                            {list.map((li, i) => (
+                                            {list.map((li: string, i: number) => (
                                                 <li
                                                     key={i}
                                                     className="flex items-center gap-3"
                                                 >
                                                     <span
-                                                        className="w-5 h-5 text-primary [&>svg]:!w-full [&>svg]:!h-full"
+                                                        className="w-5 h-5 text-primary [&>svg]:!w-full [&>svg]:!h-full flex-shrink-0"
                                                         dangerouslySetInnerHTML={{
                                                             __html: checkCircleSvg,
                                                         }}
@@ -132,29 +160,31 @@ export default function Home_02(props: home_02) {
                                         </div>
                                     )}
 
-                                    <button
-                                        onClick={(e) =>
-                                            handlePageLink(
-                                                e,
-                                                null,
-                                                item.button_link,
-                                                navigate
-                                            )
-                                        }
-                                        className="bg-primary text-white text-xl font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 flex items-center gap-2 w-fit"
-                                    >
-                                        {item.button}
-                                        <span
-                                            className="w-5 h-5 [&>svg]:!w-full [&>svg]:!h-full"
-                                            dangerouslySetInnerHTML={{
-                                                __html: chevronRightSvg,
-                                            }}
-                                        />
-                                    </button>
+                                    {item.button && (
+                                        <button
+                                            onClick={(e) =>
+                                                handlePageLink(
+                                                    e,
+                                                    null,
+                                                    item.button_link,
+                                                    navigate
+                                                )
+                                            }
+                                            className="bg-primary text-white text-xl font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-all shadow-md active:scale-95 flex items-center gap-2 w-fit"
+                                        >
+                                            {item.button}
+                                            <span
+                                                className="w-5 h-5 [&>svg]:!w-full [&>svg]:!h-full"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: chevronRightSvg,
+                                                }}
+                                            />
+                                        </button>
+                                    )}
 
                                 </div>
                             </div>
-                        </motion.div>
+                        </AnimatedSection>
                     </section>
                 );
             })}
