@@ -61,7 +61,7 @@ export async function getSharedWordPressData(avas: any, preview: boolean = false
         WC_URL = avas.WC_URL;
     }
     clearTablePressCache2();
-    //clearProcessedImagesCache();
+    clearProcessedImagesCache();
     let cacheAll = String(avas.cacheAll).toLowerCase() === 'true';
     let cachePage = String(avas.cachePage).toLowerCase() === 'true';
     let cacheProduct = String(avas.cacheProduct).toLowerCase() === 'true';

@@ -28,7 +28,6 @@ export async function getData(allWPPages: any[], WC_URL: string, data_info: WPIn
       const alt_image = item.acf?.image?.alt || '';
       const content = replaceAllProperties(item.acf?.content, data_info, lang) || '';
       const description = replaceAllProperties(item.acf?.description, data_info, lang) || '';
-
       let itemcp = unifiedPages.find((t) => t.id === id);
       if (itemcp == null) {
         itemcp = {
