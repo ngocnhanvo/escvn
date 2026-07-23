@@ -74,6 +74,8 @@ function Footer(props: AppRouterProps) {
                   src="/home-first/banner/dathongbaoBoCongThuong.png"
                   alt="Nền tảng đặt hàng trực tuyến"
                   className="h-12 object-contain"
+                  width={127}
+                  height={48}
                 />
               </a>
               <div className="mt-4 flex items-center gap-4 text-on-surface-variant">
@@ -238,6 +240,8 @@ function Footer(props: AppRouterProps) {
                     src="/home-first/banner/positivessl_trust_seal_sm.png"
                     alt="Positive SSL Trust Seal"
                     className="h-8 w-auto"
+                    width={124}
+                    height={32}
                   />
                 </a>
               </li>

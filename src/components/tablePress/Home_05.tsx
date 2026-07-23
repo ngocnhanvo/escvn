@@ -86,6 +86,7 @@ export default function Home_05(props: home_05) {
                                 <img
                                     className="h-20 w-auto object-contain"
                                     height={80}
+                                    width={768}
                                     alt={item.label || 'Partner logo'}
                                     src={item.image?.src}
                                 />
