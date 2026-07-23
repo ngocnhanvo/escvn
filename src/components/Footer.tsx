@@ -11,7 +11,7 @@ import { returnCurrentPage } from '@/context/LanguageContext/returnCurrentPage';
 
 export default React.memo(Footer);
 function Footer(props: AppRouterProps) {
-    
+
   const { language } = useLanguage();
   const navigate = useNavigate();
 
@@ -69,15 +69,17 @@ function Footer(props: AppRouterProps) {
               </li>
             </ul>
             <div className="mt-6">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4SgW02_4RefD2JCFAkRoWkwcOSFg_hcyxB6aZPighbGKQdO8Hm1_PUQr4zNg8Nj_sdjFc5xlyE9BT4Ll-uVGMTQWPUVJJ-nwluUrBwHFTbUOto025MFoBjv6YMuwzp3sGLAZW1hTyxO01C5brjpyu21RvZgtyxqR7K5MdH5M207EAQ5wPnzR0c0r97K44xa4kFoK0j2kvqqC8YtBJf_HGphAU-mLjK4ufubW0NCWtikZf39Q0yPW9iNaMuhdYXOB75qBQlyHAK8IpiaM"
-                alt="VNNIC Certified"
-                className="h-12 object-contain"
-              />
+              <a href="http://online.gov.vn/Home/WebDetails/3969" target='_blank'>
+                <img
+                  src="/home-first/banner/dathongbaoBoCongThuong.png"
+                  alt="Nền tảng đặt hàng trực tuyến"
+                  className="h-12 object-contain"
+                />
+              </a>
               <div className="mt-4 flex items-center gap-4 text-on-surface-variant">
                 <a href={props.data_info.facebook[language]} target="_blank" aria-label="Facebook" className="hover:text-signal-red hover:scale-110 transition-all duration-200 w-6 h-6 [&>svg]:!w-full [&>svg]:!h-full"
                   dangerouslySetInnerHTML={{
-                      __html: facebookSvg,
+                    __html: facebookSvg,
                   }}
                 />
                 <a href={props.data_info.twitter[language]} target="_blank" aria-label="X (Twitter)" className="hover:text-signal-red hover:scale-110 transition-all duration-200">
@@ -86,13 +88,13 @@ function Footer(props: AppRouterProps) {
                 <a href={props.data_info.tiktok[language]} target="_blank" aria-label="TikTok" className="hover:text-signal-red hover:scale-110 transition-all duration-200">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.06-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 2.89 3.5 2.53 1.13-.3 2.15-1.18 2.44-2.3.09-.3.1-.6.1-.91V.02z" /></svg>
                 </a>
-                <a 
-                  href={props.data_info.youtube[language]} 
-                  target="_blank" 
-                  aria-label="YouTube" 
+                <a
+                  href={props.data_info.youtube[language]}
+                  target="_blank"
+                  aria-label="YouTube"
                   className="hover:text-signal-red hover:scale-110 transition-all duration-200 w-6 h-6 [&>svg]:!w-full [&>svg]:!h-full"
                   dangerouslySetInnerHTML={{
-                      __html: youtubeSvg,
+                    __html: youtubeSvg,
                   }}
                 />
               </div>
@@ -221,7 +223,7 @@ function Footer(props: AppRouterProps) {
                   <li className="">
                     <a
                       className="hover:text-signal-red transition-colors"
-                      href="https://app-companion-430619.appspot.com/projects/12733143981554144019?usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.vi.jNwOADG1Nsk.O%2Fd%3D1%2Frs%3DAHpOoo_s8LJUD_uFbjY2X4aCRtCONneL2Q%2Fm%3D__features__#"
+                      href="#"
                     >
                       {getTranslation('footer.other_services.directadmin', language)}
                     </a>
@@ -231,11 +233,13 @@ function Footer(props: AppRouterProps) {
               <li className="">{getTranslation('footer.other_services.google_ads', language)}</li>
               <li className="">{getTranslation('footer.other_services.antivirus', language)}</li>
               <li className="mt-4">
-                <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0yXFhlzBPky7yp3TGdixbuR-K31AFIXZ9GNh3jWPdW8oGTo7hMPfAtJPJRtQgEVdBugD3NPDI3FV6YndQc3qjXElRSZ0nNMhZ14qi1nxUPUUmYNwtK7lb1nTeARPMa9HPI_V360tS954j2D8GoSt8DpetHOy47nDuJWyuazPqLVFE0VnSYXB5v0o65CLrP-Q7K8244LOyiz_aLoDlTIJeo-ALstWy7QXygrSs4aZUIGh9CYatq-bkbhJGadmZVBXcJ-4gFQr7hmHX"
-                  alt="Positive SSL Trust Seal"
-                  className="h-8 w-auto"
-                />
+                <a href="https://secure.trust-provider.com/ttb_searcher/trustlogo?v_querytype=W&v_shortname=CL1&v_search=https%3A%2F%2Fesc.vn%2F&x=6&y=5" target='_blank'>
+                  <img
+                    src="/home-first/banner/positivessl_trust_seal_sm.png"
+                    alt="Positive SSL Trust Seal"
+                    className="h-8 w-auto"
+                  />
+                </a>
               </li>
               <li className="mt-4 flex justify-start">
                 <br />
